@@ -4,9 +4,10 @@ import { AppService } from "./app.service";
 import { AuthModule } from "./config/module/auth/auth.module";
 import { ConcertModule } from "./config/module/concert/concert.module";
 import { ReservationModule } from "./config/module/reservation/reservation.module";
+import { PointModule } from "./config/module/point/point.module";
 
 @Module({
-  imports: [AuthModule, ConcertModule, ReservationModule],
+  imports: [AuthModule, ConcertModule, ReservationModule, PointModule],
   controllers: [AppController],
   providers: [AppService],
 })
