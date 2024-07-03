@@ -1,73 +1,155 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# 콘서트 예약 서비스
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Milestone
+![milestoneImg.png](assets%2FmilestoneImg.png)
+> https://ryanwolf.notion.site/87ca3ab5e48e43f4bfb8ccd3f43784cd?v=101604bb36ac4b8081a4382b76c39bc9&pvs=4
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## API 명세서
+> https://ryanwolf.notion.site/API-3078289affc84517b75fd1c11590e3b1?pvs=4
 
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Installation
-
-```bash
-$ npm install
+## 시퀸스 다이어그램 작성
+### 토큰 발급 API [POST] /client/token
+```mermaid
+sequenceDiagram
+    actor  client as 사용자
+    participant api as API
+    participant token as 토큰
+    participant user as 유저
+    
+    client ->> api: API 요청
+    api ->> token: 토큰 발급 요청
+    token ->> user: 유저 정보 저장
+    user ->> token: 토큰 발급 요청
+    token ->> client: 토큰 발급
 ```
 
-## Running the app
+### 콘서트 예약 가능 날짜 조회 API [GET] /concerts/{concertId}/dates
+```mermaid
+sequenceDiagram
+    actor client as 사용자
+    participant api as API
+    participant token as 토큰
+    participant concert as 콘서트 정보
+    client ->> api: API 요청
+    api ->> token: 토큰 검증 요청
+    alt 유효하지않음
+        token -->> client: 요청 실패
+    else 유효함
+        token ->> concert: 날짜 조회 요청
+    end
+    concert -->> client: 날짜 정보 반환
 
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
 ```
 
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+### 콘서트 좌석 정보 조회 API [GET] /concerts/{concertId}/dates/{concertDateId}/seats
+```mermaid
+sequenceDiagram
+    actor client as 사용자
+    participant api as API
+    participant token as 토큰
+    participant concert as 콘서트 정보
+    client ->> api: API 요청
+    api ->> token: 토큰 검증 요청
+    alt 유효하지않음
+        token -->> client: 요청 실패
+    else 유효함
+        token ->> concert: 좌석 정보 조회 요청
+    end
+    concert -->> client: 좌석 정보 반환
 ```
 
-## Support
+### 콘서트 좌석 예매 API [POST] /reservation
+```mermaid
+sequenceDiagram
+    actor client as 사용자
+    participant api as API
+    participant token as 토큰
+    participant concert as 콘서트 정보
+    participant reservation as 예약
+    client ->> api: API 요청
+    api ->> token: 토큰 검증 요청
+    alt 유효하지않음
+        token -->> client: 요청 실패
+    else 유효함
+        token ->> concert: 좌석 정보 검증 요청
+        alt 유효하지않음
+            concert -->> client: 요청 실패
+        else 유효함
+            concert ->> reservation: 예약 요청
+        end
+    end
+    reservation ->> concert: 예약 성공, 임시 배정
+    concert ->> client: 예약 결과 반환
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```
 
-## Stay in touch
+### 잔액 조회 API [GET] /client/{clientId}/balance
+```mermaid
+sequenceDiagram
+    actor client as 사용자
+    participant api as API
+    participant token as 토큰
+    participant point as 포인트
+    
+    client ->> api: API 요청
+    alt 유효하지않음
+        token -->> client: 요청 실패
+    else 유효함
+        token ->> point: 포인트 조회 요청
+    end
+    point ->> client: 포인트 잔액 반환
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```
 
-## License
+### 잔액 충전 API [PATCH] /user/{userId}/charge
+```mermaid
+sequenceDiagram
+    actor client as 사용자
+    participant api as API
+    participant token as 토큰
+    participant point as 포인트
+    
+    client ->> api: API 요청
+    alt 유효하지않음
+        token -->> client: 요청 실패
+    else 유효함
+        token ->> point: 포인트 충전 요청
+    end
+    point ->> client: 포인트 결과 반환
 
-Nest is [MIT licensed](LICENSE).
+```
+
+### 결제 요청 API [POST] /payment/{paymentId}
+```mermaid
+sequenceDiagram
+    actor client as 사용자
+    participant api as API
+    participant token as 토큰
+    participant reservation as 예약
+    participant point as 포인트
+    participant payment as 결제
+    
+    client ->> api: API 요청
+    alt 유효하지않음
+        token -->> client: 요청 실패
+    else 유효함
+        token ->> reservation: 예약 조회
+    end
+    alt 없는 예약 번호
+        reservation -->> client: 요청 실패
+    else 
+        reservation ->> point: 포인트 잔액 조회 
+    end
+    alt 잔액 부족
+        point -->> client: 요청 실패
+    else
+        point ->> payment: 결제 요청
+    end
+    payment ->> point: 결제 완료
+    point ->> reservation: 결제 완료
+    reservation ->> token: 대기열 완료
+    token ->> client: 결제 결과 반환
+```
+
+## ERD
+ ![erd.png](assets%2Ferd.png)
