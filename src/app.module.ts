@@ -1,18 +1,18 @@
 import { Module } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
-import { AuthModule } from "./config/module/auth/auth.module";
-import { ConcertModule } from "./config/module/concert/concert.module";
-import { ReservationModule } from "./config/module/reservation/reservation.module";
-import { PointModule } from "./config/module/point/point.module";
-import { PaymentModule } from "./config/module/payment/payment.module";
+import { PaymentModule } from "./module/payment/payment.module";
+import { ConcertModule } from "./module/concert/concert.module";
+import { AuthModule } from "./module/auth/auth.module";
+import { UserModule } from "./module/user/user.module";
+import { ReservationModule } from "./module/reservation/reservation.module";
 
 @Module({
   imports: [
     AuthModule,
     ConcertModule,
     ReservationModule,
-    PointModule,
+    UserModule,
     PaymentModule,
   ],
   controllers: [AppController],
