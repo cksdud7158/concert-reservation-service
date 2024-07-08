@@ -1,0 +1,2 @@
+# 포인트 조회 API
+GET localhost:3000/user/1/balance

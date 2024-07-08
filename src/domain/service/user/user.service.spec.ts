@@ -5,6 +5,7 @@ import {
   UserRepositorySymbol,
 } from "../../interface/repository/user.repository";
 import { User } from "../../../infrastructure/entity/User.entity";
+import { BadRequestException } from "@nestjs/common";
 
 describe("TokenService", () => {
   let service: UserService;
@@ -18,6 +19,7 @@ describe("TokenService", () => {
           provide: UserRepositorySymbol,
           useValue: {
             findOneById: jest.fn(),
+            findOnePointById: jest.fn(),
           },
         },
       ],
@@ -28,24 +30,26 @@ describe("TokenService", () => {
   });
 
   const userId = 1;
+  const user: User = {
+    id: userId,
+    creat_at: 0,
+    update_at: 0,
+    point: 100,
+  };
 
   describe("유저 확인 method(hasUser)", () => {
     it("유저 확인 완료", async () => {
       // given
-      const user: User = {
-        id: userId,
-        creat_at: 0,
-        update_at: 0,
-        point: 100,
-      };
 
       //when
-      jest.spyOn(userRepository, "findOneById").mockResolvedValue(user);
+      const findOneById = jest
+        .spyOn(userRepository, "findOneById")
+        .mockResolvedValue(user);
 
-      const res = await service.hasUser(userId);
+      await service.hasUser(userId);
 
       //then
-      expect(res).toBeTruthy();
+      expect(findOneById).toBeCalled();
     });
     it("유저 없음", async () => {
       // given
@@ -53,10 +57,36 @@ describe("TokenService", () => {
       //when
       jest.spyOn(userRepository, "findOneById").mockResolvedValue(null);
 
-      const res = await service.hasUser(userId);
+      const res = service.hasUser(userId);
 
       //then
-      expect(res).toBeFalsy();
+      await expect(res).rejects.toThrow(BadRequestException);
+    });
+  });
+  describe("포인트 조회 method(getPoint)", () => {
+    it("포인트 조회 완료", async () => {
+      // given
+
+      //when
+      jest
+        .spyOn(userRepository, "findOnePointById")
+        .mockResolvedValue(user.point);
+
+      const res = await service.getPoint(userId);
+
+      //then
+      expect(res).toBe(user.point);
+    });
+    it("유저 없음", async () => {
+      // given
+
+      //when
+      jest.spyOn(userRepository, "findOnePointById").mockResolvedValue(null);
+
+      const res = service.getPoint(userId);
+
+      //then
+      await expect(res).rejects.toThrow(BadRequestException);
     });
   });
 });

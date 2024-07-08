@@ -21,4 +21,21 @@ export class UserRepositoryImpl implements UserRepository {
 
     return entity;
   }
+
+  async findOnePointById(
+    userId: number,
+    _manager?: EntityManager,
+  ): Promise<number> {
+    const manager = _manager ?? this.waitingQueue.manager;
+    const entity = await manager.findOne(User, {
+      select: {
+        point: true,
+      },
+      where: {
+        id: userId,
+      },
+    });
+
+    return entity?.point;
+  }
 }

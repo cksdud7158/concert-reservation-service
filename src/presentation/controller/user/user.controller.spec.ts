@@ -1,15 +1,30 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { UserController } from "./user.controller";
+import { GetPointUseCase } from "../../../application/use-case/User/get-point.use-case";
+import { UserService } from "../../../domain/service/user/user.service";
+import { UserRepositorySymbol } from "../../../domain/interface/repository/user.repository";
 
 describe("PointController", () => {
   let controller: UserController;
+  let getPointUseCase: GetPointUseCase;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UserController],
+      providers: [
+        GetPointUseCase,
+        UserService,
+        {
+          provide: UserRepositorySymbol,
+          useValue: {
+            findOneById: jest.fn(),
+          },
+        },
+      ],
     }).compile();
 
     controller = module.get<UserController>(UserController);
+    getPointUseCase = module.get<GetPointUseCase>(GetPointUseCase);
   });
 
   describe("/user/{userId}/balance (GET)", () => {
@@ -21,6 +36,7 @@ describe("PointController", () => {
       };
 
       //when
+      jest.spyOn(getPointUseCase, "execute").mockResolvedValue(1000);
 
       //then
       const res = await controller.getPoint(userId);
