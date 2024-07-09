@@ -1,12 +1,12 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { TokenController } from "./token.controller";
 import { JwtModule } from "@nestjs/jwt";
-import { GetTokenUseCase } from "../../../application/use-case/token/get-token.use-case";
-import key from "../../../config/token/key";
-import { TokenService } from "../../../domain/service/token/token.service";
-import { WaitingQueueRepositorySymbol } from "../../../domain/interface/repository/waiting-queue.repository";
-import { UserService } from "../../../domain/service/user/user.service";
-import { UserRepositorySymbol } from "../../../domain/interface/repository/user.repository";
+import { WaitingQueueRepositorySymbol } from "@app/domain/interface/repository/waiting-queue.repository";
+import { UserRepositorySymbol } from "@app/domain/interface/repository/user.repository";
+import { UserService } from "@app/domain/service/user/user.service";
+import { GetTokenUseCase } from "@app/application/use-case/token/get-token.use-case";
+import key from "@app/config/token/key";
+import { TokenService } from "@app/domain/service/token/token.service";
+import { TokenController } from "@app/presentation/controller/token/token.controller";
 
 describe("AuthController", () => {
   let controller: TokenController;

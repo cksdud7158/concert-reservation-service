@@ -1,5 +1,5 @@
 import { Body, Controller, Post } from "@nestjs/common";
-import { ReserveConcertRequest } from "../../dto/reservation/dto/request/reserve-concert.request";
+import { ReserveConcertRequest } from "@app/presentation/dto/reservation/dto/request/reserve-concert.request";
 
 @Controller("reservation")
 export class ReservationController {

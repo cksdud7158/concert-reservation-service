@@ -1,7 +1,7 @@
-import WaitingQueueStatus from "../../../infrastructure/enum/waiting-queue-status.enum";
+import WaitingQueuesEntity from "@app/domain/entity/waiting-queues.entity";
+import { WaitingQueue } from "@app/infrastructure/entity/waiting-queue.entity";
+import WaitingQueueStatus from "@app/infrastructure/enum/waiting-queue-status.enum";
 import { EntityManager } from "typeorm";
-import WaitingQueuesEntity from "../../entity/waiting-queues.entity";
-import { WaitingQueue } from "../../../infrastructure/entity/waiting-queue.entity";
 
 export const WaitingQueueRepositorySymbol = Symbol.for(
   "WaitingQueueRepository",

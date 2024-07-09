@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { UserService } from "../../../domain/service/user/user.service";
+import { UserService } from "@app/domain/service/user/user.service";
 
 @Injectable()
 export class GetPointUseCase {

@@ -4,9 +4,9 @@ import { JwtService } from "@nestjs/jwt";
 import {
   WaitingQueueRepository,
   WaitingQueueRepositorySymbol,
-} from "../../interface/repository/waiting-queue.repository";
-import WaitingQueuesEntity from "../../entity/waiting-queues.entity";
-import WaitingQueueStatus from "../../../infrastructure/enum/waiting-queue-status.enum";
+} from "@app/domain/interface/repository/waiting-queue.repository";
+import WaitingQueuesEntity from "@app/domain/entity/waiting-queues.entity";
+import WaitingQueueStatus from "@app/infrastructure/enum/waiting-queue-status.enum";
 
 describe("TokenService", () => {
   let service: TokenService;

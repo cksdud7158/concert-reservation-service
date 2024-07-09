@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { TokenService } from "../../../domain/service/token/token.service";
-import { UserService } from "../../../domain/service/user/user.service";
+import { UserService } from "@app/domain/service/user/user.service";
+import { TokenService } from "@app/domain/service/token/token.service";
 
 @Injectable()
 export class GetTokenUseCase {

@@ -1,14 +1,14 @@
 import { Module } from "@nestjs/common";
 import { JwtModule } from "@nestjs/jwt";
-import { TokenController } from "../../presentation/controller/token/token.controller";
-import key from "../../config/token/key";
-import { GetTokenUseCase } from "../../application/use-case/token/get-token.use-case";
-import { TokenService } from "../../domain/service/token/token.service";
-import { WaitingQueueRepositorySymbol } from "../../domain/interface/repository/waiting-queue.repository";
-import { WaitingQueueRepositoryImpl } from "../../infrastructure/repository/waiting-queue.repository.impl";
+import { WaitingQueueRepositorySymbol } from "@app/domain/interface/repository/waiting-queue.repository";
+import { WaitingQueue } from "@app/infrastructure/entity/waiting-queue.entity";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { WaitingQueue } from "../../infrastructure/entity/waiting-queue.entity";
-import { UserModule } from "../user/user.module";
+import { WaitingQueueRepositoryImpl } from "@app/infrastructure/repository/waiting-queue.repository.impl";
+import { UserModule } from "@app/module/user/user.module";
+import { GetTokenUseCase } from "@app/application/use-case/token/get-token.use-case";
+import { TokenController } from "@app/presentation/controller/token/token.controller";
+import key from "@app/config/token/key";
+import { TokenService } from "@app/domain/service/token/token.service";
 
 @Module({
   controllers: [TokenController],

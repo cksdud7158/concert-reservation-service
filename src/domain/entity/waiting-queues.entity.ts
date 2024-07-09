@@ -1,5 +1,5 @@
-import { WaitingQueue } from "../../infrastructure/entity/waiting-queue.entity";
-import WaitingQueueStatus from "../../infrastructure/enum/waiting-queue-status.enum";
+import { WaitingQueue } from "@app/infrastructure/entity/waiting-queue.entity";
+import WaitingQueueStatus from "@app/infrastructure/enum/waiting-queue-status.enum";
 
 class WaitingQueuesEntity {
   constructor(private readonly _waitingQueueList: WaitingQueue[]) {}
@@ -26,19 +26,19 @@ class WaitingQueuesEntity {
   }
 
   findById(userId: number) {
-    return this._waitingQueueList
+    return this.waitingQueueList
       .filter((waitingQueue) => waitingQueue.user_id === userId)
       .map((waitingQueue) => waitingQueue.id);
   }
 
   private getAvailableStatusLength(): number {
-    return this._waitingQueueList.filter(
+    return this.waitingQueueList.filter(
       (waitingQueue) => waitingQueue.status === WaitingQueueStatus.AVAILABLE,
     ).length;
   }
 
   private getPendingStatusLength(): number {
-    return this._waitingQueueList.filter(
+    return this.waitingQueueList.filter(
       (waitingQueue) => waitingQueue.status === WaitingQueueStatus.PENDING,
     ).length;
   }

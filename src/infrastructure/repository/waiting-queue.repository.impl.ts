@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
-import { WaitingQueueRepository } from "../../domain/interface/repository/waiting-queue.repository";
-import { WaitingQueue } from "../entity/waiting-queue.entity";
-import WaitingQueueStatus from "../enum/waiting-queue-status.enum";
 import { EntityManager, In, Not, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
-import WaitingQueuesEntity from "../../domain/entity/waiting-queues.entity";
+import { WaitingQueueRepository } from "@app/domain/interface/repository/waiting-queue.repository";
+import { WaitingQueue } from "@app/infrastructure/entity/waiting-queue.entity";
+import WaitingQueuesEntity from "@app/domain/entity/waiting-queues.entity";
+import WaitingQueueStatus from "@app/infrastructure/enum/waiting-queue-status.enum";
 
 @Injectable()
 export class WaitingQueueRepositoryImpl implements WaitingQueueRepository {
