@@ -2,13 +2,15 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import WaitingQueueStatus from "../enum/waiting-queue-status.enum";
+import { ConcertSchedule } from "@app/infrastructure/entity/concert-schedule.entity";
 
 @Entity()
-export class WaitingQueue {
+export class Concert {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -18,13 +20,10 @@ export class WaitingQueue {
   @UpdateDateColumn({ type: "timestamptz" })
   update_at: Date;
 
-  @Column()
-  user_id: number;
+  @Column({ type: "text" })
+  name: string;
 
-  @Column({
-    type: "enum",
-    enum: WaitingQueueStatus,
-    default: WaitingQueueStatus.EXPIRED,
-  })
-  status: WaitingQueueStatus;
+  @OneToMany(() => ConcertSchedule, (schedule) => schedule.concert)
+  @JoinColumn()
+  schedules: ConcertSchedule[];
 }

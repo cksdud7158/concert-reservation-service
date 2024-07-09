@@ -1,19 +1,19 @@
-import { Injectable } from "@nestjs/common";
 import { UserRepository } from "@app/domain/interface/repository/user.repository";
-import { User } from "@app/infrastructure/entity/User.entity";
+import { User } from "@app/infrastructure/entity/user.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import PointEntity from "@app/domain/entity/point.entity";
 import { EntityManager, Repository } from "typeorm";
+import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export class UserRepositoryImpl implements UserRepository {
   constructor(
     @InjectRepository(User)
-    private readonly waitingQueue: Repository<User>,
+    private readonly user: Repository<User>,
   ) {}
 
   async findOneById(userId: number, _manager?: EntityManager): Promise<User> {
-    const manager = _manager ?? this.waitingQueue.manager;
+    const manager = _manager ?? this.user.manager;
     const entity = await manager.findOne(User, {
       where: {
         id: userId,
@@ -27,7 +27,7 @@ export class UserRepositoryImpl implements UserRepository {
     userId: number,
     _manager?: EntityManager,
   ): Promise<PointEntity> {
-    const manager = _manager ?? this.waitingQueue.manager;
+    const manager = _manager ?? this.user.manager;
     const entity = await manager.findOne(User, {
       select: {
         point: true,
@@ -38,12 +38,13 @@ export class UserRepositoryImpl implements UserRepository {
     });
     return new PointEntity(entity?.point);
   }
+
   async updatePoint(
     userId: number,
     point: number,
     _manager?: EntityManager,
   ): Promise<void> {
-    const manager = _manager ?? this.waitingQueue.manager;
+    const manager = _manager ?? this.user.manager;
     await manager.update(
       User,
       {

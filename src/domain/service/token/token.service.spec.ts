@@ -13,6 +13,11 @@ describe("TokenService", () => {
   let jwtService: JwtService;
   let waitingQueueRepository: jest.Mocked<WaitingQueueRepository>;
 
+  beforeAll(() => {
+    // Modern fake timers 사용
+    jest.useFakeTimers();
+  });
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -51,9 +56,9 @@ describe("TokenService", () => {
         {
           id: 1,
           status: WaitingQueueStatus.AVAILABLE,
-          creat_at: 0,
+          creat_at: new Date(),
+          update_at: new Date(),
           user_id: userId,
-          update_at: 0,
         },
       ]);
       //when

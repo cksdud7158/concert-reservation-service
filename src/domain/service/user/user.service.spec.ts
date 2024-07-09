@@ -7,13 +7,18 @@ import {
   UserRepository,
   UserRepositorySymbol,
 } from "@app/domain/interface/repository/user.repository";
-import { User } from "@app/infrastructure/entity/User.entity";
+import { User } from "@app/infrastructure/entity/user.entity";
 import { UserService } from "@app/domain/service/user/user.service";
 import PointEntity from "@app/domain/entity/point.entity";
 
 describe("TokenService", () => {
   let service: UserService;
   let userRepository: jest.Mocked<UserRepository>;
+
+  beforeAll(() => {
+    // Modern fake timers 사용
+    jest.useFakeTimers();
+  });
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -38,8 +43,8 @@ describe("TokenService", () => {
   const amount = 1000;
   const user: User = {
     id: userId,
-    creat_at: 0,
-    update_at: 0,
+    creat_at: new Date(),
+    update_at: new Date(),
     point: amount,
   };
 

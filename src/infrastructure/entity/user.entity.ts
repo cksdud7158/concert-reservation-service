@@ -11,11 +11,11 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @CreateDateColumn({ type: "timestamp" })
-  creat_at: number;
+  @CreateDateColumn({ type: "timestamptz" })
+  creat_at: Date;
 
-  @UpdateDateColumn({ type: "timestamp" })
-  update_at: number;
+  @UpdateDateColumn({ type: "timestamptz" })
+  update_at: Date;
 
   @Column({ default: 0 })
   point: number;

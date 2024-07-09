@@ -4,10 +4,16 @@ import { UserService } from "@app/domain/service/user/user.service";
 import { GetPointUseCase } from "@app/application/use-case/User/get-point.use-case";
 import { UserController } from "@app/presentation/controller/user/user.controller";
 import { ChargePointUseCase } from "@app/application/use-case/User/charge-point.use-case";
+
 describe("PointController", () => {
   let controller: UserController;
   let getPointUseCase: GetPointUseCase;
   let chargePointUseCase: ChargePointUseCase;
+
+  beforeAll(() => {
+    // Modern fake timers 사용
+    jest.useFakeTimers();
+  });
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({

@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { UserRepositorySymbol } from "@app/domain/interface/repository/user.repository";
-import { User } from "@app/infrastructure/entity/User.entity";
+import { User } from "@app/infrastructure/entity/user.entity";
 import { UserService } from "@app/domain/service/user/user.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ChargePointUseCase } from "@app/application/use-case/User/charge-point.use-case";
