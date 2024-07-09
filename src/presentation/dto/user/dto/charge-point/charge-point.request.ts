@@ -1,6 +1,7 @@
-import { IsInt } from "class-validator";
+import { IsNumber, Min } from "class-validator";
 
 export class ChargePointRequest {
-  @IsInt()
+  @IsNumber()
+  @Min(1)
   amount: number;
 }

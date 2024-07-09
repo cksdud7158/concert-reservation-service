@@ -1,5 +1,6 @@
 import { EntityManager } from "typeorm";
-import { User } from "../../../infrastructure/entity/User.entity";
+import { User } from "src/infrastructure/entity/User.entity";
+import PointEntity from "src/domain/entity/point.entity";
 
 export const UserRepositorySymbol = Symbol.for("UserRepository");
 
@@ -8,5 +9,11 @@ export interface UserRepository {
   findOnePointById(
     userId: number,
     _manager?: EntityManager,
-  ): Promise<number | null>;
+  ): Promise<PointEntity>;
+
+  updatePoint(
+    userId: number,
+    point: number,
+    _manager?: EntityManager,
+  ): Promise<void>;
 }

@@ -1,16 +1,18 @@
 import { Module } from "@nestjs/common";
-import { UserController } from "../../presentation/controller/user/user.controller";
-import { UserService } from "../../domain/service/user/user.service";
+import { UserRepositorySymbol } from "@app/domain/interface/repository/user.repository";
+import { User } from "@app/infrastructure/entity/User.entity";
+import { UserService } from "@app/domain/service/user/user.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { User } from "../../infrastructure/entity/User.entity";
-import { UserRepositorySymbol } from "../../domain/interface/repository/user.repository";
-import { UserRepositoryImpl } from "../../infrastructure/repository/user.repository.impl";
-import { GetPointUseCase } from "../../application/use-case/User/get-point.use-case";
+import { ChargePointUseCase } from "@app/application/use-case/User/charge-point.use-case";
+import { GetPointUseCase } from "@app/application/use-case/User/get-point.use-case";
+import { UserController } from "@app/presentation/controller/user/user.controller";
+import { UserRepositoryImpl } from "@app/infrastructure/repository/user.repository.impl";
 
 @Module({
   controllers: [UserController],
   providers: [
     GetPointUseCase,
+    ChargePointUseCase,
     UserService,
     {
       provide: UserRepositorySymbol,

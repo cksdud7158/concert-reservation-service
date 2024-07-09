@@ -1,0 +1,7 @@
+# 토큰 발급 API
+PATCH localhost:3000/user/1/charge
+Content-Type: application/json
+
+{
+  "amount": 2000
+}

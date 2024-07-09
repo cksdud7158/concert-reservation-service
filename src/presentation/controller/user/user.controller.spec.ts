@@ -1,18 +1,20 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { UserController } from "./user.controller";
-import { GetPointUseCase } from "../../../application/use-case/User/get-point.use-case";
-import { UserService } from "../../../domain/service/user/user.service";
-import { UserRepositorySymbol } from "../../../domain/interface/repository/user.repository";
-
+import { UserRepositorySymbol } from "@app/domain/interface/repository/user.repository";
+import { UserService } from "@app/domain/service/user/user.service";
+import { GetPointUseCase } from "@app/application/use-case/User/get-point.use-case";
+import { UserController } from "@app/presentation/controller/user/user.controller";
+import { ChargePointUseCase } from "@app/application/use-case/User/charge-point.use-case";
 describe("PointController", () => {
   let controller: UserController;
   let getPointUseCase: GetPointUseCase;
+  let chargePointUseCase: ChargePointUseCase;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UserController],
       providers: [
         GetPointUseCase,
+        ChargePointUseCase,
         UserService,
         {
           provide: UserRepositorySymbol,
@@ -25,6 +27,7 @@ describe("PointController", () => {
 
     controller = module.get<UserController>(UserController);
     getPointUseCase = module.get<GetPointUseCase>(GetPointUseCase);
+    chargePointUseCase = module.get<ChargePointUseCase>(ChargePointUseCase);
   });
 
   describe("/user/{userId}/balance (GET)", () => {
@@ -54,6 +57,7 @@ describe("PointController", () => {
       };
 
       //when
+      jest.spyOn(chargePointUseCase, "execute").mockResolvedValue(1000);
 
       //then
       const res = await controller.chargePoint(userId, request);

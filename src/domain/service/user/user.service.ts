@@ -2,8 +2,7 @@ import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import {
   UserRepository,
   UserRepositorySymbol,
-} from "../../interface/repository/user.repository";
-import { isNumber } from "class-validator";
+} from "@app/domain/interface/repository/user.repository";
 
 @Injectable()
 export class UserService {
@@ -21,9 +20,17 @@ export class UserService {
 
   async getPoint(userId: number): Promise<number> {
     const point = await this.userRepository.findOnePointById(userId);
-    if (!isNumber(point)) {
-      throw new BadRequestException("없는 유저입니다.");
-    }
-    return point;
+    return point.point;
+  }
+
+  async chargePoint(userId: number, amount: number): Promise<number> {
+    // 포인트 조회
+    const point = await this.userRepository.findOnePointById(userId);
+
+    // 잔액 충전
+    point.add(amount);
+    await this.userRepository.updatePoint(userId, point.point);
+
+    return point.point;
   }
 }

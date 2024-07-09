@@ -1,8 +1,9 @@
 import { Injectable } from "@nestjs/common";
-import { EntityManager, Repository } from "typeorm";
+import { UserRepository } from "@app/domain/interface/repository/user.repository";
+import { User } from "@app/infrastructure/entity/User.entity";
 import { InjectRepository } from "@nestjs/typeorm";
-import { UserRepository } from "../../domain/interface/repository/user.repository";
-import { User } from "../entity/User.entity";
+import PointEntity from "@app/domain/entity/point.entity";
+import { EntityManager, Repository } from "typeorm";
 
 @Injectable()
 export class UserRepositoryImpl implements UserRepository {
@@ -25,7 +26,7 @@ export class UserRepositoryImpl implements UserRepository {
   async findOnePointById(
     userId: number,
     _manager?: EntityManager,
-  ): Promise<number> {
+  ): Promise<PointEntity> {
     const manager = _manager ?? this.waitingQueue.manager;
     const entity = await manager.findOne(User, {
       select: {
@@ -35,7 +36,20 @@ export class UserRepositoryImpl implements UserRepository {
         id: userId,
       },
     });
-
-    return entity?.point;
+    return new PointEntity(entity?.point);
+  }
+  async updatePoint(
+    userId: number,
+    point: number,
+    _manager?: EntityManager,
+  ): Promise<void> {
+    const manager = _manager ?? this.waitingQueue.manager;
+    await manager.update(
+      User,
+      {
+        id: userId,
+      },
+      { point: point },
+    );
   }
 }

@@ -5,16 +5,20 @@ import {
   ApiOperation,
   ApiTags,
 } from "@nestjs/swagger";
-import { ApiTag } from "../../../config/swagger/api-tag-enum";
-import { ChargePointResponse } from "../../dto/user/dto/charge-point/charge-point.response";
-import { ChargePointRequest } from "../../dto/user/dto/charge-point/charge-point.request";
-import { GetPointUseCase } from "../../../application/use-case/User/get-point.use-case";
-import { IdPipe } from "../../pipe/id.pipe";
+import { IdPipe } from "@app/presentation/pipe/id.pipe";
+import { ChargePointResponse } from "@app/presentation/dto/user/dto/charge-point/charge-point.response";
+import { ApiTag } from "@app/config/swagger/api-tag-enum";
+import { ChargePointUseCase } from "@app/application/use-case/User/charge-point.use-case";
+import { GetPointUseCase } from "@app/application/use-case/User/get-point.use-case";
+import { ChargePointRequest } from "@app/presentation/dto/user/dto/charge-point/charge-point.request";
 
 @Controller("user")
 @ApiTags(ApiTag.User)
 export class UserController {
-  constructor(private readonly getPointUseCase: GetPointUseCase) {}
+  constructor(
+    private readonly getPointUseCase: GetPointUseCase,
+    private readonly chargePointUseCase: ChargePointUseCase,
+  ) {}
 
   @Get(":userId/balance")
   @ApiOperation({ summary: "포인트 조회 API" })
@@ -35,9 +39,9 @@ export class UserController {
 
   @Patch(":userId/charge")
   async chargePoint(
-    @Param("userId") userId: number,
+    @Param("userId", IdPipe) userId: number,
     @Body() chargePointRequest: ChargePointRequest,
   ): Promise<any> {
-    return true;
+    return this.chargePointUseCase.execute(userId, chargePointRequest.amount);
   }
 }

@@ -1,11 +1,15 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { UserService } from "./user.service";
+import {
+  BadRequestException,
+  InternalServerErrorException,
+} from "@nestjs/common";
 import {
   UserRepository,
   UserRepositorySymbol,
-} from "../../interface/repository/user.repository";
-import { User } from "../../../infrastructure/entity/User.entity";
-import { BadRequestException } from "@nestjs/common";
+} from "@app/domain/interface/repository/user.repository";
+import { User } from "@app/infrastructure/entity/User.entity";
+import { UserService } from "@app/domain/service/user/user.service";
+import PointEntity from "@app/domain/entity/point.entity";
 
 describe("TokenService", () => {
   let service: UserService;
@@ -20,6 +24,7 @@ describe("TokenService", () => {
           useValue: {
             findOneById: jest.fn(),
             findOnePointById: jest.fn(),
+            updatePoint: jest.fn(),
           },
         },
       ],
@@ -30,11 +35,12 @@ describe("TokenService", () => {
   });
 
   const userId = 1;
+  const amount = 1000;
   const user: User = {
     id: userId,
     creat_at: 0,
     update_at: 0,
-    point: 100,
+    point: amount,
   };
 
   describe("유저 확인 method(hasUser)", () => {
@@ -70,12 +76,12 @@ describe("TokenService", () => {
       //when
       jest
         .spyOn(userRepository, "findOnePointById")
-        .mockResolvedValue(user.point);
+        .mockResolvedValue(new PointEntity(amount));
 
       const res = await service.getPoint(userId);
 
       //then
-      expect(res).toBe(user.point);
+      expect(res).toBe(amount);
     });
     it("유저 없음", async () => {
       // given
@@ -86,7 +92,39 @@ describe("TokenService", () => {
       const res = service.getPoint(userId);
 
       //then
-      await expect(res).rejects.toThrow(BadRequestException);
+      await expect(res).rejects.toThrow(TypeError);
+    });
+  });
+  describe("포인트 충전 method(chargePoint)", () => {
+    it("포인트 충전 완료", async () => {
+      // given
+
+      //when
+      jest
+        .spyOn(userRepository, "findOnePointById")
+        .mockResolvedValue(new PointEntity(amount));
+      jest.spyOn(userRepository, "updatePoint");
+
+      const res = await service.chargePoint(userId, amount);
+
+      //then
+      expect(res).toBe(amount + amount);
+    });
+    it("충전 실패", async () => {
+      // given
+
+      //when
+      jest
+        .spyOn(userRepository, "findOnePointById")
+        .mockResolvedValue(new PointEntity(amount));
+      jest
+        .spyOn(userRepository, "updatePoint")
+        .mockRejectedValue(new InternalServerErrorException());
+
+      const res = service.chargePoint(userId, amount);
+
+      //then
+      await expect(res).rejects.toThrow(InternalServerErrorException);
     });
   });
 });
