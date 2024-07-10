@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { Concert } from "@app/infrastructure/entity/concert.entity";
-import { Seat } from "@app/infrastructure/entity/seat.entity";
+import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
 
 @Entity()
 export class ConcertSchedule {
@@ -32,7 +32,7 @@ export class ConcertSchedule {
   @JoinColumn()
   concert: Concert;
 
-  @OneToMany(() => Seat, (seat) => seat.schedule)
+  @OneToMany(() => ConcertSeat, (seat) => seat.schedule)
   @JoinColumn()
-  seats: Seat[];
+  seats: ConcertSeat[];
 }

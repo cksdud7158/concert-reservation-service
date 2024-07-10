@@ -8,10 +8,10 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { ConcertSchedule } from "@app/infrastructure/entity/concert-schedule.entity";
-import ConcertSeatStatusEnum from "@app/infrastructure/enum/concert-seat-status.enum";
+import ConcertScheduleStatus from "@app/infrastructure/enum/concert-seat-status.enum";
 
 @Entity()
-export class Seat {
+export class ConcertSeat {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -34,10 +34,10 @@ export class Seat {
 
   @Column({
     type: "enum",
-    enum: ConcertSeatStatusEnum,
-    default: ConcertSeatStatusEnum.SALE,
+    enum: ConcertScheduleStatus,
+    default: ConcertScheduleStatus.SALE,
   })
-  status: ConcertSeatStatusEnum;
+  status: ConcertScheduleStatus;
 
   @Column({ type: "integer", nullable: false })
   price: number;

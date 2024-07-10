@@ -5,6 +5,7 @@ import {
   ConcertScheduleRepositorySymbol,
 } from "@app/domain/interface/repository/concert-schedule.repository";
 import { ConcertSchedule } from "@app/infrastructure/entity/concert-schedule.entity";
+import { ConcertSeatRepositorySymbol } from "@app/domain/interface/repository/concert-seat.repository";
 
 describe("ConcertService", () => {
   let service: ConcertService;
@@ -23,6 +24,12 @@ describe("ConcertService", () => {
           provide: ConcertScheduleRepositorySymbol,
           useValue: {
             findById: jest.fn(),
+          },
+        },
+        {
+          provide: ConcertSeatRepositorySymbol,
+          useValue: {
+            findByIdWithScheduleId: jest.fn(),
           },
         },
       ],
@@ -45,6 +52,21 @@ describe("ConcertService", () => {
 
   describe("콘서트 예약 가능 날짜 조회 method(getScheduleList)", () => {
     it("콘서트 날짜 조회 완료", async () => {
+      // given
+
+      //when
+
+      jest
+        .spyOn(concertScheduleRepository, "findById")
+        .mockResolvedValue([concertSchedule]);
+      const res = await service.getScheduleList(concertId);
+
+      //then
+      expect(res).toEqual([concertSchedule]);
+    });
+  });
+  describe("콘서트 좌석 조회 method(getSeatList)", () => {
+    it("콘서트 좌석 조회 완료", async () => {
       // given
 
       //when

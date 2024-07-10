@@ -2,11 +2,14 @@ import { Controller, Get, Inject, Param } from "@nestjs/common";
 import { GetScheduleListResponse } from "@app/presentation/dto/concert/get-schedule-list/get-schedule-list.response";
 import { GetScheduleListUseCase } from "@app/application/use-case/concert/get-schedule-list.use-case";
 import { IdPipe } from "@app/presentation/pipe/id.pipe";
+import { GetSeatListUseCase } from "@app/application/use-case/concert/get-seat-list.use-case";
+import { GetSeatListResponse } from "@app/presentation/dto/concert/get-seat-list/get-seat-list.response";
 
 @Controller("concerts")
 export class ConcertController {
   constructor(
     @Inject() private readonly getScheduleListUseCase: GetScheduleListUseCase,
+    @Inject() private readonly getSeatListUseCase: GetSeatListUseCase,
   ) {}
 
   @Get(":concertId/schedules")
@@ -18,19 +21,13 @@ export class ConcertController {
     );
   }
 
-  @Get("/concerts/:concertId/schedules/:concertDateId/seats")
+  @Get("/:concertId/schedules/:concertScheduleId/seats")
   async getSeatList(
-    @Param("concertId") concertId: number,
-    @Param("concertDateId") concertDateId: number,
+    @Param("concertId", IdPipe) concertId: number,
+    @Param("concertScheduleId", IdPipe) concertScheduleId: number,
   ): Promise<any> {
-    return {
-      seats: [
-        {
-          seatId: 1,
-          seatNum: 1,
-          isReserved: false,
-        },
-      ],
-    };
+    return GetSeatListResponse.toResponse(
+      await this.getSeatListUseCase.execute(concertId, concertScheduleId),
+    );
   }
 }
