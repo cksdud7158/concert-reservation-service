@@ -57,10 +57,8 @@ export class PayUseCase {
         manager,
       );
     } catch (e) {
-      if (e.response.statusCode !== 400) {
-        await queryRunner.rollbackTransaction();
-        throw e;
-      }
+      await queryRunner.rollbackTransaction();
+      throw e;
     } finally {
       await queryRunner.release();
     }

@@ -1,9 +1,8 @@
 import { Body, Controller, Inject, Post } from "@nestjs/common";
 import { ApiCreatedResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { ApiTag } from "@app/config/swagger/api-tag-enum";
-
-import { GetTokenUseCase } from "@app/application/use-case/token/get-token.use-case";
 import { TokenRequest } from "@app/presentation/dto/token/get-token/token.request";
+import { GetTokenUseCase } from "@app/application/use-case/token/get-token/get-token.use-case";
 
 @Controller("token")
 @ApiTags(ApiTag.Token)

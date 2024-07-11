@@ -1,5 +1,4 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { TokenService } from "./token.service";
 import { JwtService } from "@nestjs/jwt";
 import {
   WaitingQueueRepository,
@@ -7,6 +6,7 @@ import {
 } from "@app/domain/interface/repository/waiting-queue.repository";
 import WaitingQueuesEntity from "@app/domain/entity/waiting-queues.entity";
 import WaitingQueueStatus from "@app/infrastructure/enum/waiting-queue-status.enum";
+import { TokenService } from "@app/domain/service/token/token.service";
 
 describe("TokenService", () => {
   let service: TokenService;

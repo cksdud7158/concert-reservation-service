@@ -3,12 +3,12 @@ import { JwtModule } from "@nestjs/jwt";
 import { WaitingQueueRepositorySymbol } from "@app/domain/interface/repository/waiting-queue.repository";
 import { UserRepositorySymbol } from "@app/domain/interface/repository/user.repository";
 import { UserService } from "@app/domain/service/user/user.service";
-import { GetTokenUseCase } from "@app/application/use-case/token/get-token.use-case";
 import key from "@app/config/token/key";
 import { TokenService } from "@app/domain/service/token/token.service";
 import { TokenController } from "@app/presentation/controller/token/token.controller";
 import { PointHistoryRepositorySymbol } from "@app/domain/interface/repository/point-history.repository";
 import { DataSource, EntityManager } from "typeorm";
+import { GetTokenUseCase } from "@app/application/use-case/token/get-token/get-token.use-case";
 
 describe("AuthController", () => {
   let controller: TokenController;

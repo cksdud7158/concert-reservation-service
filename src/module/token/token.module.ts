@@ -5,10 +5,10 @@ import { WaitingQueue } from "@app/infrastructure/entity/waiting-queue.entity";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { WaitingQueueRepositoryImpl } from "@app/infrastructure/repository/waiting-queue.repository.impl";
 import { UserModule } from "@app/module/user/user.module";
-import { GetTokenUseCase } from "@app/application/use-case/token/get-token.use-case";
 import { TokenController } from "@app/presentation/controller/token/token.controller";
 import key from "@app/config/token/key";
 import { TokenService } from "@app/domain/service/token/token.service";
+import { GetTokenUseCase } from "@app/application/use-case/token/get-token/get-token.use-case";
 
 @Module({
   controllers: [TokenController],
