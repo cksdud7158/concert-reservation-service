@@ -1,18 +1,17 @@
-import { Body, Controller, Param, Post } from "@nestjs/common";
-import { PayRequest } from "@app/presentation/dto/payment/dto/request/pay.request";
+import { Body, Controller, Inject, Post } from "@nestjs/common";
+import { PayRequest } from "@app/presentation/dto/payment/pay/pay.request";
+import { PayUseCase } from "@app/application/use-case/payment/pay.use-case";
+import { Payment } from "@app/infrastructure/entity/payment.entity";
 
 @Controller("payment")
 export class PaymentController {
-  @Post(":paymentId")
-  async pay(
-    @Param("paymentId") paymentId: number,
-    @Body() payRequest: PayRequest,
-  ): Promise<any> {
-    return {
-      paymentId: 1,
-      status: 1,
-      paymentPrice: 1000,
-      balance: 300,
-    };
+  constructor(@Inject() private readonly payUseCase: PayUseCase) {}
+
+  @Post("")
+  async pay(@Body() payRequest: PayRequest): Promise<Partial<Payment>> {
+    return await this.payUseCase.execute(
+      payRequest.userId,
+      payRequest.ticketIds,
+    );
   }
 }

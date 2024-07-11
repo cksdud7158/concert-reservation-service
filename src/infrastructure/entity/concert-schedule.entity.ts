@@ -30,9 +30,9 @@ export class ConcertSchedule {
     nullable: false,
   })
   @JoinColumn()
-  concert: Concert;
+  concert: Partial<Concert>;
 
   @OneToMany(() => ConcertSeat, (seat) => seat.schedule)
   @JoinColumn()
-  seats: ConcertSeat[];
+  seats: Partial<ConcertSeat[]>;
 }

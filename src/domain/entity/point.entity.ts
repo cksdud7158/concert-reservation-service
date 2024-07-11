@@ -17,6 +17,13 @@ class PointEntity {
   add(amount: number) {
     this.point += amount;
   }
+
+  use(amount: number) {
+    if (amount > this.point) {
+      throw new BadRequestException("잔액이 부족합니다.");
+    }
+    this.point -= amount;
+  }
 }
 
 export default PointEntity;

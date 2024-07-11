@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import { Ticket } from "@app/infrastructure/entity/ticket.entity";
 import {
   TicketRepository,
@@ -30,6 +30,22 @@ export class ReservationService {
 
     // 티켓 리스트 조회
     const ticketList = await this.ticketRepository.findByIds(ticketIds);
+
+    return ticketList;
+  }
+
+  async getTicketList(
+    userId: number,
+    ticketIds: number[],
+  ): Promise<Partial<Ticket>[]> {
+    const ticketList = await this.ticketRepository.findByIdsAndUserId(
+      userId,
+      ticketIds,
+    );
+
+    if (ticketList.length !== ticketIds.length) {
+      throw new BadRequestException("잘못된 요청입니다.");
+    }
 
     return ticketList;
   }

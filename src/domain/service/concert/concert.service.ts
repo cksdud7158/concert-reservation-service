@@ -15,6 +15,7 @@ import {
 } from "@app/domain/interface/repository/concert.repository";
 import { Concert } from "@app/infrastructure/entity/concert.entity";
 import ConcertSeatStatus from "@app/infrastructure/enum/concert-seat-status.enum";
+import { EntityManager } from "typeorm";
 
 @Injectable()
 export class ConcertService {
@@ -45,8 +46,9 @@ export class ConcertService {
   async changeStatus(
     seatIds: number[],
     status: ConcertSeatStatus,
+    _manager?: EntityManager,
   ): Promise<void> {
-    await this.concertSeatRepository.updateStatus(seatIds, status);
+    await this.concertSeatRepository.updateStatus(seatIds, status, _manager);
   }
 
   // 일정 리스트 조회
@@ -68,5 +70,17 @@ export class ConcertService {
       concertId,
       concertScheduleId,
     );
+  }
+
+  // 구매 가능 여부 체크
+  async checkExpiredTime(seatIds: number[]): Promise<void> {
+    // 5분이 지났는가 확인
+    const seatList =
+      await this.concertSeatRepository.findByExpiredTime(seatIds);
+
+    // 지났으면 SALE 로 변경 및 에러 처리
+    if (seatList.length) {
+      throw new BadRequestException("5분이 지나 구매가 불가능합니다.");
+    }
   }
 }

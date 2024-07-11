@@ -55,4 +55,28 @@ export class TicketRepositoryImpl implements TicketRepository {
 
     return entities;
   }
+
+  async findByIdsAndUserId(
+    userId: number,
+    ticketIds: number[],
+    _manager?: EntityManager,
+  ): Promise<Ticket[]> {
+    const manager = _manager ?? this.ticket.manager;
+
+    const entities = await manager.find(Ticket, {
+      where: {
+        id: In(ticketIds),
+        user: {
+          id: userId,
+        },
+      },
+      relations: {
+        concert: true,
+        schedule: true,
+        seat: true,
+      },
+    });
+
+    return entities;
+  }
 }

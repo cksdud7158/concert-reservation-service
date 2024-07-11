@@ -13,4 +13,9 @@ export interface TicketRepository {
   ): Promise<number[]>;
 
   findByIds(ticketIds: number[], _manager?: EntityManager): Promise<Ticket[]>;
+  findByIdsAndUserId(
+    userId: number,
+    ticketIds: number[],
+    _manager?: EntityManager,
+  ): Promise<Ticket[]>;
 }

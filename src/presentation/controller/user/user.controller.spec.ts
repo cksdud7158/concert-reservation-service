@@ -4,8 +4,9 @@ import { UserService } from "@app/domain/service/user/user.service";
 import { GetPointUseCase } from "@app/application/use-case/User/get-point.use-case";
 import { UserController } from "@app/presentation/controller/user/user.controller";
 import { ChargePointUseCase } from "@app/application/use-case/User/charge-point.use-case";
+import { PointHistoryRepositorySymbol } from "@app/domain/interface/repository/point-history.repository";
 
-describe("PointController", () => {
+describe("UserController", () => {
   let controller: UserController;
   let getPointUseCase: GetPointUseCase;
   let chargePointUseCase: ChargePointUseCase;
@@ -26,6 +27,12 @@ describe("PointController", () => {
           provide: UserRepositorySymbol,
           useValue: {
             findOneById: jest.fn(),
+          },
+        },
+        {
+          provide: PointHistoryRepositorySymbol,
+          useValue: {
+            insert: jest.fn(),
           },
         },
       ],

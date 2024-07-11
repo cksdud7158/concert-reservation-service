@@ -19,5 +19,12 @@ import { ConcertModule } from "@app/module/concert/concert.module";
     },
   ],
   imports: [TypeOrmModule.forFeature([Ticket]), ConcertModule],
+  exports: [
+    ReservationService,
+    {
+      provide: TicketRepositorySymbol,
+      useClass: TicketRepositoryImpl,
+    },
+  ],
 })
 export class ReservationModule {}

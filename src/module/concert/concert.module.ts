@@ -40,6 +40,10 @@ import { Concert } from "@app/infrastructure/entity/concert.entity";
       provide: ConcertRepositorySymbol,
       useClass: ConcertRepositoryImpl,
     },
+    {
+      provide: ConcertSeatRepositorySymbol,
+      useClass: ConcertSeatRepositoryImpl,
+    },
   ],
 })
 export class ConcertModule {}

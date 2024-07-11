@@ -1,0 +1,8 @@
+# 콘서트 좌석 예매 API
+POST localhost:3000/payment
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "ticketIds":[15,16]
+}

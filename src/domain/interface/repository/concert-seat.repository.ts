@@ -24,4 +24,9 @@ export interface ConcertSeatRepository {
     status: ConcertSeatStatus,
     _manager?: EntityManager,
   ): Promise<void>;
+
+  findByExpiredTime(
+    seatIds: number[],
+    _manager?: EntityManager,
+  ): Promise<ConcertSeat[]>;
 }

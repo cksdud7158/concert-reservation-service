@@ -86,4 +86,21 @@ export class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
       .where("id IN (:...seatIds)", { seatIds: seatIds })
       .execute();
   }
+
+  async findByExpiredTime(
+    seatIds: number[],
+    _manager?: EntityManager,
+  ): Promise<ConcertSeat[]> {
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+    const manager = _manager ?? this.concertSeat.manager;
+    const entity = await manager
+      .createQueryBuilder(ConcertSeat, "seat")
+      .select()
+      .where("id IN (:...seatIds)", { seatIds: seatIds })
+      .andWhere("status = :status", { status: ConcertScheduleStatus.PENDING })
+      .andWhere("update_at < :date", { date: fiveMinutesAgo.toISOString() })
+      .execute();
+
+    return entity;
+  }
 }

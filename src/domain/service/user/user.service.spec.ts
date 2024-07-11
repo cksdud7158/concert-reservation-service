@@ -10,6 +10,7 @@ import {
 import { User } from "@app/infrastructure/entity/user.entity";
 import { UserService } from "@app/domain/service/user/user.service";
 import PointEntity from "@app/domain/entity/point.entity";
+import { PointHistoryRepositorySymbol } from "@app/domain/interface/repository/point-history.repository";
 
 describe("UserService", () => {
   let service: UserService;
@@ -30,6 +31,12 @@ describe("UserService", () => {
             findOneById: jest.fn(),
             findOnePointById: jest.fn(),
             updatePoint: jest.fn(),
+          },
+        },
+        {
+          provide: PointHistoryRepositorySymbol,
+          useValue: {
+            insert: jest.fn(),
           },
         },
       ],

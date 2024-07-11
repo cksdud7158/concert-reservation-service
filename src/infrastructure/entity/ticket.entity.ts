@@ -36,26 +36,26 @@ export class Ticket {
     nullable: false,
   })
   @JoinColumn()
-  user: User;
+  user: Partial<User>;
 
   @ManyToOne(() => ConcertSchedule, (schedule) => schedule.id, {
     createForeignKeyConstraints: false,
     nullable: false,
   })
   @JoinColumn()
-  schedule: ConcertSchedule;
+  schedule: Partial<ConcertSchedule>;
 
   @ManyToOne(() => ConcertSeat, (seat) => seat.id, {
     createForeignKeyConstraints: false,
     nullable: false,
   })
   @JoinColumn()
-  seat: ConcertSeat;
+  seat: Partial<ConcertSeat>;
 
   @ManyToOne(() => Concert, (concert) => concert.id, {
     createForeignKeyConstraints: false,
     nullable: false,
   })
   @JoinColumn()
-  concert: Concert;
+  concert: Partial<Concert>;
 }

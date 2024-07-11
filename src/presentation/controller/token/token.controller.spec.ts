@@ -7,6 +7,7 @@ import { GetTokenUseCase } from "@app/application/use-case/token/get-token.use-c
 import key from "@app/config/token/key";
 import { TokenService } from "@app/domain/service/token/token.service";
 import { TokenController } from "@app/presentation/controller/token/token.controller";
+import { PointHistoryRepositorySymbol } from "@app/domain/interface/repository/point-history.repository";
 
 describe("AuthController", () => {
   let controller: TokenController;
@@ -33,6 +34,12 @@ describe("AuthController", () => {
           provide: UserRepositorySymbol,
           useValue: {
             findOneById: jest.fn(),
+          },
+        },
+        {
+          provide: PointHistoryRepositorySymbol,
+          useValue: {
+            insert: jest.fn(),
           },
         },
       ],

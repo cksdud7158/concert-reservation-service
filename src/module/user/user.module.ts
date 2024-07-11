@@ -7,6 +7,9 @@ import { ChargePointUseCase } from "@app/application/use-case/User/charge-point.
 import { GetPointUseCase } from "@app/application/use-case/User/get-point.use-case";
 import { UserController } from "@app/presentation/controller/user/user.controller";
 import { UserRepositoryImpl } from "@app/infrastructure/repository/user.repository.impl";
+import { PointHistoryRepositorySymbol } from "@app/domain/interface/repository/point-history.repository";
+import { PointHistoryRepositoryImpl } from "@app/infrastructure/repository/point-history.repository.impl";
+import { PointHistory } from "@app/infrastructure/entity/point-history.entity";
 
 @Module({
   controllers: [UserController],
@@ -18,13 +21,21 @@ import { UserRepositoryImpl } from "@app/infrastructure/repository/user.reposito
       provide: UserRepositorySymbol,
       useClass: UserRepositoryImpl,
     },
+    {
+      provide: PointHistoryRepositorySymbol,
+      useClass: PointHistoryRepositoryImpl,
+    },
   ],
-  imports: [TypeOrmModule.forFeature([User])],
+  imports: [TypeOrmModule.forFeature([User, PointHistory])],
   exports: [
     UserService,
     {
       provide: UserRepositorySymbol,
       useClass: UserRepositoryImpl,
+    },
+    {
+      provide: PointHistoryRepositorySymbol,
+      useClass: PointHistoryRepositoryImpl,
     },
   ],
 })

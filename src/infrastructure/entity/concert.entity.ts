@@ -25,5 +25,5 @@ export class Concert {
 
   @OneToMany(() => ConcertSchedule, (schedule) => schedule.concert)
   @JoinColumn()
-  schedules: ConcertSchedule[];
+  schedules: Partial<ConcertSchedule[]>;
 }
