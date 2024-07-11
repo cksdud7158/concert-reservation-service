@@ -4,6 +4,7 @@ import {
   TicketRepository,
   TicketRepositorySymbol,
 } from "@app/domain/interface/repository/ticket.repository";
+import { EntityManager } from "typeorm";
 
 @Injectable()
 export class ReservationService {
@@ -17,6 +18,7 @@ export class ReservationService {
     concertId: number,
     concertScheduleId: number,
     seatIds: number[],
+    _manager?: EntityManager,
   ): Promise<Ticket[]> {
     // 티켓 여러개 만들기
     const ticketIds = await this.ticketRepository.insert(
@@ -24,12 +26,16 @@ export class ReservationService {
       concertId,
       concertScheduleId,
       seatIds,
+      _manager,
     );
 
     // 해당 seat pending 처리
 
     // 티켓 리스트 조회
-    const ticketList = await this.ticketRepository.findByIds(ticketIds);
+    const ticketList = await this.ticketRepository.findByIds(
+      ticketIds,
+      _manager,
+    );
 
     return ticketList;
   }

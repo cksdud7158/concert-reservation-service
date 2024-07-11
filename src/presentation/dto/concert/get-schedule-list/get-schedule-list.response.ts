@@ -4,13 +4,12 @@ import { ConcertSchedule } from "@app/infrastructure/entity/concert-schedule.ent
 const schedulesExample = [
   {
     id: 1,
-    date: 12321345,
-    isSoldOut: false,
+    date: new Date(),
   },
 ];
 
 export class GetScheduleListResponse {
-  @ApiProperty({ example: 10, minimum: 0 })
+  @ApiProperty({ example: 1, minimum: 0 })
   total: number;
 
   @ApiProperty({ example: schedulesExample })

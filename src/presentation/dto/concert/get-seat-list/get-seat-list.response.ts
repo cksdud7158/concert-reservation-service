@@ -2,19 +2,20 @@ import { ApiProperty } from "@nestjs/swagger";
 import ConcertScheduleStatus from "@app/infrastructure/enum/concert-seat-status.enum";
 import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
 
-const schedulesExample = [
+const seatsExample = [
   {
     id: 1,
-    date: 12321345,
-    isSoldOut: false,
+    seatNum: 1,
+    status: ConcertScheduleStatus.PENDING,
+    price: 100000,
   },
 ];
 
 export class GetSeatListResponse {
-  @ApiProperty({ example: 10, minimum: 0 })
+  @ApiProperty({ example: 1, minimum: 0 })
   total: number;
 
-  @ApiProperty({ example: schedulesExample })
+  @ApiProperty({ example: seatsExample })
   seats: {
     id: number;
     seatNum: number;

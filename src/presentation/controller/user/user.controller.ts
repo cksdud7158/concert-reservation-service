@@ -1,10 +1,5 @@
 import { Body, Controller, Get, Param, Patch } from "@nestjs/common";
-import {
-  ApiBadRequestResponse,
-  ApiCreatedResponse,
-  ApiOperation,
-  ApiTags,
-} from "@nestjs/swagger";
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { IdPipe } from "@app/presentation/pipe/id.pipe";
 import { ApiTag } from "@app/config/swagger/api-tag-enum";
 import { ChargePointUseCase } from "@app/application/use-case/User/charge-point.use-case";
@@ -23,14 +18,6 @@ export class UserController {
 
   @Get(":userId/balance")
   @ApiOperation({ summary: "포인트 조회 API" })
-  @ApiCreatedResponse({
-    description: "포인트 조회 완료",
-    type: ChargePointResponse,
-  })
-  @ApiBadRequestResponse({
-    description: "잘못된 요청",
-    example: "잘못된 요청입니다.",
-  })
   async getPoint(
     @Param("userId", IdPipe) userId: number,
   ): Promise<ChargePointResponse> {
@@ -38,11 +25,12 @@ export class UserController {
     return ChargePointResponse.toResponse(point);
   }
 
+  @ApiOperation({ summary: "잔액 충전 API" })
   @Patch(":userId/charge")
   async chargePoint(
     @Param("userId", IdPipe) userId: number,
     @Body() chargePointRequest: ChargePointRequest,
-  ): Promise<any> {
+  ): Promise<number> {
     return this.chargePointUseCase.execute(userId, chargePointRequest.amount);
   }
 }
