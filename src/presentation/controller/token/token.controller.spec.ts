@@ -8,12 +8,19 @@ import key from "@app/config/token/key";
 import { TokenService } from "@app/domain/service/token/token.service";
 import { TokenController } from "@app/presentation/controller/token/token.controller";
 import { PointHistoryRepositorySymbol } from "@app/domain/interface/repository/point-history.repository";
+import { DataSource, EntityManager } from "typeorm";
 
 describe("AuthController", () => {
   let controller: TokenController;
   let getTokenUseCase: GetTokenUseCase;
+  let dataSourceMock: Partial<DataSource>;
 
   beforeEach(async () => {
+    dataSourceMock = {
+      manager: {} as EntityManager,
+      createEntityManager: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [TokenController],
       imports: [
@@ -26,6 +33,8 @@ describe("AuthController", () => {
         GetTokenUseCase,
         TokenService,
         UserService,
+        { provide: DataSource, useValue: dataSourceMock },
+
         {
           provide: WaitingQueueRepositorySymbol,
           useValue: jest.fn(),

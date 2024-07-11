@@ -1,10 +1,10 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { UserRepositorySymbol } from "@app/domain/interface/repository/user.repository";
 import { UserService } from "@app/domain/service/user/user.service";
-import { GetPointUseCase } from "@app/application/use-case/User/get-point.use-case";
 import { UserController } from "@app/presentation/controller/user/user.controller";
 import { ChargePointUseCase } from "@app/application/use-case/User/charge-point.use-case";
 import { PointHistoryRepositorySymbol } from "@app/domain/interface/repository/point-history.repository";
+import { GetPointUseCase } from "@app/application/use-case/User/get-point/get-point.use-case";
 
 describe("UserController", () => {
   let controller: UserController;

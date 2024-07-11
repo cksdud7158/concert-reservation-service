@@ -12,10 +12,12 @@ import { TicketRepositorySymbol } from "@app/domain/interface/repository/ticket.
 import { ConcertRepositorySymbol } from "@app/domain/interface/repository/concert.repository";
 import { ConcertScheduleRepositorySymbol } from "@app/domain/interface/repository/concert-schedule.repository";
 import { ConcertSeatRepositorySymbol } from "@app/domain/interface/repository/concert-seat.repository";
+import { DataSource, EntityManager } from "typeorm";
 
 describe("ReservationController", () => {
   let controller: ReservationController;
   let reserveConcertUseCase: ReserveConcertUseCase;
+  let dataSourceMock: Partial<DataSource>;
 
   beforeAll(() => {
     // Modern fake timers 사용
@@ -23,12 +25,18 @@ describe("ReservationController", () => {
   });
 
   beforeEach(async () => {
+    dataSourceMock = {
+      manager: {} as EntityManager,
+      createEntityManager: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ReservationController],
       providers: [
         ReserveConcertUseCase,
         ReservationService,
         ConcertService,
+        { provide: DataSource, useValue: dataSourceMock },
         {
           provide: TicketRepositorySymbol,
           useValue: {
