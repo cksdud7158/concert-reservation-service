@@ -9,10 +9,10 @@ import { ConcertScheduleRepositoryImpl } from "@app/infrastructure/repository/co
 import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
 import { ConcertSeatRepositorySymbol } from "@app/domain/interface/repository/concert-seat.repository";
 import { ConcertSeatRepositoryImpl } from "@app/infrastructure/repository/concert-seat.repository.impl";
-import { GetSeatListUseCase } from "@app/application/use-case/concert/get-seat-list.use-case";
 import { ConcertRepositorySymbol } from "@app/domain/interface/repository/concert.repository";
 import { ConcertRepositoryImpl } from "@app/infrastructure/repository/concert.repository.impl";
 import { Concert } from "@app/infrastructure/entity/concert.entity";
+import { GetSeatListUseCase } from "@app/application/use-case/concert/get-seat-list/get-seat-list.use-case";
 
 @Module({
   controllers: [ConcertController],
