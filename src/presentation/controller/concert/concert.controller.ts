@@ -1,11 +1,11 @@
 import { Controller, Get, Inject, Param } from "@nestjs/common";
 import { GetScheduleListResponse } from "@app/presentation/dto/concert/get-schedule-list/get-schedule-list.response";
-import { GetScheduleListUseCase } from "@app/application/use-case/concert/get-schedule-list.use-case";
 import { IdPipe } from "@app/presentation/pipe/id.pipe";
 import { GetSeatListResponse } from "@app/presentation/dto/concert/get-seat-list/get-seat-list.response";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { ApiTag } from "@app/config/swagger/api-tag-enum";
 import { GetSeatListUseCase } from "@app/application/use-case/concert/get-seat-list/get-seat-list.use-case";
+import { GetScheduleListUseCase } from "@app/application/use-case/concert/get-schedule-list/get-schedule-list.use-case";
 
 @Controller("concerts")
 @ApiTags(ApiTag.Concert)

@@ -1,16 +1,16 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { ConcertController } from "@app/presentation/controller/concert/concert.controller";
-import { GetScheduleListUseCase } from "@app/application/use-case/concert/get-schedule-list.use-case";
+import { GetScheduleListUseCase } from "@app/application/use-case/concert/get-schedule-list/get-schedule-list.use-case";
 import { ConcertSchedule } from "@app/infrastructure/entity/concert-schedule.entity";
 import { GetScheduleListResponse } from "@app/presentation/dto/concert/get-schedule-list/get-schedule-list.response";
 import { ConcertService } from "@app/domain/service/concert/concert.service";
 import { ConcertScheduleRepositorySymbol } from "@app/domain/interface/repository/concert-schedule.repository";
 import { ConcertSeatRepositorySymbol } from "@app/domain/interface/repository/concert-seat.repository";
-import { GetSeatListUseCase } from "@app/application/use-case/concert/get-seat-list.use-case";
 import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
 import ConcertScheduleStatus from "@app/infrastructure/enum/concert-seat-status.enum";
 import { GetSeatListResponse } from "@app/presentation/dto/concert/get-seat-list/get-seat-list.response";
 import { ConcertRepositorySymbol } from "@app/domain/interface/repository/concert.repository";
+import { GetSeatListUseCase } from "@app/application/use-case/concert/get-seat-list/get-seat-list.use-case";
 
 describe("ConcertController", () => {
   let controller: ConcertController;

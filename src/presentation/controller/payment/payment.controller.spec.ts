@@ -1,7 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { PaymentController } from "@app/presentation/controller/payment/payment.controller";
 import { PayRequest } from "@app/presentation/dto/payment/pay/pay.request";
-import { PayUseCase } from "@app/application/use-case/payment/pay.use-case";
 import { PaymentService } from "@app/domain/service/payment/payment.service";
 import { PaymentRepositorySymbol } from "@app/domain/interface/repository/payment.repository";
 import { ReservationService } from "@app/domain/service/reservation/reservation.service";
@@ -16,6 +15,7 @@ import { ConcertSeatRepositorySymbol } from "@app/domain/interface/repository/co
 import { Payment } from "@app/infrastructure/entity/payment.entity";
 import PaymentStatus from "@app/infrastructure/enum/payment-status.enum";
 import { DataSource, EntityManager } from "typeorm";
+import { PayUseCase } from "@app/application/use-case/payment/pay/pay.use-case";
 
 describe("PaymentController", () => {
   let controller: PaymentController;

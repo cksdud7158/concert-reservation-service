@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { ConcertController } from "@app/presentation/controller/concert/concert.controller";
-import { GetScheduleListUseCase } from "@app/application/use-case/concert/get-schedule-list.use-case";
+import { GetScheduleListUseCase } from "@app/application/use-case/concert/get-schedule-list/get-schedule-list.use-case";
 import { ConcertService } from "@app/domain/service/concert/concert.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConcertSchedule } from "@app/infrastructure/entity/concert-schedule.entity";

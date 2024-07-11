@@ -80,7 +80,7 @@ describe("PayUseCase", () => {
         { seat: { id: 2, price: 150 } },
         { seat: { id: 3, price: 200 } },
       ];
-      const totalPrice = tickets.reduce((pv, cv) => pv + cv.seat.price, 450);
+      const totalPrice = tickets.reduce((pv, cv) => pv + cv.seat.price, 0);
       const payment = { id: 1 };
 
       reservationService.getTicketList = jest.fn().mockResolvedValue(tickets);
@@ -125,7 +125,7 @@ describe("PayUseCase", () => {
         { seat: { id: 2, price: 150 } },
         { seat: { id: 3, price: 200 } },
       ];
-      const totalPrice = tickets.reduce((pv, cv) => pv + cv.seat.price, 450);
+      const totalPrice = tickets.reduce((pv, cv) => pv + cv.seat.price, 0);
       const error = new Error("test error");
 
       reservationService.getTicketList = jest.fn().mockResolvedValue(tickets);
