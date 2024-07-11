@@ -1,9 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { EntityManager, Repository } from "typeorm";
+import { EntityManager, In, Repository } from "typeorm";
 import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
 import { ConcertSeatRepository } from "@app/domain/interface/repository/concert-seat.repository";
 import ConcertScheduleStatus from "@app/infrastructure/enum/concert-seat-status.enum";
+import ConcertSeatStatus from "@app/infrastructure/enum/concert-seat-status.enum";
 
 @Injectable()
 export class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
@@ -52,5 +53,37 @@ export class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
     }
 
     await builder.execute();
+  }
+
+  async findByIdAndStatusSale(
+    seatIds: number[],
+    _manager?: EntityManager,
+  ): Promise<ConcertSeat[]> {
+    const manager = _manager ?? this.concertSeat.manager;
+    const entity = await manager.find(ConcertSeat, {
+      where: {
+        id: In(seatIds),
+        status: ConcertScheduleStatus.SALE,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    return entity;
+  }
+
+  async updateStatus(
+    seatIds: number[],
+    status: ConcertSeatStatus,
+    _manager?: EntityManager,
+  ): Promise<void> {
+    const manager = _manager ?? this.concertSeat.manager;
+    await manager
+      .createQueryBuilder()
+      .update(ConcertSeat)
+      .set({ status: status })
+      .where("id IN (:...seatIds)", { seatIds: seatIds })
+      .execute();
   }
 }

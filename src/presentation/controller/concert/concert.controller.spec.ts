@@ -10,6 +10,7 @@ import { GetSeatListUseCase } from "@app/application/use-case/concert/get-seat-l
 import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
 import ConcertScheduleStatus from "@app/infrastructure/enum/concert-seat-status.enum";
 import { GetSeatListResponse } from "@app/presentation/dto/concert/get-seat-list/get-seat-list.response";
+import { ConcertRepositorySymbol } from "@app/domain/interface/repository/concert.repository";
 
 describe("ConcertController", () => {
   let controller: ConcertController;
@@ -28,6 +29,12 @@ describe("ConcertController", () => {
         GetScheduleListUseCase,
         GetSeatListUseCase,
         ConcertService,
+        {
+          provide: ConcertRepositorySymbol,
+          useValue: {
+            findById: jest.fn(),
+          },
+        },
         {
           provide: ConcertScheduleRepositorySymbol,
           useValue: {

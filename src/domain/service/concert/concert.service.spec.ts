@@ -5,11 +5,19 @@ import {
   ConcertScheduleRepositorySymbol,
 } from "@app/domain/interface/repository/concert-schedule.repository";
 import { ConcertSchedule } from "@app/infrastructure/entity/concert-schedule.entity";
-import { ConcertSeatRepositorySymbol } from "@app/domain/interface/repository/concert-seat.repository";
+import {
+  ConcertSeatRepository,
+  ConcertSeatRepositorySymbol,
+} from "@app/domain/interface/repository/concert-seat.repository";
+import { ConcertRepositorySymbol } from "@app/domain/interface/repository/concert.repository";
+import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
+import ConcertScheduleStatus from "@app/infrastructure/enum/concert-seat-status.enum";
+import { BadRequestException } from "@nestjs/common";
 
 describe("ConcertService", () => {
   let service: ConcertService;
   let concertScheduleRepository: jest.Mocked<ConcertScheduleRepository>;
+  let concertSeatRepository: jest.Mocked<ConcertSeatRepository>;
 
   beforeAll(() => {
     // Modern fake timers 사용
@@ -21,6 +29,12 @@ describe("ConcertService", () => {
       providers: [
         ConcertService,
         {
+          provide: ConcertRepositorySymbol,
+          useValue: {
+            findById: jest.fn(),
+          },
+        },
+        {
           provide: ConcertScheduleRepositorySymbol,
           useValue: {
             findById: jest.fn(),
@@ -30,6 +44,9 @@ describe("ConcertService", () => {
           provide: ConcertSeatRepositorySymbol,
           useValue: {
             findByIdWithScheduleId: jest.fn(),
+            updatePendingToSale: jest.fn(),
+            findByIdAndStatusSale: jest.fn(),
+            updateStatus: jest.fn(),
           },
         },
       ],
@@ -37,6 +54,7 @@ describe("ConcertService", () => {
 
     service = module.get<ConcertService>(ConcertService);
     concertScheduleRepository = module.get(ConcertScheduleRepositorySymbol);
+    concertSeatRepository = module.get(ConcertSeatRepositorySymbol);
   });
 
   const concertId = 1;
@@ -65,6 +83,7 @@ describe("ConcertService", () => {
       expect(res).toEqual([concertSchedule]);
     });
   });
+
   describe("콘서트 좌석 조회 method(getSeatList)", () => {
     it("콘서트 좌석 조회 완료", async () => {
       // given
@@ -78,6 +97,62 @@ describe("ConcertService", () => {
 
       //then
       expect(res).toEqual([concertSchedule]);
+    });
+  });
+
+  describe("좌석들의 판매 가능 상태 조회 method(checkSaleSeat)", () => {
+    const concertSeatList: ConcertSeat[] = [
+      {
+        id: 1,
+        status: ConcertScheduleStatus.SALE,
+        price: 1000,
+        seat_number: 1,
+        creat_at: date,
+        update_at: date,
+        schedule: {} as ConcertSchedule,
+      },
+    ];
+    it("좌석들의 판매 가능 상태 조회 완료", async () => {
+      // given
+
+      //when
+      const findByIdAndStatusSale = jest
+        .spyOn(concertSeatRepository, "findByIdAndStatusSale")
+        .mockResolvedValue(concertSeatList);
+
+      await service.checkSaleSeat([1]);
+
+      //then
+      expect(findByIdAndStatusSale).toBeCalled();
+    });
+    it("조회한 ids.length 와 조회된 length 가 다름", async () => {
+      // given
+
+      //when
+      const findByIdAndStatusSale = jest
+        .spyOn(concertSeatRepository, "findByIdAndStatusSale")
+        .mockResolvedValue([]);
+
+      const res = service.checkSaleSeat([1]);
+
+      //then
+      expect(findByIdAndStatusSale).toBeCalled();
+      await expect(res).rejects.toThrow(BadRequestException);
+    });
+  });
+
+  describe("좌석들의 판매 상태 변경 method(changeStatus)", () => {
+    it("좌석들의 판매 상태 변경 완료", async () => {
+      // given
+
+      //when
+
+      const updateStatus = jest.spyOn(concertSeatRepository, "updateStatus");
+
+      await service.changeStatus([1, 2], ConcertScheduleStatus.SOLD_OUT);
+
+      //then
+      expect(updateStatus).toBeCalled();
     });
   });
 });

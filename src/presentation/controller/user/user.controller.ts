@@ -9,8 +9,9 @@ import { IdPipe } from "@app/presentation/pipe/id.pipe";
 import { ApiTag } from "@app/config/swagger/api-tag-enum";
 import { ChargePointUseCase } from "@app/application/use-case/User/charge-point.use-case";
 import { GetPointUseCase } from "@app/application/use-case/User/get-point.use-case";
-import { ChargePointRequest } from "@app/presentation/dto/user/dto/charge-point/charge-point.request";
+
 import { ChargePointResponse } from "@app/presentation/dto/user/charge-point/charge-point.response";
+import { ChargePointRequest } from "@app/presentation/dto/user/charge-point/charge-point.request";
 
 @Controller("user")
 @ApiTags(ApiTag.User)

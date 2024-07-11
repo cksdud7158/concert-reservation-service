@@ -10,6 +10,9 @@ import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
 import { ConcertSeatRepositorySymbol } from "@app/domain/interface/repository/concert-seat.repository";
 import { ConcertSeatRepositoryImpl } from "@app/infrastructure/repository/concert-seat.repository.impl";
 import { GetSeatListUseCase } from "@app/application/use-case/concert/get-seat-list.use-case";
+import { ConcertRepositorySymbol } from "@app/domain/interface/repository/concert.repository";
+import { ConcertRepositoryImpl } from "@app/infrastructure/repository/concert.repository.impl";
+import { Concert } from "@app/infrastructure/entity/concert.entity";
 
 @Module({
   controllers: [ConcertController],
@@ -25,7 +28,18 @@ import { GetSeatListUseCase } from "@app/application/use-case/concert/get-seat-l
       provide: ConcertSeatRepositorySymbol,
       useClass: ConcertSeatRepositoryImpl,
     },
+    {
+      provide: ConcertRepositorySymbol,
+      useClass: ConcertRepositoryImpl,
+    },
   ],
-  imports: [TypeOrmModule.forFeature([ConcertSchedule, ConcertSeat])],
+  imports: [TypeOrmModule.forFeature([ConcertSchedule, ConcertSeat, Concert])],
+  exports: [
+    ConcertService,
+    {
+      provide: ConcertRepositorySymbol,
+      useClass: ConcertRepositoryImpl,
+    },
+  ],
 })
 export class ConcertModule {}

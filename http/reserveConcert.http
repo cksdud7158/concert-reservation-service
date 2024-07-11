@@ -1,0 +1,10 @@
+# 콘서트 좌석 예매 API
+POST localhost:3000/reservation
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "concertId":1,
+  "concertScheduleId": 1,
+  "seatIds":[1,2]
+}

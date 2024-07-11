@@ -11,7 +11,7 @@ import { User } from "@app/infrastructure/entity/user.entity";
 import { UserService } from "@app/domain/service/user/user.service";
 import PointEntity from "@app/domain/entity/point.entity";
 
-describe("TokenService", () => {
+describe("UserService", () => {
   let service: UserService;
   let userRepository: jest.Mocked<UserRepository>;
 

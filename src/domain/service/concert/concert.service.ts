@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import { ConcertSchedule } from "@app/infrastructure/entity/concert-schedule.entity";
 import {
   ConcertScheduleRepository,
@@ -9,22 +9,54 @@ import {
   ConcertSeatRepositorySymbol,
 } from "@app/domain/interface/repository/concert-seat.repository";
 import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
+import {
+  ConcertRepository,
+  ConcertRepositorySymbol,
+} from "@app/domain/interface/repository/concert.repository";
+import { Concert } from "@app/infrastructure/entity/concert.entity";
+import ConcertSeatStatus from "@app/infrastructure/enum/concert-seat-status.enum";
 
 @Injectable()
 export class ConcertService {
   constructor(
+    @Inject(ConcertRepositorySymbol)
+    private readonly concertRepository: ConcertRepository,
     @Inject(ConcertScheduleRepositorySymbol)
     private readonly concertScheduleRepository: ConcertScheduleRepository,
     @Inject(ConcertSeatRepositorySymbol)
     private readonly concertSeatRepository: ConcertSeatRepository,
   ) {}
 
+  //콘서트 정보 조회
+  async getConcert(concertId: number): Promise<Concert> {
+    return this.concertRepository.findById(concertId);
+  }
+
+  //좌석들의 판매 가능 상태 조회
+  async checkSaleSeat(seatIds: number[]): Promise<void> {
+    const concertSeatList =
+      await this.concertSeatRepository.findByIdAndStatusSale(seatIds);
+    if (seatIds.length !== concertSeatList.length) {
+      throw new BadRequestException("이미 판매된 좌석입니다.");
+    }
+  }
+
+  // 좌석들의 판매 상태 변경
+  async changeStatus(
+    seatIds: number[],
+    status: ConcertSeatStatus,
+  ): Promise<void> {
+    await this.concertSeatRepository.updateStatus(seatIds, status);
+  }
+
+  // 일정 리스트 조회
   async getScheduleList(
     concertId: number,
   ): Promise<Partial<ConcertSchedule>[]> {
     return this.concertScheduleRepository.findById(concertId);
   }
 
+  // 좌석 리스트 조회
   async getSeatList(
     concertId: number,
     concertScheduleId: number,

@@ -1,27 +1,24 @@
-import { Body, Controller, Post } from "@nestjs/common";
-import { ReserveConcertRequest } from "@app/presentation/dto/reservation/dto/request/reserve-concert.request";
+import { Body, Controller, Inject, Post } from "@nestjs/common";
+import { ReserveConcertRequest } from "@app/presentation/dto/reservation/reserve-concert/reserve-concert.request";
+import { ReserveConcertUseCase } from "@app/application/use-case/reservation/reserve-concert.use-case";
+import { ReserveConcertResponse } from "@app/presentation/dto/reservation/reserve-concert/reserve-concert.response";
 
 @Controller("reservation")
 export class ReservationController {
+  constructor(
+    @Inject() private readonly reserveConcertUseCase: ReserveConcertUseCase,
+  ) {}
   @Post("")
   async reserveConcert(
     @Body() reserveConcertRequest: ReserveConcertRequest,
   ): Promise<any> {
-    return {
-      reservationId: 1,
-      status: 0,
-      concertInfo: {
-        concertId: 1,
-        concertDateId: 1,
-        name: "백지헌 단독 공연",
-        date: 0,
-        seatNum: 1,
-      },
-      paymentInfo: {
-        paymentId: 1,
-        status: 0,
-        paymentPrice: 1000,
-      },
-    };
+    return ReserveConcertResponse.toResponse(
+      await this.reserveConcertUseCase.execute(
+        reserveConcertRequest.userId,
+        reserveConcertRequest.concertId,
+        reserveConcertRequest.concertScheduleId,
+        reserveConcertRequest.seatIds,
+      ),
+    );
   }
 }
