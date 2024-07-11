@@ -1,6 +1,5 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { ReservationController } from "@app/presentation/controller/reservation/reservation.controller";
-import { ReserveConcertUseCase } from "@app/application/use-case/reservation/reserve-concert.use-case";
 import TicketStatus from "@app/infrastructure/enum/ticket-status.enum";
 import ConcertSeatStatus from "@app/infrastructure/enum/concert-seat-status.enum";
 import { Concert } from "@app/infrastructure/entity/concert.entity";
@@ -13,6 +12,7 @@ import { ConcertRepositorySymbol } from "@app/domain/interface/repository/concer
 import { ConcertScheduleRepositorySymbol } from "@app/domain/interface/repository/concert-schedule.repository";
 import { ConcertSeatRepositorySymbol } from "@app/domain/interface/repository/concert-seat.repository";
 import { DataSource, EntityManager } from "typeorm";
+import { ReserveConcertUseCase } from "@app/application/use-case/reservation/reserve-concert/reserve-concert.use-case";
 
 describe("ReservationController", () => {
   let controller: ReservationController;

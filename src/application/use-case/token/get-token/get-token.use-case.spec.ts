@@ -100,7 +100,7 @@ describe("GetTokenUseCase", () => {
       expect(queryRunner.release).toHaveBeenCalled();
       expect(result).toBe(token);
     });
-    it("getToken 실패 시", async () => {
+    it("getToken 실패 시 롤백 처리해야함 ", async () => {
       const userId = 1;
       const error = new InternalServerErrorException();
 
