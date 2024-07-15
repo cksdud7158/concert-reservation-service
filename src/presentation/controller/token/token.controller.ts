@@ -1,13 +1,13 @@
-import { Body, Controller, Post } from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
+import { Body, Controller, Inject, Post } from "@nestjs/common";
 import { ApiCreatedResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
-import { ApiTag } from "../../../config/swagger/api-tag-enum";
-import { TokenRequest } from "../../dto/token/dto/token/token.request";
+import { ApiTag } from "@app/config/swagger/api-tag-enum";
+import { TokenRequest } from "@app/presentation/dto/token/get-token/token.request";
+import { GetTokenUseCase } from "@app/application/use-case/token/get-token/get-token.use-case";
 
 @Controller("token")
 @ApiTags(ApiTag.Token)
 export class TokenController {
-  constructor(private jwtService: JwtService) {}
+  constructor(@Inject() private readonly getTokenUseCase: GetTokenUseCase) {}
 
   @Post("")
   @ApiOperation({ summary: "토큰 발급 API" })
@@ -15,8 +15,7 @@ export class TokenController {
     description: "유저를 생성 완료",
     type: String,
   })
-  async token(@Body() tokenRequest: TokenRequest): Promise<string> {
-    const payload = { sub: tokenRequest.userId, status: 0 };
-    return await this.jwtService.signAsync(payload);
+  async getToken(@Body() tokenRequest: TokenRequest): Promise<string> {
+    return await this.getTokenUseCase.execute(tokenRequest.userId);
   }
 }

@@ -1,0 +1,106 @@
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { EntityManager, In, Repository } from "typeorm";
+import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
+import { ConcertSeatRepository } from "@app/domain/interface/repository/concert-seat.repository";
+import ConcertScheduleStatus from "@app/infrastructure/enum/concert-seat-status.enum";
+import ConcertSeatStatus from "@app/infrastructure/enum/concert-seat-status.enum";
+
+@Injectable()
+export class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
+  constructor(
+    @InjectRepository(ConcertSeat)
+    private readonly concertSeat: Repository<ConcertSeat>,
+  ) {}
+
+  async findByIdWithScheduleId(
+    concertId: number,
+    concertScheduleId: number,
+    _manager?: EntityManager,
+  ): Promise<ConcertSeat[]> {
+    const manager = _manager ?? this.concertSeat.manager;
+    const entity = await manager.find(ConcertSeat, {
+      where: {
+        schedule: {
+          id: concertScheduleId,
+          concert: {
+            id: concertId,
+          },
+        },
+      },
+      order: {
+        seat_number: "ASC",
+      },
+    });
+
+    return entity;
+  }
+
+  async updatePendingToSale(
+    seatId?: number,
+    _manager?: EntityManager,
+  ): Promise<void> {
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+    const manager = _manager ?? this.concertSeat.manager;
+    const builder = await manager
+      .createQueryBuilder()
+      .update(ConcertSeat)
+      .set({ status: ConcertScheduleStatus.SALE })
+      .where("status = :status", { status: ConcertScheduleStatus.PENDING })
+      .andWhere("update_at < :date", { date: fiveMinutesAgo.toISOString() });
+    if (seatId) {
+      builder.andWhere("id = :id", { id: seatId });
+    }
+
+    await builder.execute();
+  }
+
+  async findByIdAndStatusSale(
+    seatIds: number[],
+    _manager?: EntityManager,
+  ): Promise<ConcertSeat[]> {
+    const manager = _manager ?? this.concertSeat.manager;
+    const entity = await manager.find(ConcertSeat, {
+      where: {
+        id: In(seatIds),
+        status: ConcertScheduleStatus.SALE,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    return entity;
+  }
+
+  async updateStatus(
+    seatIds: number[],
+    status: ConcertSeatStatus,
+    _manager?: EntityManager,
+  ): Promise<void> {
+    const manager = _manager ?? this.concertSeat.manager;
+    await manager
+      .createQueryBuilder()
+      .update(ConcertSeat)
+      .set({ status: status })
+      .where("id IN (:...seatIds)", { seatIds: seatIds })
+      .execute();
+  }
+
+  async findByExpiredTime(
+    seatIds: number[],
+    _manager?: EntityManager,
+  ): Promise<ConcertSeat[]> {
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+    const manager = _manager ?? this.concertSeat.manager;
+    const entity = await manager
+      .createQueryBuilder(ConcertSeat, "seat")
+      .select()
+      .where("id IN (:...seatIds)", { seatIds: seatIds })
+      .andWhere("status = :status", { status: ConcertScheduleStatus.PENDING })
+      .andWhere("update_at < :date", { date: fiveMinutesAgo.toISOString() })
+      .execute();
+
+    return entity;
+  }
+}

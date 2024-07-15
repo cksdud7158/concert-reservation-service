@@ -1,34 +1,49 @@
-import { Controller, Get, Param } from "@nestjs/common";
+import { Controller, Get, Inject, Param } from "@nestjs/common";
+import { GetScheduleListResponse } from "@app/presentation/dto/concert/get-schedule-list/get-schedule-list.response";
+import { IdPipe } from "@app/presentation/pipe/id.pipe";
+import { GetSeatListResponse } from "@app/presentation/dto/concert/get-seat-list/get-seat-list.response";
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ApiTag } from "@app/config/swagger/api-tag-enum";
+import { GetSeatListUseCase } from "@app/application/use-case/concert/get-seat-list/get-seat-list.use-case";
+import { GetScheduleListUseCase } from "@app/application/use-case/concert/get-schedule-list/get-schedule-list.use-case";
+import { GetConcertListUseCase } from "@app/application/use-case/concert/get-concert-list/get-concert-list.use-case";
+import { GetConcertListResponse } from "@app/presentation/dto/concert/get-concert-list/get-concert-list.response";
 
-@Controller("concert")
+@Controller("concerts")
+@ApiTags(ApiTag.Concert)
 export class ConcertController {
-  @Get(":concertId/dates")
-  async getDateList(@Param("concertId") concertId: number): Promise<any> {
-    return {
-      total: 1,
-      dates: [
-        {
-          concertDateId: 1,
-          date: 0,
-          isSoldOut: false,
-        },
-      ],
-    };
+  constructor(
+    @Inject() private readonly getScheduleListUseCase: GetScheduleListUseCase,
+    @Inject() private readonly getSeatListUseCase: GetSeatListUseCase,
+    @Inject() private readonly getConcertListUseCase: GetConcertListUseCase,
+  ) {}
+
+  @ApiOperation({ summary: "콘서트 목록 조회 API" })
+  @Get("")
+  async getConcertList(): Promise<GetConcertListResponse> {
+    return GetConcertListResponse.toResponse(
+      await this.getConcertListUseCase.execute(),
+    );
   }
 
-  @Get("/concerts/:concertId/dates/:concertDateId/seats")
+  @ApiOperation({ summary: "스케쥴 조회 API" })
+  @Get(":concertId/schedules")
+  async getScheduleList(
+    @Param("concertId", IdPipe) concertId: number,
+  ): Promise<GetScheduleListResponse> {
+    return GetScheduleListResponse.toResponse(
+      await this.getScheduleListUseCase.execute(concertId),
+    );
+  }
+
+  @ApiOperation({ summary: "콘서트 좌석 정보 조회 API" })
+  @Get("/:concertId/schedules/:concertScheduleId/seats")
   async getSeatList(
-    @Param("concertId") concertId: number,
-    @Param("concertDateId") concertDateId: number,
-  ): Promise<any> {
-    return {
-      seats: [
-        {
-          seatId: 1,
-          seatNum: 1,
-          isReserved: false,
-        },
-      ],
-    };
+    @Param("concertId", IdPipe) concertId: number,
+    @Param("concertScheduleId", IdPipe) concertScheduleId: number,
+  ): Promise<GetSeatListResponse> {
+    return GetSeatListResponse.toResponse(
+      await this.getSeatListUseCase.execute(concertId, concertScheduleId),
+    );
   }
 }

@@ -1,40 +1,35 @@
-import { Body, Controller, Param, Patch, Post } from "@nestjs/common";
-import {
-  ApiBadRequestResponse,
-  ApiCreatedResponse,
-  ApiOperation,
-  ApiTags,
-} from "@nestjs/swagger";
-import { ApiTag } from "../../../config/swagger/api-tag-enum";
-import { ChargePointResponse } from "../../dto/user/dto/charge-point/charge-point.response";
-import { ChargePointRequest } from "../../dto/user/dto/charge-point/charge-point.request";
+import { Body, Controller, Get, Param, Patch } from "@nestjs/common";
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
+import { IdPipe } from "@app/presentation/pipe/id.pipe";
+import { ApiTag } from "@app/config/swagger/api-tag-enum";
+import { ChargePointResponse } from "@app/presentation/dto/user/charge-point/charge-point.response";
+import { ChargePointRequest } from "@app/presentation/dto/user/charge-point/charge-point.request";
+import { GetPointUseCase } from "@app/application/use-case/User/get-point/get-point.use-case";
+import { ChargePointUseCase } from "@app/application/use-case/User/charge-point/charge-point.use-case";
 
 @Controller("user")
 @ApiTags(ApiTag.User)
 export class UserController {
-  @Post(":userId/balance")
+  constructor(
+    private readonly getPointUseCase: GetPointUseCase,
+    private readonly chargePointUseCase: ChargePointUseCase,
+  ) {}
+
+  @Get(":userId/balance")
   @ApiOperation({ summary: "포인트 조회 API" })
-  @ApiCreatedResponse({
-    description: "포인트 조회 완료",
-    type: ChargePointResponse,
-  })
-  @ApiBadRequestResponse({
-    description: "잘못된 요청",
-    example: "잘못된 요청입니다.",
-  })
   async getPoint(
-    @Param("userId") userId: number,
+    @Param("userId", IdPipe) userId: number,
   ): Promise<ChargePointResponse> {
-    return {
-      balance: 1000,
-    };
+    const point = await this.getPointUseCase.execute(userId);
+    return ChargePointResponse.toResponse(point);
   }
 
+  @ApiOperation({ summary: "잔액 충전 API" })
   @Patch(":userId/charge")
   async chargePoint(
-    @Param("userId") userId: number,
+    @Param("userId", IdPipe) userId: number,
     @Body() chargePointRequest: ChargePointRequest,
-  ): Promise<any> {
-    return true;
+  ): Promise<number> {
+    return this.chargePointUseCase.execute(userId, chargePointRequest.amount);
   }
 }
