@@ -25,6 +25,7 @@ export class AuthGuard implements CanActivate {
 
       request["user"] = payload;
       // todo 추후 대기열 관련 로직 처리해야함
+      // AVAILABLE 상태일 때 재 요청시 exp time 리셋되도록 처리
     } catch {
       throw new UnauthorizedException();
     }

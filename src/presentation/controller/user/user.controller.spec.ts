@@ -1,15 +1,46 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { UserController } from "./user.controller";
+import { UserRepositorySymbol } from "@app/domain/interface/repository/user.repository";
+import { UserService } from "@app/domain/service/user/user.service";
+import { UserController } from "@app/presentation/controller/user/user.controller";
+import { PointHistoryRepositorySymbol } from "@app/domain/interface/repository/point-history.repository";
+import { GetPointUseCase } from "@app/application/use-case/User/get-point/get-point.use-case";
+import { ChargePointUseCase } from "@app/application/use-case/User/charge-point/charge-point.use-case";
 
-describe("PointController", () => {
+describe("UserController", () => {
   let controller: UserController;
+  let getPointUseCase: GetPointUseCase;
+  let chargePointUseCase: ChargePointUseCase;
+
+  beforeAll(() => {
+    // Modern fake timers 사용
+    jest.useFakeTimers();
+  });
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UserController],
+      providers: [
+        GetPointUseCase,
+        ChargePointUseCase,
+        UserService,
+        {
+          provide: UserRepositorySymbol,
+          useValue: {
+            findOneById: jest.fn(),
+          },
+        },
+        {
+          provide: PointHistoryRepositorySymbol,
+          useValue: {
+            insert: jest.fn(),
+          },
+        },
+      ],
     }).compile();
 
     controller = module.get<UserController>(UserController);
+    getPointUseCase = module.get<GetPointUseCase>(GetPointUseCase);
+    chargePointUseCase = module.get<ChargePointUseCase>(ChargePointUseCase);
   });
 
   describe("/user/{userId}/balance (GET)", () => {
@@ -21,6 +52,7 @@ describe("PointController", () => {
       };
 
       //when
+      jest.spyOn(getPointUseCase, "execute").mockResolvedValue(1000);
 
       //then
       const res = await controller.getPoint(userId);
@@ -38,6 +70,7 @@ describe("PointController", () => {
       };
 
       //when
+      jest.spyOn(chargePointUseCase, "execute").mockResolvedValue(1000);
 
       //then
       const res = await controller.chargePoint(userId, request);
