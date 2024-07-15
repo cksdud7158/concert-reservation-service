@@ -28,6 +28,11 @@ export class ConcertService {
     private readonly concertSeatRepository: ConcertSeatRepository,
   ) {}
 
+  // 콘서트 목록 조회
+  async getConcertList(): Promise<Concert[]> {
+    return await this.concertRepository.selectAll();
+  }
+
   //콘서트 정보 조회
   async getConcert(concertId: number): Promise<Concert> {
     return this.concertRepository.findById(concertId);

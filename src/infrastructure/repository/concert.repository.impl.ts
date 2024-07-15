@@ -11,6 +11,13 @@ export class ConcertRepositoryImpl implements ConcertRepository {
     private readonly concert: Repository<Concert>,
   ) {}
 
+  async selectAll(_manager?: EntityManager): Promise<Concert[]> {
+    const manager = _manager ?? this.concert.manager;
+    const entity = await manager.find(Concert);
+
+    return entity;
+  }
+
   async findById(
     concertId: number,
     _manager?: EntityManager,

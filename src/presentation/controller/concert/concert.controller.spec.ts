@@ -11,11 +11,15 @@ import ConcertScheduleStatus from "@app/infrastructure/enum/concert-seat-status.
 import { GetSeatListResponse } from "@app/presentation/dto/concert/get-seat-list/get-seat-list.response";
 import { ConcertRepositorySymbol } from "@app/domain/interface/repository/concert.repository";
 import { GetSeatListUseCase } from "@app/application/use-case/concert/get-seat-list/get-seat-list.use-case";
+import { GetConcertListUseCase } from "@app/application/use-case/concert/get-concert-list/get-concert-list.use-case";
+import { Concert } from "@app/infrastructure/entity/concert.entity";
+import { GetConcertListResponse } from "@app/presentation/dto/concert/get-concert-list/get-concert-list.response";
 
 describe("ConcertController", () => {
   let controller: ConcertController;
   let getScheduleListUseCase: GetScheduleListUseCase;
   let getSeatListUseCase: GetSeatListUseCase;
+  let getConcertListUseCase: GetConcertListUseCase;
 
   beforeAll(() => {
     // Modern fake timers 사용
@@ -28,6 +32,7 @@ describe("ConcertController", () => {
       providers: [
         GetScheduleListUseCase,
         GetSeatListUseCase,
+        GetConcertListUseCase,
         ConcertService,
         {
           provide: ConcertRepositorySymbol,
@@ -45,6 +50,10 @@ describe("ConcertController", () => {
           provide: ConcertSeatRepositorySymbol,
           useValue: {
             findByIdWithScheduleId: jest.fn(),
+            updatePendingToSale: jest.fn(),
+            findByIdAndStatusSale: jest.fn(),
+            updateStatus: jest.fn(),
+            findByExpiredTime: jest.fn(),
           },
         },
       ],
@@ -55,6 +64,9 @@ describe("ConcertController", () => {
       GetScheduleListUseCase,
     );
     getSeatListUseCase = module.get<GetSeatListUseCase>(GetSeatListUseCase);
+    getConcertListUseCase = module.get<GetConcertListUseCase>(
+      GetConcertListUseCase,
+    );
   });
 
   const concertId = 1;
@@ -125,6 +137,31 @@ describe("ConcertController", () => {
 
       //then
       const res = await controller.getSeatList(concertId, concertDateId);
+
+      expect(res).toEqual(response);
+    });
+  });
+
+  describe("/concerts (GET)", () => {
+    it("콘서트 목록 조회 성공", async () => {
+      //given
+      const concert = {
+        id: 1,
+        creat_at: date,
+        update_at: date,
+        name: "콘서트1",
+      } as Concert;
+
+      const response: GetConcertListResponse = {
+        total: 1,
+        concert: [{ ...concert }],
+      };
+
+      //when
+      jest.spyOn(getConcertListUseCase, "execute").mockResolvedValue([concert]);
+
+      //then
+      const res = await controller.getConcertList();
 
       expect(res).toEqual(response);
     });

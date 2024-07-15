@@ -13,12 +13,14 @@ import { ConcertRepositorySymbol } from "@app/domain/interface/repository/concer
 import { ConcertRepositoryImpl } from "@app/infrastructure/repository/concert.repository.impl";
 import { Concert } from "@app/infrastructure/entity/concert.entity";
 import { GetSeatListUseCase } from "@app/application/use-case/concert/get-seat-list/get-seat-list.use-case";
+import { GetConcertListUseCase } from "@app/application/use-case/concert/get-concert-list/get-concert-list.use-case";
 
 @Module({
   controllers: [ConcertController],
   providers: [
     GetScheduleListUseCase,
     GetSeatListUseCase,
+    GetConcertListUseCase,
     ConcertService,
     {
       provide: ConcertScheduleRepositorySymbol,

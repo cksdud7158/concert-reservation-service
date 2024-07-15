@@ -5,4 +5,5 @@ export const ConcertRepositorySymbol = Symbol.for("ConcertRepository");
 
 export interface ConcertRepository {
   findById(concertId: number, _manager?: EntityManager): Promise<Concert>;
+  selectAll(_manager?: EntityManager): Promise<Concert[]>;
 }

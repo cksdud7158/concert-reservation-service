@@ -6,6 +6,8 @@ import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { ApiTag } from "@app/config/swagger/api-tag-enum";
 import { GetSeatListUseCase } from "@app/application/use-case/concert/get-seat-list/get-seat-list.use-case";
 import { GetScheduleListUseCase } from "@app/application/use-case/concert/get-schedule-list/get-schedule-list.use-case";
+import { GetConcertListUseCase } from "@app/application/use-case/concert/get-concert-list/get-concert-list.use-case";
+import { GetConcertListResponse } from "@app/presentation/dto/concert/get-concert-list/get-concert-list.response";
 
 @Controller("concerts")
 @ApiTags(ApiTag.Concert)
@@ -13,7 +15,16 @@ export class ConcertController {
   constructor(
     @Inject() private readonly getScheduleListUseCase: GetScheduleListUseCase,
     @Inject() private readonly getSeatListUseCase: GetSeatListUseCase,
+    @Inject() private readonly getConcertListUseCase: GetConcertListUseCase,
   ) {}
+
+  @ApiOperation({ summary: "콘서트 목록 조회 API" })
+  @Get("")
+  async getConcertList(): Promise<GetConcertListResponse> {
+    return GetConcertListResponse.toResponse(
+      await this.getConcertListUseCase.execute(),
+    );
+  }
 
   @ApiOperation({ summary: "스케쥴 조회 API" })
   @Get(":concertId/schedules")

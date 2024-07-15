@@ -9,15 +9,20 @@ import {
   ConcertSeatRepository,
   ConcertSeatRepositorySymbol,
 } from "@app/domain/interface/repository/concert-seat.repository";
-import { ConcertRepositorySymbol } from "@app/domain/interface/repository/concert.repository";
+import {
+  ConcertRepository,
+  ConcertRepositorySymbol,
+} from "@app/domain/interface/repository/concert.repository";
 import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
 import ConcertScheduleStatus from "@app/infrastructure/enum/concert-seat-status.enum";
 import { BadRequestException } from "@nestjs/common";
+import { Concert } from "@app/infrastructure/entity/concert.entity";
 
 describe("ConcertService", () => {
   let service: ConcertService;
   let concertScheduleRepository: jest.Mocked<ConcertScheduleRepository>;
   let concertSeatRepository: jest.Mocked<ConcertSeatRepository>;
+  let concertRepository: jest.Mocked<ConcertRepository>;
 
   beforeAll(() => {
     // Modern fake timers 사용
@@ -32,6 +37,7 @@ describe("ConcertService", () => {
           provide: ConcertRepositorySymbol,
           useValue: {
             findById: jest.fn(),
+            selectAll: jest.fn(),
           },
         },
         {
@@ -55,6 +61,7 @@ describe("ConcertService", () => {
     service = module.get<ConcertService>(ConcertService);
     concertScheduleRepository = module.get(ConcertScheduleRepositorySymbol);
     concertSeatRepository = module.get(ConcertSeatRepositorySymbol);
+    concertRepository = module.get(ConcertRepositorySymbol);
   });
 
   const concertId = 1;
@@ -153,6 +160,26 @@ describe("ConcertService", () => {
 
       //then
       expect(updateStatus).toBeCalled();
+    });
+  });
+
+  describe("콘서트 목록 조회 method(getConcertList)", () => {
+    it("콘서트 목록 조회 완료", async () => {
+      // given
+      const concert = {
+        id: 1,
+        creat_at: date,
+        update_at: date,
+        name: "콘서트1",
+      } as Concert;
+
+      //when
+      jest.spyOn(concertRepository, "selectAll").mockResolvedValue([concert]);
+
+      const res = await service.getConcertList();
+
+      //then
+      expect(res).toEqual([concert]);
     });
   });
 });
