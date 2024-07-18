@@ -1,9 +1,10 @@
-import { Body, Controller, Inject, Post } from "@nestjs/common";
+import { Body, Controller, Inject, Post, UseGuards } from "@nestjs/common";
 import { ReserveConcertRequest } from "@app/presentation/dto/reservation/reserve-concert/reserve-concert.request";
 import { ReserveConcertResponse } from "@app/presentation/dto/reservation/reserve-concert/reserve-concert.response";
 import { ApiCreatedResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { ApiTag } from "@app/config/swagger/api-tag-enum";
 import { ReserveConcertUseCase } from "@app/application/use-case/reservation/reserve-concert/reserve-concert.use-case";
+import { TokenGuard } from "@app/presentation/guard/token.guard";
 
 @Controller("reservation")
 @ApiTags(ApiTag.Reservation)
@@ -18,6 +19,7 @@ export class ReservationController {
     type: ReserveConcertResponse,
   })
   @Post("")
+  @UseGuards(TokenGuard)
   async reserveConcert(
     @Body() reserveConcertRequest: ReserveConcertRequest,
   ): Promise<ReserveConcertResponse> {
