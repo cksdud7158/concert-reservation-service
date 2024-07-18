@@ -1,10 +1,10 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { UserRepositorySymbol } from "@app/domain/interface/repository/user.repository";
 import { UserService } from "@app/domain/service/user/user.service";
 import { UserController } from "@app/presentation/controller/user/user.controller";
-import { PointHistoryRepositorySymbol } from "@app/domain/interface/repository/point-history.repository";
-import { GetPointUseCase } from "@app/application/use-case/User/get-point/get-point.use-case";
-import { ChargePointUseCase } from "@app/application/use-case/User/charge-point/charge-point.use-case";
+import { GetPointUseCase } from "@app/application/use-case/user/get-point/get-point.use-case";
+import { ChargePointUseCase } from "@app/application/use-case/user/charge-point/charge-point.use-case";
+import { mockUserProvider } from "../../../mock/repositroy-mocking/user-repository.mock";
+import { mockPointHistoryProvider } from "../../../mock/repositroy-mocking/point-history-repository.mock";
 
 describe("UserController", () => {
   let controller: UserController;
@@ -23,18 +23,8 @@ describe("UserController", () => {
         GetPointUseCase,
         ChargePointUseCase,
         UserService,
-        {
-          provide: UserRepositorySymbol,
-          useValue: {
-            findOneById: jest.fn(),
-          },
-        },
-        {
-          provide: PointHistoryRepositorySymbol,
-          useValue: {
-            insert: jest.fn(),
-          },
-        },
+        mockUserProvider,
+        mockPointHistoryProvider,
       ],
     }).compile();
 

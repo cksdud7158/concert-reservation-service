@@ -11,6 +11,7 @@ import { Concert } from "@app/infrastructure/entity/concert.entity";
 import { ConcertSchedule } from "@app/infrastructure/entity/concert-schedule.entity";
 import ConcertSeatStatus from "@app/infrastructure/enum/concert-seat-status.enum";
 import { User } from "@app/infrastructure/entity/user.entity";
+import { mockTicketProvider } from "../../../mock/repositroy-mocking/ticket-repository.mock";
 
 describe("ReservationService", () => {
   let service: ReservationService;
@@ -23,16 +24,7 @@ describe("ReservationService", () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        ReservationService,
-        {
-          provide: TicketRepositorySymbol,
-          useValue: {
-            insert: jest.fn(),
-            findByIds: jest.fn(),
-          },
-        },
-      ],
+      providers: [ReservationService, mockTicketProvider],
     }).compile();
 
     service = module.get<ReservationService>(ReservationService);

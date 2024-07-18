@@ -6,6 +6,7 @@ import {
 } from "@app/domain/interface/repository/payment.repository";
 import { Payment } from "@app/infrastructure/entity/payment.entity";
 import PaymentStatus from "@app/infrastructure/enum/payment-status.enum";
+import { mockPaymentProvider } from "../../../mock/repositroy-mocking/payment-repository.mock";
 
 describe("PaymentService", () => {
   let service: PaymentService;
@@ -18,16 +19,7 @@ describe("PaymentService", () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        PaymentService,
-        {
-          provide: PaymentRepositorySymbol,
-          useValue: {
-            insert: jest.fn(),
-            findOneById: jest.fn(),
-          },
-        },
-      ],
+      providers: [PaymentService, mockPaymentProvider],
     }).compile();
 
     service = module.get<PaymentService>(PaymentService);

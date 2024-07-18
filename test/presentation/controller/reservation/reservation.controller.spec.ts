@@ -7,17 +7,20 @@ import { ConcertSchedule } from "@app/infrastructure/entity/concert-schedule.ent
 import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
 import { ReservationService } from "@app/domain/service/reservation/reservation.service";
 import { ConcertService } from "@app/domain/service/concert/concert.service";
-import { TicketRepositorySymbol } from "@app/domain/interface/repository/ticket.repository";
-import { ConcertRepositorySymbol } from "@app/domain/interface/repository/concert.repository";
-import { ConcertScheduleRepositorySymbol } from "@app/domain/interface/repository/concert-schedule.repository";
-import { ConcertSeatRepositorySymbol } from "@app/domain/interface/repository/concert-seat.repository";
-import { DataSource, EntityManager } from "typeorm";
 import { ReserveConcertUseCase } from "@app/application/use-case/reservation/reserve-concert/reserve-concert.use-case";
+import { JwtService } from "@nestjs/jwt";
+import { TokenService } from "@app/domain/service/token/token.service";
+import { TokenGuard } from "@app/presentation/guard/token.guard";
+import { mockWaitingQueueProvider } from "../../../mock/repositroy-mocking/waiting-queue-repository.mock";
+import { mockTicketProvider } from "../../../mock/repositroy-mocking/ticket-repository.mock";
+import { mockConcertProvider } from "../../../mock/repositroy-mocking/concert-repository.mock";
+import { mockConcertScheduleProvider } from "../../../mock/repositroy-mocking/concert-schedule-repository.mock";
+import { mockConcertSeatProvider } from "../../../mock/repositroy-mocking/concert-seat-repository.mock";
+import { datasourceProvider } from "../../../mock/lib/datasource.mock";
 
 describe("ReservationController", () => {
   let controller: ReservationController;
   let reserveConcertUseCase: ReserveConcertUseCase;
-  let dataSourceMock: Partial<DataSource>;
 
   beforeAll(() => {
     // Modern fake timers 사용
@@ -25,48 +28,27 @@ describe("ReservationController", () => {
   });
 
   beforeEach(async () => {
-    dataSourceMock = {
-      manager: {} as EntityManager,
-      createEntityManager: jest.fn(),
-    };
-
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ReservationController],
       providers: [
         ReserveConcertUseCase,
         ReservationService,
         ConcertService,
-        { provide: DataSource, useValue: dataSourceMock },
-        {
-          provide: TicketRepositorySymbol,
-          useValue: {
-            insert: jest.fn(),
-            findByIds: jest.fn(),
-          },
-        },
-        {
-          provide: ConcertRepositorySymbol,
-          useValue: {
-            findById: jest.fn(),
-          },
-        },
-        {
-          provide: ConcertScheduleRepositorySymbol,
-          useValue: {
-            findById: jest.fn(),
-          },
-        },
-        {
-          provide: ConcertSeatRepositorySymbol,
-          useValue: {
-            findByIdWithScheduleId: jest.fn(),
-            updatePendingToSale: jest.fn(),
-            findByIdAndStatusSale: jest.fn(),
-            updateStatus: jest.fn(),
-          },
-        },
+        TokenService,
+        JwtService,
+        mockWaitingQueueProvider,
+        mockTicketProvider,
+        mockConcertProvider,
+        mockConcertScheduleProvider,
+        mockConcertSeatProvider,
+        datasourceProvider,
       ],
-    }).compile();
+    })
+      .overrideGuard(TokenGuard)
+      .useValue({
+        canActivate: jest.fn(() => true),
+      })
+      .compile();
 
     controller = module.get<ReservationController>(ReservationController);
     reserveConcertUseCase = module.get<ReserveConcertUseCase>(
@@ -74,7 +56,7 @@ describe("ReservationController", () => {
     );
   });
 
-  describe("/reservation (POST)", () => {
+  describe("/token (POST)", () => {
     it("콘서트 좌석 예매 성공", async () => {
       const date = new Date();
       //given
