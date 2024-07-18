@@ -4,16 +4,17 @@ import { GetScheduleListUseCase } from "@app/application/use-case/concert/get-sc
 import { ConcertSchedule } from "@app/infrastructure/entity/concert-schedule.entity";
 import { GetScheduleListResponse } from "@app/presentation/dto/concert/get-schedule-list/get-schedule-list.response";
 import { ConcertService } from "@app/domain/service/concert/concert.service";
-import { ConcertScheduleRepositorySymbol } from "@app/domain/interface/repository/concert-schedule.repository";
-import { ConcertSeatRepositorySymbol } from "@app/domain/interface/repository/concert-seat.repository";
 import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
 import ConcertScheduleStatus from "@app/infrastructure/enum/concert-seat-status.enum";
 import { GetSeatListResponse } from "@app/presentation/dto/concert/get-seat-list/get-seat-list.response";
-import { ConcertRepositorySymbol } from "@app/domain/interface/repository/concert.repository";
 import { GetSeatListUseCase } from "@app/application/use-case/concert/get-seat-list/get-seat-list.use-case";
 import { GetConcertListUseCase } from "@app/application/use-case/concert/get-concert-list/get-concert-list.use-case";
 import { Concert } from "@app/infrastructure/entity/concert.entity";
 import { GetConcertListResponse } from "@app/presentation/dto/concert/get-concert-list/get-concert-list.response";
+import { TokenGuard } from "@app/presentation/guard/token.guard";
+import { mockConcertProvider } from "../../../mock/repositroy-mocking/concert-repository.mock";
+import { mockConcertScheduleProvider } from "../../../mock/repositroy-mocking/concert-schedule-repository.mock";
+import { mockConcertSeatProvider } from "../../../mock/repositroy-mocking/concert-seat-repository.mock";
 
 describe("ConcertController", () => {
   let controller: ConcertController;
@@ -34,30 +35,16 @@ describe("ConcertController", () => {
         GetSeatListUseCase,
         GetConcertListUseCase,
         ConcertService,
-        {
-          provide: ConcertRepositorySymbol,
-          useValue: {
-            findById: jest.fn(),
-          },
-        },
-        {
-          provide: ConcertScheduleRepositorySymbol,
-          useValue: {
-            findById: jest.fn(),
-          },
-        },
-        {
-          provide: ConcertSeatRepositorySymbol,
-          useValue: {
-            findByIdWithScheduleId: jest.fn(),
-            updatePendingToSale: jest.fn(),
-            findByIdAndStatusSale: jest.fn(),
-            updateStatus: jest.fn(),
-            findByExpiredTime: jest.fn(),
-          },
-        },
+        mockConcertProvider,
+        mockConcertScheduleProvider,
+        mockConcertSeatProvider,
       ],
-    }).compile();
+    })
+      .overrideGuard(TokenGuard)
+      .useValue({
+        canActivate: jest.fn(() => true),
+      })
+      .compile();
 
     controller = module.get<ConcertController>(ConcertController);
     getScheduleListUseCase = module.get<GetScheduleListUseCase>(
@@ -106,7 +93,7 @@ describe("ConcertController", () => {
     });
   });
 
-  describe("/concerts/{concertId}/dates/{concertDateId}/seats (GET)", () => {
+  describe("/concerts/dates/{concertDateId}/seats (GET)", () => {
     it("콘서트 좌석 정보 조회 성공", async () => {
       //given
       const concertSeat: Partial<ConcertSeat> = {
@@ -136,7 +123,7 @@ describe("ConcertController", () => {
         .mockResolvedValue([concertSeat]);
 
       //then
-      const res = await controller.getSeatList(concertId, concertDateId);
+      const res = await controller.getSeatList(concertDateId);
 
       expect(res).toEqual(response);
     });

@@ -17,6 +17,9 @@ import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
 import ConcertScheduleStatus from "@app/infrastructure/enum/concert-seat-status.enum";
 import { BadRequestException } from "@nestjs/common";
 import { Concert } from "@app/infrastructure/entity/concert.entity";
+import { mockConcertProvider } from "../../../mock/repositroy-mocking/concert-repository.mock";
+import { mockConcertScheduleProvider } from "../../../mock/repositroy-mocking/concert-schedule-repository.mock";
+import { mockConcertSeatProvider } from "../../../mock/repositroy-mocking/concert-seat-repository.mock";
 
 describe("ConcertService", () => {
   let service: ConcertService;
@@ -33,28 +36,9 @@ describe("ConcertService", () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ConcertService,
-        {
-          provide: ConcertRepositorySymbol,
-          useValue: {
-            findById: jest.fn(),
-            selectAll: jest.fn(),
-          },
-        },
-        {
-          provide: ConcertScheduleRepositorySymbol,
-          useValue: {
-            findById: jest.fn(),
-          },
-        },
-        {
-          provide: ConcertSeatRepositorySymbol,
-          useValue: {
-            findByIdWithScheduleId: jest.fn(),
-            updatePendingToSale: jest.fn(),
-            findByIdAndStatusSale: jest.fn(),
-            updateStatus: jest.fn(),
-          },
-        },
+        mockConcertProvider,
+        mockConcertScheduleProvider,
+        mockConcertSeatProvider,
       ],
     }).compile();
 
