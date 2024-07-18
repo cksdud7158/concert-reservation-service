@@ -50,12 +50,16 @@ export class PayUseCase {
       );
 
       // 결제
-      return await this.paymentService.pay(
+      const payment = await this.paymentService.pay(
         userId,
         ticketIds,
         totalPrice,
         manager,
       );
+
+      await queryRunner.commitTransaction();
+
+      return payment;
     } catch (e) {
       await queryRunner.rollbackTransaction();
       throw e;
