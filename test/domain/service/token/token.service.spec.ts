@@ -7,6 +7,8 @@ import {
 import WaitingQueuesEntity from "@app/domain/entity/waiting-queues.entity";
 import WaitingQueueStatus from "@app/infrastructure/enum/waiting-queue-status.enum";
 import { TokenService } from "@app/domain/service/token/token.service";
+import { WaitingQueue } from "@app/infrastructure/entity/waiting-queue.entity";
+import { mockWaitingQueueProvider } from "../../../mock/repositroy-mocking/waiting-queue-repository.mock";
 
 describe("TokenService", () => {
   let service: TokenService;
@@ -22,19 +24,11 @@ describe("TokenService", () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         TokenService,
+        mockWaitingQueueProvider,
         {
           provide: JwtService,
           useValue: {
             signAsync: jest.fn(),
-          },
-        },
-        {
-          provide: WaitingQueueRepositorySymbol,
-          useValue: {
-            insert: jest.fn(),
-            findByStatusNotExpired: jest.fn(),
-            findByIdAndStatus: jest.fn(),
-            updateStatusToExpired: jest.fn(),
           },
         },
       ],
@@ -52,19 +46,22 @@ describe("TokenService", () => {
       // given
       const token =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInN0YXR1cyI6MCwiaWF0IjoxNzIwMzU0NjU1LCJleHAiOjE3MjAzNTgyNTV9.RoRR1NcQ-TWzWXxMXL2_XlWYB1I8LUlE4TR1doeosOM";
-      const waitingQueuesEntity = new WaitingQueuesEntity([
-        {
-          id: 1,
-          status: WaitingQueueStatus.AVAILABLE,
-          creat_at: new Date(),
-          update_at: new Date(),
-          user_id: userId,
-        },
-      ]);
+      const waitingQueue = {
+        id: 1,
+        status: WaitingQueueStatus.AVAILABLE,
+        creat_at: new Date(),
+        update_at: new Date(),
+        user_id: userId,
+        orderNum: 0,
+      } as WaitingQueue;
+      const waitingQueuesEntity = new WaitingQueuesEntity([waitingQueue]);
       //when
       jest
-        .spyOn(waitingQueueRepository, "findByStatusNotExpired")
+        .spyOn(waitingQueueRepository, "findByNotExpiredStatus")
         .mockResolvedValue(waitingQueuesEntity);
+      jest
+        .spyOn(waitingQueueRepository, "save")
+        .mockResolvedValue(waitingQueue);
       const signAsync = jest
         .spyOn(jwtService, "signAsync")
         .mockResolvedValue(token);

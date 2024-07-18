@@ -1,26 +1,20 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { JwtModule } from "@nestjs/jwt";
-import { WaitingQueueRepositorySymbol } from "@app/domain/interface/repository/waiting-queue.repository";
-import { UserRepositorySymbol } from "@app/domain/interface/repository/user.repository";
 import { UserService } from "@app/domain/service/user/user.service";
 import key from "@app/config/token/key";
 import { TokenService } from "@app/domain/service/token/token.service";
 import { TokenController } from "@app/presentation/controller/token/token.controller";
-import { PointHistoryRepositorySymbol } from "@app/domain/interface/repository/point-history.repository";
-import { DataSource, EntityManager } from "typeorm";
 import { GetTokenUseCase } from "@app/application/use-case/token/get-token/get-token.use-case";
+import { mockWaitingQueueProvider } from "../../../mock/repositroy-mocking/waiting-queue-repository.mock";
+import { mockUserProvider } from "../../../mock/repositroy-mocking/user-repository.mock";
+import { mockPointHistoryProvider } from "../../../mock/repositroy-mocking/point-history-repository.mock";
+import { datasourceProvider } from "../../../mock/lib/datasource.mock";
 
 describe("AuthController", () => {
   let controller: TokenController;
   let getTokenUseCase: GetTokenUseCase;
-  let dataSourceMock: Partial<DataSource>;
 
   beforeEach(async () => {
-    dataSourceMock = {
-      manager: {} as EntityManager,
-      createEntityManager: jest.fn(),
-    };
-
     const module: TestingModule = await Test.createTestingModule({
       controllers: [TokenController],
       imports: [
@@ -33,24 +27,10 @@ describe("AuthController", () => {
         GetTokenUseCase,
         TokenService,
         UserService,
-        { provide: DataSource, useValue: dataSourceMock },
-
-        {
-          provide: WaitingQueueRepositorySymbol,
-          useValue: jest.fn(),
-        },
-        {
-          provide: UserRepositorySymbol,
-          useValue: {
-            findOneById: jest.fn(),
-          },
-        },
-        {
-          provide: PointHistoryRepositorySymbol,
-          useValue: {
-            insert: jest.fn(),
-          },
-        },
+        datasourceProvider,
+        mockWaitingQueueProvider,
+        mockUserProvider,
+        mockPointHistoryProvider,
       ],
     }).compile();
 
