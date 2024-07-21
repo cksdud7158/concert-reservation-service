@@ -24,39 +24,29 @@ export class ReserveConcertUseCase {
     // 판매 가능 여부 체크
     await this.concertService.checkSaleSeat(seatIds);
 
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-    const manager = queryRunner.manager;
+    return await this.dataSource
+      .createEntityManager()
+      .transaction(async (manager) => {
+        // Pending 상태로 변경
+        await this.concertService.changeStatus(
+          seatIds,
+          ConcertSeatStatus.PENDING,
+          manager,
+        );
 
-    try {
-      // Pending 상태로 변경
-      await this.concertService.changeStatus(
-        seatIds,
-        ConcertSeatStatus.PENDING,
-        manager,
-      );
+        // 티켓 발행
+        const ticketList = await this.reservationService.makeTickets(
+          userId,
+          concertId,
+          concertScheduleId,
+          seatIds,
+          manager,
+        );
 
-      // 티켓 발행
-      const ticketList = await this.reservationService.makeTickets(
-        userId,
-        concertId,
-        concertScheduleId,
-        seatIds,
-        manager,
-      );
+        // 대기열 만료 처리
+        await this.tokenService.changeToExpired(userId, manager);
 
-      // 대기열 만료 처리
-      await this.tokenService.changeToExpired(userId, manager);
-
-      await queryRunner.commitTransaction();
-
-      return ticketList;
-    } catch (e) {
-      await queryRunner.rollbackTransaction();
-      throw e;
-    } finally {
-      await queryRunner.release();
-    }
+        return ticketList;
+      });
   }
 }

@@ -14,22 +14,13 @@ export class GetTokenUseCase {
   async execute(userId: number): Promise<string> {
     // 해당 유저 있는지 확인
     await this.userService.hasUser(userId);
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-    const manager = queryRunner.manager;
-    try {
-      // 토큰 발급
-      const token = await this.tokenService.getToken(userId, manager);
 
-      await queryRunner.commitTransaction();
+    return await this.dataSource
+      .createEntityManager()
+      .transaction(async (manager) => {
+        const token = await this.tokenService.getToken(userId, manager);
 
-      return token;
-    } catch (e) {
-      await queryRunner.rollbackTransaction();
-      throw e;
-    } finally {
-      await queryRunner.release();
-    }
+        return token;
+      });
   }
 }
