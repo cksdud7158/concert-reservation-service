@@ -9,10 +9,15 @@ import { mockWaitingQueueProvider } from "../../../mock/repositroy-mocking/waiti
 import { mockUserProvider } from "../../../mock/repositroy-mocking/user-repository.mock";
 import { mockPointHistoryProvider } from "../../../mock/repositroy-mocking/point-history-repository.mock";
 import { datasourceProvider } from "../../../mock/lib/datasource.mock";
+import { GetWaitingStatusUseCase } from "@app/application/use-case/token/get-waiting-status/get-waiting-status.use-case";
+import { WaitingQueue } from "@app/infrastructure/entity/waiting-queue.entity";
+import WaitingQueueStatus from "@app/infrastructure/enum/waiting-queue-status.enum";
+import { GetWaitingStatusResponse } from "@app/presentation/dto/token/get-waiting-status/get-waiting-status.response";
 
 describe("AuthController", () => {
   let controller: TokenController;
   let getTokenUseCase: GetTokenUseCase;
+  let getWaitingStatusUseCase: GetWaitingStatusUseCase;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -25,6 +30,7 @@ describe("AuthController", () => {
       ],
       providers: [
         GetTokenUseCase,
+        GetWaitingStatusUseCase,
         TokenService,
         UserService,
         datasourceProvider,
@@ -36,6 +42,7 @@ describe("AuthController", () => {
 
     controller = module.get<TokenController>(TokenController);
     getTokenUseCase = module.get(GetTokenUseCase);
+    getWaitingStatusUseCase = module.get(GetWaitingStatusUseCase);
   });
 
   describe("/token (POST)", () => {
@@ -52,6 +59,26 @@ describe("AuthController", () => {
       const res = await controller.getToken(request);
 
       expect(res).toBe(response);
+    });
+  });
+  describe("/token/waiting-status (GET)", () => {
+    it("상태 조회 성공", async () => {
+      const req = { id: 1 };
+      const waitingQueue = {
+        id: 1,
+        status: WaitingQueueStatus.AVAILABLE,
+        orderNum: 0,
+        user_id: 1,
+      } as WaitingQueue;
+
+      jest
+        .spyOn(getWaitingStatusUseCase, "execute")
+        .mockResolvedValue(waitingQueue);
+
+      const res = await controller.getWaitingStatus(req);
+
+      expect(res).toEqual(GetWaitingStatusResponse.toResponse(waitingQueue));
+      expect(getWaitingStatusUseCase.execute).toHaveBeenCalledWith(req.id);
     });
   });
 });

@@ -9,7 +9,7 @@ export class TokenScheduler {
     private readonly checkWaitingQueuesUseCase: CheckWaitingQueuesUseCase,
   ) {}
 
-  @Cron(CronExpression.EVERY_5_MINUTES)
+  @Cron(CronExpression.EVERY_MINUTE)
   async handleCron() {
     await this.checkWaitingQueuesUseCase.execute();
   }

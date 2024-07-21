@@ -119,4 +119,11 @@ export class TokenService {
       _manager,
     );
   }
+
+  async getWaitingQueue(
+    id: number,
+    _manager?: EntityManager,
+  ): Promise<WaitingQueue> {
+    return await this.waitingQueueRepository.findOneById(id, _manager);
+  }
 }
