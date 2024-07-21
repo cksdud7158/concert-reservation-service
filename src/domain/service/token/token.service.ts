@@ -23,8 +23,9 @@ export class TokenService {
   ) {}
 
   async getToken(userId: number, _manager?: EntityManager): Promise<string> {
-    // 대기열 상태 정리
-    const waitingQueuesEntity = await this.checkWaitingQueues(_manager);
+    // 만료 상태 아닌 목록 조회
+    const waitingQueuesEntity =
+      await this.waitingQueueRepository.findByNotExpiredStatus(_manager);
 
     // 기존 queue 에 해당 유저가 활성 상태로 있으면 만료 상태로 변경
     const waitingQueueIdList = waitingQueuesEntity.findByUserId(userId);
