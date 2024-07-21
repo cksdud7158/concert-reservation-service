@@ -40,7 +40,7 @@ export class ConcertController {
   }
 
   @ApiOperation({ summary: "콘서트 좌석 정보 조회 API" })
-  @Get("/schedules/:concertScheduleId/seats")
+  @Get("/:concertId/schedules/:concertScheduleId/seats")
   @UseGuards(TokenGuard)
   async getSeatList(
     @Param("concertScheduleId", IdPipe) concertScheduleId: number,
