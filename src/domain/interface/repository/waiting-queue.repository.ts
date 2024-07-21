@@ -8,24 +8,27 @@ export const WaitingQueueRepositorySymbol = Symbol.for(
 );
 
 export interface WaitingQueueRepository {
-  insert(
-    userId: number,
-    status: WaitingQueueStatus,
+  save(
+    waitingQueue: WaitingQueue,
     _manager?: EntityManager,
-  ): Promise<void>;
+  ): Promise<WaitingQueue>;
 
-  findByStatusNotExpired(
+  findByNotExpiredStatus(
     _manager?: EntityManager,
   ): Promise<WaitingQueuesEntity>;
 
-  findByIdAndStatus(
-    userId: number,
-    status: WaitingQueueStatus,
-    _manager?: EntityManager,
-  ): Promise<WaitingQueue[]>;
-
   updateStatusToExpired(
     idList: number[],
+    _manager?: EntityManager,
+  ): Promise<void>;
+
+  findOneById(id: number, _manager?: EntityManager): Promise<WaitingQueue>;
+
+  updateEntities(waitingQueues: WaitingQueuesEntity, _manager?: EntityManager);
+
+  updateStatusByUserId(
+    id: number,
+    status: WaitingQueueStatus,
     _manager?: EntityManager,
   ): Promise<void>;
 }

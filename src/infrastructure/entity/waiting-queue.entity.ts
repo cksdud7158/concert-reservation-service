@@ -21,6 +21,9 @@ export class WaitingQueue {
   @Column()
   user_id: number;
 
+  @Column({ type: "integer", default: 0 })
+  orderNum: number;
+
   @Column({
     type: "enum",
     enum: WaitingQueueStatus,

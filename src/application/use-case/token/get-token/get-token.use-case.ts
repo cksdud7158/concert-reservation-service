@@ -12,13 +12,19 @@ export class GetTokenUseCase {
   ) {}
 
   async execute(userId: number): Promise<string> {
+    // 해당 유저 있는지 확인
     await this.userService.hasUser(userId);
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
     const manager = queryRunner.manager;
     try {
-      return await this.tokenService.getToken(userId, manager);
+      // 토큰 발급
+      const token = await this.tokenService.getToken(userId, manager);
+
+      await queryRunner.commitTransaction();
+
+      return token;
     } catch (e) {
       await queryRunner.rollbackTransaction();
       throw e;

@@ -3,29 +3,23 @@ import { PaymentController } from "@app/presentation/controller/payment/payment.
 import { PaymentService } from "@app/domain/service/payment/payment.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Payment } from "@app/infrastructure/entity/payment.entity";
-import { PaymentRepositorySymbol } from "@app/domain/interface/repository/payment.repository";
-import { PaymentRepositoryImpl } from "@app/infrastructure/repository/payment.repository.impl";
 import { ReservationModule } from "@app/module/reservation/reservation.module";
 import { UserModule } from "@app/module/user/user.module";
 import { ConcertModule } from "@app/module/concert/concert.module";
 import { PayUseCase } from "@app/application/use-case/payment/pay/pay.use-case";
+import { TokenModule } from "@app/module/token/token.module";
+import paymentProvider from "@app/module/provider/payment.provider";
 
 @Module({
   controllers: [PaymentController],
-  providers: [
-    PayUseCase,
-    PaymentService,
-    {
-      provide: PaymentRepositorySymbol,
-      useClass: PaymentRepositoryImpl,
-    },
-  ],
+  providers: [PayUseCase, PaymentService, paymentProvider],
 
   imports: [
     TypeOrmModule.forFeature([Payment]),
     ReservationModule,
     UserModule,
     ConcertModule,
+    TokenModule,
   ],
 })
 export class PaymentModule {}
