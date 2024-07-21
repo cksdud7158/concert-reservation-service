@@ -33,38 +33,27 @@ export class PayUseCase {
 
     const totalPrice = ticketList.reduce((pv, cv) => pv + cv.seat.price, 0);
 
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-    const manager = queryRunner.manager;
+    return await this.dataSource
+      .createEntityManager()
+      .transaction(async (manager) => {
+        await this.userService.usePoint(userId, totalPrice, manager);
 
-    try {
-      // 포인트 사용
-      await this.userService.usePoint(userId, totalPrice, manager);
+        // 좌석 판매 완료로 변경
+        await this.concertService.changeStatus(
+          seatIds,
+          ConcertScheduleStatus.SOLD_OUT,
+          manager,
+        );
 
-      // 좌석 판매 완료로 변경
-      await this.concertService.changeStatus(
-        seatIds,
-        ConcertScheduleStatus.SOLD_OUT,
-        manager,
-      );
+        // 결제
+        const payment = await this.paymentService.pay(
+          userId,
+          ticketIds,
+          totalPrice,
+          manager,
+        );
 
-      // 결제
-      const payment = await this.paymentService.pay(
-        userId,
-        ticketIds,
-        totalPrice,
-        manager,
-      );
-
-      await queryRunner.commitTransaction();
-
-      return payment;
-    } catch (e) {
-      await queryRunner.rollbackTransaction();
-      throw e;
-    } finally {
-      await queryRunner.release();
-    }
+        return payment;
+      });
   }
 }

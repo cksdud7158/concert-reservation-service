@@ -10,19 +10,8 @@ export class CheckWaitingQueuesUseCase {
   ) {}
 
   async execute(): Promise<void> {
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-    const manager = queryRunner.manager;
-    try {
-      // 토큰 발급
+    await this.dataSource.createEntityManager().transaction(async (manager) => {
       await this.tokenService.checkWaitingQueues(manager);
-      await queryRunner.commitTransaction();
-    } catch (e) {
-      await queryRunner.rollbackTransaction();
-      throw e;
-    } finally {
-      await queryRunner.release();
-    }
+    });
   }
 }
