@@ -14,7 +14,6 @@ export class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
   ) {}
 
   async findByIdWithScheduleId(
-    concertId: number,
     concertScheduleId: number,
     _manager?: EntityManager,
   ): Promise<ConcertSeat[]> {
@@ -23,9 +22,6 @@ export class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
       where: {
         schedule: {
           id: concertScheduleId,
-          concert: {
-            id: concertId,
-          },
         },
       },
       order: {

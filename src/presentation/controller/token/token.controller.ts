@@ -12,7 +12,7 @@ export class TokenController {
   @Post("")
   @ApiOperation({ summary: "토큰 발급 API" })
   @ApiCreatedResponse({
-    description: "유저를 생성 완료",
+    description: "토큰 생성 완료",
     type: String,
   })
   async getToken(@Body() tokenRequest: TokenRequest): Promise<string> {

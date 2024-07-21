@@ -6,7 +6,6 @@ export const ConcertSeatRepositorySymbol = Symbol.for("ConcertSeatRepository");
 
 export interface ConcertSeatRepository {
   findByIdWithScheduleId(
-    concertId: number,
     concertScheduleId: number,
     _manager?: EntityManager,
   ): Promise<ConcertSeat[]>;

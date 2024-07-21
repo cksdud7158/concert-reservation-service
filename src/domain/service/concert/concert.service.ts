@@ -64,17 +64,11 @@ export class ConcertService {
   }
 
   // 좌석 리스트 조회
-  async getSeatList(
-    concertId: number,
-    concertScheduleId: number,
-  ): Promise<ConcertSeat[]> {
+  async getSeatList(concertScheduleId: number): Promise<ConcertSeat[]> {
     // status 가 PENDING 인것중 update_at 가 5분 지났으면 SALE 상태로 변경
     await this.concertSeatRepository.updatePendingToSale();
 
-    return this.concertSeatRepository.findByIdWithScheduleId(
-      concertId,
-      concertScheduleId,
-    );
+    return this.concertSeatRepository.findByIdWithScheduleId(concertScheduleId);
   }
 
   // 구매 가능 여부 체크

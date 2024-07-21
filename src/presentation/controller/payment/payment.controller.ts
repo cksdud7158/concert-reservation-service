@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Post } from "@nestjs/common";
+import { Body, Controller, Inject, Post, UseGuards } from "@nestjs/common";
 import { PayRequest } from "@app/presentation/dto/payment/pay/pay.request";
 import { Payment } from "@app/infrastructure/entity/payment.entity";
 import {
@@ -9,6 +9,7 @@ import {
 } from "@nestjs/swagger";
 import { ApiTag } from "@app/config/swagger/api-tag-enum";
 import { PayUseCase } from "@app/application/use-case/payment/pay/pay.use-case";
+import { TokenGuard } from "@app/presentation/guard/token.guard";
 
 @Controller("payment")
 @ApiTags(ApiTag.Payment)
@@ -21,6 +22,7 @@ export class PaymentController {
     type: PartialType(Payment),
   })
   @Post("")
+  @UseGuards(TokenGuard)
   async pay(@Body() payRequest: PayRequest): Promise<Partial<Payment>> {
     return await this.payUseCase.execute(
       payRequest.userId,
