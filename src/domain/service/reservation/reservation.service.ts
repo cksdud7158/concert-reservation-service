@@ -1,10 +1,11 @@
 import { BadRequestException, Inject, Injectable } from "@nestjs/common";
-import { Ticket } from "@app/infrastructure/entity/ticket.entity";
+
 import {
   TicketRepository,
   TicketRepositorySymbol,
 } from "@app/domain/interface/repository/ticket.repository";
 import { EntityManager } from "typeorm";
+import { TicketEntity } from "@app/domain/entity/ticket.entity";
 
 @Injectable()
 export class ReservationService {
@@ -19,7 +20,7 @@ export class ReservationService {
     concertScheduleId: number,
     seatIds: number[],
     _manager?: EntityManager,
-  ): Promise<Ticket[]> {
+  ): Promise<TicketEntity[]> {
     // 티켓 여러개 만들기
     const ticketIds = await this.ticketRepository.insert(
       userId,
@@ -43,7 +44,7 @@ export class ReservationService {
   async getTicketList(
     userId: number,
     ticketIds: number[],
-  ): Promise<Partial<Ticket>[]> {
+  ): Promise<TicketEntity[]> {
     const ticketList = await this.ticketRepository.findByIdsAndUserId(
       userId,
       ticketIds,

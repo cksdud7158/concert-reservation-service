@@ -1,11 +1,11 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { PaymentService } from "@app/domain/service/payment/payment.service";
-import { Payment } from "@app/infrastructure/entity/payment.entity";
 import { ReservationService } from "@app/domain/service/reservation/reservation.service";
 import { UserService } from "@app/domain/service/user/user.service";
 import { ConcertService } from "@app/domain/service/concert/concert.service";
 import ConcertScheduleStatus from "@app/domain/enum/concert-seat-status.enum";
 import { DataSource } from "typeorm";
+import { PaymentEntity } from "@app/domain/entity/payment.entity";
 
 @Injectable()
 export class PayUseCase {
@@ -17,10 +17,7 @@ export class PayUseCase {
     private readonly dataSource: DataSource,
   ) {}
 
-  async execute(
-    userId: number,
-    ticketIds: number[],
-  ): Promise<Partial<Payment>> {
+  async execute(userId: number, ticketIds: number[]): Promise<PaymentEntity> {
     // 티켓 조회
     const ticketList = await this.reservationService.getTicketList(
       userId,

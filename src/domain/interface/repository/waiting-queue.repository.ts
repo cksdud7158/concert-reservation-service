@@ -1,5 +1,5 @@
 import WaitingQueuesEntity from "@app/domain/entity/waiting-queues.entity";
-import { WaitingQueue } from "@app/infrastructure/entity/waiting-queue.entity";
+
 import WaitingQueueStatus from "@app/domain/enum/waiting-queue-status.enum";
 import { EntityManager } from "typeorm";
 import WaitingQueueEntity from "@app/domain/entity/waiting-queue.entity";
@@ -10,7 +10,7 @@ export const WaitingQueueRepositorySymbol = Symbol.for(
 
 export interface WaitingQueueRepository {
   save(
-    waitingQueue: WaitingQueue,
+    waitingQueue: WaitingQueueEntity,
     _manager?: EntityManager,
   ): Promise<WaitingQueueEntity>;
 

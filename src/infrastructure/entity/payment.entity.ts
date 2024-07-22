@@ -37,12 +37,12 @@ export class Payment {
     nullable: false,
   })
   @JoinColumn()
-  tickets: Partial<Ticket[]>;
+  tickets: Ticket[];
 
   @ManyToOne(() => User, (user) => user.id, {
     createForeignKeyConstraints: false,
     nullable: false,
   })
   @JoinColumn()
-  user: Partial<User>;
+  user: User;
 }

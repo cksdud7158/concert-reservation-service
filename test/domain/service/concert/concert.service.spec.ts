@@ -16,11 +16,11 @@ import {
 import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
 import ConcertScheduleStatus from "@app/domain/enum/concert-seat-status.enum";
 import { BadRequestException } from "@nestjs/common";
-import { Concert } from "@app/infrastructure/entity/concert.entity";
 import { mockConcertProvider } from "../../../mock/repositroy-mocking/concert-repository.mock";
 import { mockConcertScheduleProvider } from "../../../mock/repositroy-mocking/concert-schedule-repository.mock";
 import { mockConcertSeatProvider } from "../../../mock/repositroy-mocking/concert-seat-repository.mock";
 import { ConcertScheduleEntity } from "@app/domain/entity/concert-schedule.entity";
+import { ConcertEntity } from "@app/domain/entity/concert.entity";
 
 describe("ConcertService", () => {
   let service: ConcertService;
@@ -52,12 +52,10 @@ describe("ConcertService", () => {
   const concertId = 1;
   const date = new Date();
 
-  const concertSchedule: ConcertScheduleEntity = new ConcertScheduleEntity(
-    1,
-    date,
-    date,
-    date,
-  );
+  const concertSchedule = new ConcertScheduleEntity({
+    id: 1,
+    date: date,
+  });
 
   describe("콘서트 예약 가능 날짜 조회 method(getScheduleList)", () => {
     it("콘서트 날짜 조회 완료", async () => {
@@ -150,12 +148,7 @@ describe("ConcertService", () => {
   describe("콘서트 목록 조회 method(getConcertList)", () => {
     it("콘서트 목록 조회 완료", async () => {
       // given
-      const concert = {
-        id: 1,
-        creat_at: date,
-        update_at: date,
-        name: "콘서트1",
-      } as Concert;
+      const concert = new ConcertEntity({ name: "콘서트1" });
 
       //when
       jest.spyOn(concertRepository, "selectAll").mockResolvedValue([concert]);

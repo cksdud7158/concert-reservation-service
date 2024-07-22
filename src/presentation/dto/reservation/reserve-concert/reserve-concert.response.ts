@@ -1,10 +1,10 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Ticket } from "@app/infrastructure/entity/ticket.entity";
-import { Concert } from "@app/infrastructure/entity/concert.entity";
-import { ConcertSchedule } from "@app/infrastructure/entity/concert-schedule.entity";
 import TicketStatus from "@app/domain/enum/ticket-status.enum";
-import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
 import ConcertSeatStatus from "@app/domain/enum/concert-seat-status.enum";
+import { ConcertEntity } from "@app/domain/entity/concert.entity";
+import { ConcertScheduleEntity } from "@app/domain/entity/concert-schedule.entity";
+import { TicketEntity } from "@app/domain/entity/ticket.entity";
+import { ConcertSeatEntity } from "@app/domain/entity/concert-seat.entity";
 
 const ticketsExample = [
   {
@@ -41,12 +41,12 @@ export class ReserveConcertResponse {
   tickets: {
     id: number;
     status: TicketStatus;
-    concert: Partial<Concert>;
-    schedule: Partial<ConcertSchedule>;
-    seat: Partial<ConcertSeat>;
+    concert: ConcertEntity;
+    schedule: ConcertScheduleEntity;
+    seat: ConcertSeatEntity;
   }[];
 
-  static toResponse(ticketList: Partial<Ticket>[]): ReserveConcertResponse {
+  static toResponse(ticketList: TicketEntity[]): ReserveConcertResponse {
     return {
       total: ticketList.length,
       tickets: ticketList.map((ticket) => {
