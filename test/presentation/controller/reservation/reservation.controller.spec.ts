@@ -1,7 +1,7 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { ReservationController } from "@app/presentation/controller/reservation/reservation.controller";
-import TicketStatus from "@app/infrastructure/enum/ticket-status.enum";
-import ConcertSeatStatus from "@app/infrastructure/enum/concert-seat-status.enum";
+import TicketStatus from "@app/domain/enum/ticket-status.enum";
+import ConcertSeatStatus from "@app/domain/enum/concert-seat-status.enum";
 import { Concert } from "@app/infrastructure/entity/concert.entity";
 import { ConcertSchedule } from "@app/infrastructure/entity/concert-schedule.entity";
 import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";

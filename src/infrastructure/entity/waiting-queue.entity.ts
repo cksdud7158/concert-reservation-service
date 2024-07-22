@@ -5,7 +5,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import WaitingQueueStatus from "../enum/waiting-queue-status.enum";
+import WaitingQueueStatus from "@app/domain/enum/waiting-queue-status.enum";
 
 @Entity()
 export class WaitingQueue {

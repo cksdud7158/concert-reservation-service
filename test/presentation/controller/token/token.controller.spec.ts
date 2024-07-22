@@ -10,9 +10,9 @@ import { mockUserProvider } from "../../../mock/repositroy-mocking/user-reposito
 import { mockPointHistoryProvider } from "../../../mock/repositroy-mocking/point-history-repository.mock";
 import { datasourceProvider } from "../../../mock/lib/datasource.mock";
 import { GetWaitingStatusUseCase } from "@app/application/use-case/token/get-waiting-status/get-waiting-status.use-case";
-import { WaitingQueue } from "@app/infrastructure/entity/waiting-queue.entity";
-import WaitingQueueStatus from "@app/infrastructure/enum/waiting-queue-status.enum";
+import WaitingQueueStatus from "@app/domain/enum/waiting-queue-status.enum";
 import { GetWaitingStatusResponse } from "@app/presentation/dto/token/get-waiting-status/get-waiting-status.response";
+import WaitingQueueEntity from "@app/domain/entity/waiting-queue.entity";
 
 describe("AuthController", () => {
   let controller: TokenController;
@@ -64,12 +64,15 @@ describe("AuthController", () => {
   describe("/token/waiting-status (GET)", () => {
     it("상태 조회 성공", async () => {
       const req = { id: 1 };
-      const waitingQueue = {
-        id: 1,
-        status: WaitingQueueStatus.AVAILABLE,
-        orderNum: 0,
-        user_id: 1,
-      } as WaitingQueue;
+
+      const waitingQueue = new WaitingQueueEntity(
+        1,
+        new Date(),
+        new Date(),
+        1,
+        0,
+        WaitingQueueStatus.AVAILABLE,
+      );
 
       jest
         .spyOn(getWaitingStatusUseCase, "execute")

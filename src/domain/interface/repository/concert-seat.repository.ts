@@ -1,6 +1,6 @@
 import { EntityManager } from "typeorm";
 import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
-import ConcertSeatStatus from "@app/infrastructure/enum/concert-seat-status.enum";
+import ConcertSeatStatus from "@app/domain/enum/concert-seat-status.enum";
 
 export const ConcertSeatRepositorySymbol = Symbol.for("ConcertSeatRepository");
 

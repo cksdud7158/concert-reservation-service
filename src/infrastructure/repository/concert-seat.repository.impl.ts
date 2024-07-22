@@ -3,8 +3,8 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { EntityManager, In, Repository } from "typeorm";
 import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
 import { ConcertSeatRepository } from "@app/domain/interface/repository/concert-seat.repository";
-import ConcertScheduleStatus from "@app/infrastructure/enum/concert-seat-status.enum";
-import ConcertSeatStatus from "@app/infrastructure/enum/concert-seat-status.enum";
+import ConcertScheduleStatus from "@app/domain/enum/concert-seat-status.enum";
+import ConcertSeatStatus from "@app/domain/enum/concert-seat-status.enum";
 
 @Injectable()
 export class ConcertSeatRepositoryImpl implements ConcertSeatRepository {

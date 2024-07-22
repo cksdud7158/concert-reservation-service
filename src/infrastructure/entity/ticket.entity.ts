@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import TicketStatus from "@app/infrastructure/enum/ticket-status.enum";
+import TicketStatus from "@app/domain/enum/ticket-status.enum";
 import { User } from "@app/infrastructure/entity/user.entity";
 import { ConcertSchedule } from "@app/infrastructure/entity/concert-schedule.entity";
 import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";

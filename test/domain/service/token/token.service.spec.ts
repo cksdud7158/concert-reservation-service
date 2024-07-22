@@ -5,10 +5,10 @@ import {
   WaitingQueueRepositorySymbol,
 } from "@app/domain/interface/repository/waiting-queue.repository";
 import WaitingQueuesEntity from "@app/domain/entity/waiting-queues.entity";
-import WaitingQueueStatus from "@app/infrastructure/enum/waiting-queue-status.enum";
+import WaitingQueueStatus from "@app/domain/enum/waiting-queue-status.enum";
 import { TokenService } from "@app/domain/service/token/token.service";
-import { WaitingQueue } from "@app/infrastructure/entity/waiting-queue.entity";
 import { mockWaitingQueueProvider } from "../../../mock/repositroy-mocking/waiting-queue-repository.mock";
+import WaitingQueueEntity from "@app/domain/entity/waiting-queue.entity";
 
 describe("TokenService", () => {
   let service: TokenService;
@@ -46,14 +46,15 @@ describe("TokenService", () => {
       // given
       const token =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInN0YXR1cyI6MCwiaWF0IjoxNzIwMzU0NjU1LCJleHAiOjE3MjAzNTgyNTV9.RoRR1NcQ-TWzWXxMXL2_XlWYB1I8LUlE4TR1doeosOM";
-      const waitingQueue = {
-        id: 1,
-        status: WaitingQueueStatus.AVAILABLE,
-        creat_at: new Date(),
-        update_at: new Date(),
-        user_id: userId,
-        orderNum: 0,
-      } as WaitingQueue;
+      const waitingQueue = new WaitingQueueEntity(
+        1,
+        new Date(),
+        new Date(),
+        userId,
+        0,
+        WaitingQueueStatus.AVAILABLE,
+      ) as WaitingQueueEntity;
+
       const waitingQueuesEntity = new WaitingQueuesEntity([waitingQueue]);
       //when
       jest

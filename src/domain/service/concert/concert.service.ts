@@ -14,7 +14,7 @@ import {
   ConcertRepositorySymbol,
 } from "@app/domain/interface/repository/concert.repository";
 import { Concert } from "@app/infrastructure/entity/concert.entity";
-import ConcertSeatStatus from "@app/infrastructure/enum/concert-seat-status.enum";
+import ConcertSeatStatus from "@app/domain/enum/concert-seat-status.enum";
 import { EntityManager } from "typeorm";
 
 @Injectable()

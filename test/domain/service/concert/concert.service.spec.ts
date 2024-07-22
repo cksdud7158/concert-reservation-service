@@ -14,7 +14,7 @@ import {
   ConcertRepositorySymbol,
 } from "@app/domain/interface/repository/concert.repository";
 import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
-import ConcertScheduleStatus from "@app/infrastructure/enum/concert-seat-status.enum";
+import ConcertScheduleStatus from "@app/domain/enum/concert-seat-status.enum";
 import { BadRequestException } from "@nestjs/common";
 import { Concert } from "@app/infrastructure/entity/concert.entity";
 import { mockConcertProvider } from "../../../mock/repositroy-mocking/concert-repository.mock";
