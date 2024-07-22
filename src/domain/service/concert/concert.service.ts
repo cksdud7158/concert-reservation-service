@@ -1,5 +1,4 @@
 import { BadRequestException, Inject, Injectable } from "@nestjs/common";
-import { ConcertSchedule } from "@app/infrastructure/entity/concert-schedule.entity";
 import {
   ConcertScheduleRepository,
   ConcertScheduleRepositorySymbol,
@@ -16,6 +15,7 @@ import {
 import { Concert } from "@app/infrastructure/entity/concert.entity";
 import ConcertSeatStatus from "@app/domain/enum/concert-seat-status.enum";
 import { EntityManager } from "typeorm";
+import { ConcertScheduleEntity } from "@app/domain/entity/concert-schedule.entity";
 
 @Injectable()
 export class ConcertService {
@@ -57,9 +57,7 @@ export class ConcertService {
   }
 
   // 일정 리스트 조회
-  async getScheduleList(
-    concertId: number,
-  ): Promise<Partial<ConcertSchedule>[]> {
+  async getScheduleList(concertId: number): Promise<ConcertScheduleEntity[]> {
     return this.concertScheduleRepository.findById(concertId);
   }
 

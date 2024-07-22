@@ -1,6 +1,5 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { ConcertController } from "@app/presentation/controller/concert/concert.controller";
-import { ConcertSchedule } from "@app/infrastructure/entity/concert-schedule.entity";
 import { GetScheduleListResponse } from "@app/presentation/dto/concert/get-schedule-list/get-schedule-list.response";
 import { ConcertService } from "@app/domain/service/concert/concert.service";
 import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
@@ -15,6 +14,7 @@ import { mockConcertSeatProvider } from "../../../mock/repositroy-mocking/concer
 import { GetConcertListUseCase } from "@app/application/use-case/concert/get-concert-list.use-case";
 import { GetScheduleListUseCase } from "@app/application/use-case/concert/get-schedule-list.use-case";
 import { GetSeatListUseCase } from "@app/application/use-case/concert/get-seat-list.use-case";
+import { ConcertScheduleEntity } from "@app/domain/entity/concert-schedule.entity";
 
 describe("ConcertController", () => {
   let controller: ConcertController;
@@ -63,13 +63,12 @@ describe("ConcertController", () => {
   describe("/concerts/{concertId}/dates (GET)", () => {
     it("콘서트 예약 가능 날짜 조회 성공", async () => {
       //given
-      const concertSchedule: Partial<ConcertSchedule> = {
-        id: 1,
-        creat_at: date,
-        update_at: date,
-        date: date,
-        seats: [],
-      };
+      const concertSchedule: ConcertScheduleEntity = new ConcertScheduleEntity(
+        1,
+        date,
+        date,
+        date,
+      );
 
       const response: GetScheduleListResponse = {
         total: 1,
