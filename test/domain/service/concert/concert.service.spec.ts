@@ -20,6 +20,7 @@ import { Concert } from "@app/infrastructure/entity/concert.entity";
 import { mockConcertProvider } from "../../../mock/repositroy-mocking/concert-repository.mock";
 import { mockConcertScheduleProvider } from "../../../mock/repositroy-mocking/concert-schedule-repository.mock";
 import { mockConcertSeatProvider } from "../../../mock/repositroy-mocking/concert-seat-repository.mock";
+import { ConcertScheduleEntity } from "@app/domain/entity/concert-schedule.entity";
 
 describe("ConcertService", () => {
   let service: ConcertService;
@@ -51,13 +52,12 @@ describe("ConcertService", () => {
   const concertId = 1;
   const date = new Date();
 
-  const concertSchedule: Partial<ConcertSchedule> = {
-    id: 1,
-    creat_at: date,
-    update_at: date,
-    date: date,
-    seats: [],
-  };
+  const concertSchedule: ConcertScheduleEntity = new ConcertScheduleEntity(
+    1,
+    date,
+    date,
+    date,
+  );
 
   describe("콘서트 예약 가능 날짜 조회 method(getScheduleList)", () => {
     it("콘서트 날짜 조회 완료", async () => {
