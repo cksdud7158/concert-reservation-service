@@ -4,7 +4,7 @@ import { Payment } from "@app/infrastructure/entity/payment.entity";
 import { ReservationService } from "@app/domain/service/reservation/reservation.service";
 import { UserService } from "@app/domain/service/user/user.service";
 import { ConcertService } from "@app/domain/service/concert/concert.service";
-import ConcertScheduleStatus from "@app/infrastructure/enum/concert-seat-status.enum";
+import ConcertScheduleStatus from "@app/domain/enum/concert-seat-status.enum";
 import { DataSource } from "typeorm";
 
 @Injectable()

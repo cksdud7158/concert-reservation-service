@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { ConcertSchedule } from "@app/infrastructure/entity/concert-schedule.entity";
-import ConcertScheduleStatus from "@app/infrastructure/enum/concert-seat-status.enum";
+import ConcertScheduleStatus from "@app/domain/enum/concert-seat-status.enum";
 
 @Entity()
 export class ConcertSeat {

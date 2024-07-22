@@ -10,14 +10,15 @@ import {
   WaitingQueueRepositorySymbol,
 } from "../../interface/repository/waiting-queue.repository";
 import { EntityManager } from "typeorm";
-import WaitingQueueStatus from "@app/infrastructure/enum/waiting-queue-status.enum";
+import WaitingQueueStatus from "@app/domain/enum/waiting-queue-status.enum";
 import { WaitingQueue } from "@app/infrastructure/entity/waiting-queue.entity";
 import WaitingQueuesEntity from "@app/domain/entity/waiting-queues.entity";
+import WaitingQueueEntity from "@app/domain/entity/waiting-queue.entity";
 
 @Injectable()
 export class TokenService {
   constructor(
-    @Inject() private readonly jwtService: JwtService,
+    private readonly jwtService: JwtService,
     @Inject(WaitingQueueRepositorySymbol)
     private readonly waitingQueueRepository: WaitingQueueRepository,
   ) {}
@@ -77,7 +78,7 @@ export class TokenService {
     }
 
     // 이용 가능 상태면 update_at 업데이트
-    waitingQueue.update_at = new Date();
+    waitingQueue.updateUpdateAt(new Date());
     waitingQueue = await this.waitingQueueRepository.save(
       waitingQueue,
       _manager,
@@ -120,10 +121,11 @@ export class TokenService {
     );
   }
 
+  // 토큰 정보 조회
   async getWaitingQueue(
     id: number,
     _manager?: EntityManager,
-  ): Promise<WaitingQueue> {
+  ): Promise<WaitingQueueEntity> {
     return await this.waitingQueueRepository.findOneById(id, _manager);
   }
 }

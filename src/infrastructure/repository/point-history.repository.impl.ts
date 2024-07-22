@@ -3,7 +3,7 @@ import { EntityManager, Repository } from "typeorm";
 import { Injectable } from "@nestjs/common";
 import { PointHistoryRepository } from "@app/domain/interface/repository/point-history.repository";
 import { PointHistory } from "@app/infrastructure/entity/point-history.entity";
-import PointHistoryType from "@app/infrastructure/enum/point-history.enum";
+import PointHistoryType from "@app/domain/enum/point-history.enum";
 
 @Injectable()
 export class PointHistoryRepositoryImpl implements PointHistoryRepository {

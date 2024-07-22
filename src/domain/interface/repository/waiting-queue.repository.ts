@@ -1,7 +1,8 @@
 import WaitingQueuesEntity from "@app/domain/entity/waiting-queues.entity";
 import { WaitingQueue } from "@app/infrastructure/entity/waiting-queue.entity";
-import WaitingQueueStatus from "@app/infrastructure/enum/waiting-queue-status.enum";
+import WaitingQueueStatus from "@app/domain/enum/waiting-queue-status.enum";
 import { EntityManager } from "typeorm";
+import WaitingQueueEntity from "@app/domain/entity/waiting-queue.entity";
 
 export const WaitingQueueRepositorySymbol = Symbol.for(
   "WaitingQueueRepository",
@@ -11,7 +12,7 @@ export interface WaitingQueueRepository {
   save(
     waitingQueue: WaitingQueue,
     _manager?: EntityManager,
-  ): Promise<WaitingQueue>;
+  ): Promise<WaitingQueueEntity>;
 
   findByNotExpiredStatus(
     _manager?: EntityManager,
@@ -22,7 +23,10 @@ export interface WaitingQueueRepository {
     _manager?: EntityManager,
   ): Promise<void>;
 
-  findOneById(id: number, _manager?: EntityManager): Promise<WaitingQueue>;
+  findOneById(
+    id: number,
+    _manager?: EntityManager,
+  ): Promise<WaitingQueueEntity>;
 
   updateEntities(waitingQueues: WaitingQueuesEntity, _manager?: EntityManager);
 

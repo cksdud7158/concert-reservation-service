@@ -2,7 +2,7 @@ import { Inject, Injectable } from "@nestjs/common";
 import { ReservationService } from "@app/domain/service/reservation/reservation.service";
 import { Ticket } from "@app/infrastructure/entity/ticket.entity";
 import { ConcertService } from "@app/domain/service/concert/concert.service";
-import ConcertSeatStatus from "@app/infrastructure/enum/concert-seat-status.enum";
+import ConcertSeatStatus from "@app/domain/enum/concert-seat-status.enum";
 import { DataSource } from "typeorm";
 import { TokenService } from "@app/domain/service/token/token.service";
 
