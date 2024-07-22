@@ -1,10 +1,10 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { UserService } from "@app/domain/service/user/user.service";
 import { UserController } from "@app/presentation/controller/user/user.controller";
-import { GetPointUseCase } from "@app/application/use-case/user/get-point/get-point.use-case";
-import { ChargePointUseCase } from "@app/application/use-case/user/charge-point/charge-point.use-case";
 import { mockUserProvider } from "../../../mock/repositroy-mocking/user-repository.mock";
 import { mockPointHistoryProvider } from "../../../mock/repositroy-mocking/point-history-repository.mock";
+import { ChargePointUseCase } from "@app/application/use-case/user/charge-point.use-case";
+import { GetPointUseCase } from "@app/application/use-case/user/get-point.use-case";
 
 describe("UserController", () => {
   let controller: UserController;

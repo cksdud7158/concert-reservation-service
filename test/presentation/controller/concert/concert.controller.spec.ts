@@ -1,20 +1,20 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { ConcertController } from "@app/presentation/controller/concert/concert.controller";
-import { GetScheduleListUseCase } from "@app/application/use-case/concert/get-schedule-list/get-schedule-list.use-case";
 import { ConcertSchedule } from "@app/infrastructure/entity/concert-schedule.entity";
 import { GetScheduleListResponse } from "@app/presentation/dto/concert/get-schedule-list/get-schedule-list.response";
 import { ConcertService } from "@app/domain/service/concert/concert.service";
 import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
-import ConcertScheduleStatus from "@app/infrastructure/enum/concert-seat-status.enum";
+import ConcertScheduleStatus from "@app/domain/enum/concert-seat-status.enum";
 import { GetSeatListResponse } from "@app/presentation/dto/concert/get-seat-list/get-seat-list.response";
-import { GetSeatListUseCase } from "@app/application/use-case/concert/get-seat-list/get-seat-list.use-case";
-import { GetConcertListUseCase } from "@app/application/use-case/concert/get-concert-list/get-concert-list.use-case";
 import { Concert } from "@app/infrastructure/entity/concert.entity";
 import { GetConcertListResponse } from "@app/presentation/dto/concert/get-concert-list/get-concert-list.response";
 import { TokenGuard } from "@app/presentation/guard/token.guard";
 import { mockConcertProvider } from "../../../mock/repositroy-mocking/concert-repository.mock";
 import { mockConcertScheduleProvider } from "../../../mock/repositroy-mocking/concert-schedule-repository.mock";
 import { mockConcertSeatProvider } from "../../../mock/repositroy-mocking/concert-seat-repository.mock";
+import { GetConcertListUseCase } from "@app/application/use-case/concert/get-concert-list.use-case";
+import { GetScheduleListUseCase } from "@app/application/use-case/concert/get-schedule-list.use-case";
+import { GetSeatListUseCase } from "@app/application/use-case/concert/get-seat-list.use-case";
 
 describe("ConcertController", () => {
   let controller: ConcertController;

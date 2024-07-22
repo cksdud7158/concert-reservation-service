@@ -8,8 +8,8 @@ import {
   PartialType,
 } from "@nestjs/swagger";
 import { ApiTag } from "@app/config/swagger/api-tag-enum";
-import { PayUseCase } from "@app/application/use-case/payment/pay/pay.use-case";
 import { TokenGuard } from "@app/presentation/guard/token.guard";
+import { PayUseCase } from "@app/application/use-case/payment/pay.use-case";
 
 @Controller("payment")
 @ApiTags(ApiTag.Payment)

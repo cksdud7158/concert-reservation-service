@@ -4,15 +4,15 @@ import { UserService } from "@app/domain/service/user/user.service";
 import key from "@app/config/token/key";
 import { TokenService } from "@app/domain/service/token/token.service";
 import { TokenController } from "@app/presentation/controller/token/token.controller";
-import { GetTokenUseCase } from "@app/application/use-case/token/get-token/get-token.use-case";
 import { mockWaitingQueueProvider } from "../../../mock/repositroy-mocking/waiting-queue-repository.mock";
 import { mockUserProvider } from "../../../mock/repositroy-mocking/user-repository.mock";
 import { mockPointHistoryProvider } from "../../../mock/repositroy-mocking/point-history-repository.mock";
 import { datasourceProvider } from "../../../mock/lib/datasource.mock";
-import { GetWaitingStatusUseCase } from "@app/application/use-case/token/get-waiting-status/get-waiting-status.use-case";
 import WaitingQueueStatus from "@app/domain/enum/waiting-queue-status.enum";
 import { GetWaitingStatusResponse } from "@app/presentation/dto/token/get-waiting-status/get-waiting-status.response";
 import WaitingQueueEntity from "@app/domain/entity/waiting-queue.entity";
+import { GetWaitingStatusUseCase } from "@app/application/use-case/token/get-waiting-status.use-case";
+import { GetTokenUseCase } from "@app/application/use-case/token/get-token.use-case";
 
 describe("AuthController", () => {
   let controller: TokenController;

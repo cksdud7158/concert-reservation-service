@@ -7,7 +7,6 @@ import { ConcertSchedule } from "@app/infrastructure/entity/concert-schedule.ent
 import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
 import { ReservationService } from "@app/domain/service/reservation/reservation.service";
 import { ConcertService } from "@app/domain/service/concert/concert.service";
-import { ReserveConcertUseCase } from "@app/application/use-case/reservation/reserve-concert/reserve-concert.use-case";
 import { JwtService } from "@nestjs/jwt";
 import { TokenService } from "@app/domain/service/token/token.service";
 import { TokenGuard } from "@app/presentation/guard/token.guard";
@@ -17,6 +16,7 @@ import { mockConcertProvider } from "../../../mock/repositroy-mocking/concert-re
 import { mockConcertScheduleProvider } from "../../../mock/repositroy-mocking/concert-schedule-repository.mock";
 import { mockConcertSeatProvider } from "../../../mock/repositroy-mocking/concert-seat-repository.mock";
 import { datasourceProvider } from "../../../mock/lib/datasource.mock";
+import { ReserveConcertUseCase } from "@app/application/use-case/reservation/reserve-concert.use-case";
 
 describe("ReservationController", () => {
   let controller: ReservationController;

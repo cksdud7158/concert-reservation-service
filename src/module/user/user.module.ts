@@ -4,10 +4,10 @@ import { UserService } from "@app/domain/service/user/user.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { UserController } from "@app/presentation/controller/user/user.controller";
 import { PointHistory } from "@app/infrastructure/entity/point-history.entity";
-import { GetPointUseCase } from "@app/application/use-case/user/get-point/get-point.use-case";
-import { ChargePointUseCase } from "@app/application/use-case/user/charge-point/charge-point.use-case";
 import userProvider from "@app/module/provider/user.provider";
 import pointHistoryProvider from "@app/module/provider/point-history.provider";
+import { ChargePointUseCase } from "@app/application/use-case/user/charge-point.use-case";
+import { GetPointUseCase } from "@app/application/use-case/user/get-point.use-case";
 
 @Module({
   controllers: [UserController],
