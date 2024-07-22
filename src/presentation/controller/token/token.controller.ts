@@ -10,10 +10,10 @@ import {
 import { ApiCreatedResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { ApiTag } from "@app/config/swagger/api-tag-enum";
 import { TokenRequest } from "@app/presentation/dto/token/get-token/token.request";
-import { GetTokenUseCase } from "@app/application/use-case/token/get-token/get-token.use-case";
 import { GetWaitingStatusResponse } from "@app/presentation/dto/token/get-waiting-status/get-waiting-status.response";
-import { GetWaitingStatusUseCase } from "@app/application/use-case/token/get-waiting-status/get-waiting-status.use-case";
 import { TokenGuard } from "@app/presentation/guard/token.guard";
+import { GetWaitingStatusUseCase } from "@app/application/use-case/token/get-waiting-status.use-case";
+import { GetTokenUseCase } from "@app/application/use-case/token/get-token.use-case";
 
 @Controller("token")
 @ApiTags(ApiTag.Token)

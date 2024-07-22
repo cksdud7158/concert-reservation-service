@@ -6,9 +6,9 @@ import { Payment } from "@app/infrastructure/entity/payment.entity";
 import { ReservationModule } from "@app/module/reservation/reservation.module";
 import { UserModule } from "@app/module/user/user.module";
 import { ConcertModule } from "@app/module/concert/concert.module";
-import { PayUseCase } from "@app/application/use-case/payment/pay/pay.use-case";
 import { TokenModule } from "@app/module/token/token.module";
 import paymentProvider from "@app/module/provider/payment.provider";
+import { PayUseCase } from "@app/application/use-case/payment/pay.use-case";
 
 @Module({
   controllers: [PaymentController],

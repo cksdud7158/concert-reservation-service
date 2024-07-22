@@ -7,7 +7,6 @@ import { UserService } from "@app/domain/service/user/user.service";
 import { ConcertService } from "@app/domain/service/concert/concert.service";
 import { Payment } from "@app/infrastructure/entity/payment.entity";
 import PaymentStatus from "@app/domain/enum/payment-status.enum";
-import { PayUseCase } from "@app/application/use-case/payment/pay/pay.use-case";
 import { TokenGuard } from "@app/presentation/guard/token.guard";
 import { mockPaymentProvider } from "../../../mock/repositroy-mocking/payment-repository.mock";
 import { mockTicketProvider } from "../../../mock/repositroy-mocking/ticket-repository.mock";
@@ -17,6 +16,7 @@ import { mockConcertProvider } from "../../../mock/repositroy-mocking/concert-re
 import { mockConcertSeatProvider } from "../../../mock/repositroy-mocking/concert-seat-repository.mock";
 import { mockConcertScheduleProvider } from "../../../mock/repositroy-mocking/concert-schedule-repository.mock";
 import { datasourceProvider } from "../../../mock/lib/datasource.mock";
+import { PayUseCase } from "@app/application/use-case/payment/pay.use-case";
 
 describe("PaymentController", () => {
   let controller: PaymentController;

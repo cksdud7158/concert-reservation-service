@@ -9,9 +9,9 @@ import { Ticket } from "@app/infrastructure/entity/ticket.entity";
 import { Payment } from "@app/infrastructure/entity/payment.entity";
 import { UserService } from "@app/domain/service/user/user.service";
 import { ConcertService } from "@app/domain/service/concert/concert.service";
-import ConcertScheduleStatus from "@app/infrastructure/enum/concert-seat-status.enum";
-import { mockAppModule } from "../../../../mock/App.module";
-import { PayUseCase } from "@app/application/use-case/payment/pay/pay.use-case";
+import ConcertScheduleStatus from "@app/domain/enum/concert-seat-status.enum";
+import { mockAppModule } from "../../../mock/App.module";
+import { PayUseCase } from "@app/application/use-case/payment/pay.use-case";
 
 describe("PayUseCase", () => {
   let app: INestApplication;
