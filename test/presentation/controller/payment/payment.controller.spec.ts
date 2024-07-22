@@ -5,7 +5,6 @@ import { PaymentService } from "@app/domain/service/payment/payment.service";
 import { ReservationService } from "@app/domain/service/reservation/reservation.service";
 import { UserService } from "@app/domain/service/user/user.service";
 import { ConcertService } from "@app/domain/service/concert/concert.service";
-import { Payment } from "@app/infrastructure/entity/payment.entity";
 import PaymentStatus from "@app/domain/enum/payment-status.enum";
 import { TokenGuard } from "@app/presentation/guard/token.guard";
 import { mockPaymentProvider } from "../../../mock/repositroy-mocking/payment-repository.mock";
@@ -17,6 +16,7 @@ import { mockConcertSeatProvider } from "../../../mock/repositroy-mocking/concer
 import { mockConcertScheduleProvider } from "../../../mock/repositroy-mocking/concert-schedule-repository.mock";
 import { datasourceProvider } from "../../../mock/lib/datasource.mock";
 import { PayUseCase } from "@app/application/use-case/payment/pay.use-case";
+import { PaymentEntity } from "@app/domain/entity/payment.entity";
 
 describe("PaymentController", () => {
   let controller: PaymentController;
@@ -58,14 +58,13 @@ describe("PaymentController", () => {
         userId: 1,
         ticketIds: [1, 2],
       };
-      const response: Partial<Payment> = {
+      const response = new PaymentEntity({
         id: 1,
         creat_at: undefined,
         update_at: undefined,
         price: 10000,
         status: PaymentStatus.PAID,
-        tickets: [],
-      };
+      });
 
       //when
       jest.spyOn(payUseCase, "execute").mockResolvedValue(response);

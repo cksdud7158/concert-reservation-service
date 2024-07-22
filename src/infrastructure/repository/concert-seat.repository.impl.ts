@@ -5,6 +5,8 @@ import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
 import { ConcertSeatRepository } from "@app/domain/interface/repository/concert-seat.repository";
 import ConcertScheduleStatus from "@app/domain/enum/concert-seat-status.enum";
 import ConcertSeatStatus from "@app/domain/enum/concert-seat-status.enum";
+import { ConcertSeatEntity } from "@app/domain/entity/concert-seat.entity";
+import ConcertSeatMapper from "@app/infrastructure/mapper/concert-seat.mapper";
 
 @Injectable()
 export class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
@@ -16,9 +18,9 @@ export class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
   async findByIdWithScheduleId(
     concertScheduleId: number,
     _manager?: EntityManager,
-  ): Promise<ConcertSeat[]> {
+  ): Promise<ConcertSeatEntity[]> {
     const manager = _manager ?? this.concertSeat.manager;
-    const entity = await manager.find(ConcertSeat, {
+    const entities = await manager.find(ConcertSeat, {
       where: {
         schedule: {
           id: concertScheduleId,
@@ -29,7 +31,7 @@ export class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
       },
     });
 
-    return entity;
+    return entities.map((seat) => ConcertSeatMapper.toDomain(seat));
   }
 
   async updatePendingToSale(
@@ -54,9 +56,9 @@ export class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
   async findByIdAndStatusSale(
     seatIds: number[],
     _manager?: EntityManager,
-  ): Promise<ConcertSeat[]> {
+  ): Promise<ConcertSeatEntity[]> {
     const manager = _manager ?? this.concertSeat.manager;
-    const entity = await manager.find(ConcertSeat, {
+    const entities = await manager.find(ConcertSeat, {
       where: {
         id: In(seatIds),
         status: ConcertScheduleStatus.SALE,
@@ -66,7 +68,7 @@ export class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
       },
     });
 
-    return entity;
+    return entities.map((seat) => ConcertSeatMapper.toDomain(seat));
   }
 
   async updateStatus(
@@ -86,10 +88,10 @@ export class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
   async findByExpiredTime(
     seatIds: number[],
     _manager?: EntityManager,
-  ): Promise<ConcertSeat[]> {
+  ): Promise<ConcertSeatEntity[]> {
     const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
     const manager = _manager ?? this.concertSeat.manager;
-    const entity = await manager
+    const entities = await manager
       .createQueryBuilder(ConcertSeat, "seat")
       .select()
       .where("id IN (:...seatIds)", { seatIds: seatIds })
@@ -97,6 +99,6 @@ export class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
       .andWhere("update_at < :date", { date: fiveMinutesAgo.toISOString() })
       .execute();
 
-    return entity;
+    return entities.map((seat) => ConcertSeatMapper.toDomain(seat));
   }
 }

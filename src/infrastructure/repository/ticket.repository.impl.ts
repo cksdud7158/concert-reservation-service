@@ -3,6 +3,8 @@ import { EntityManager, In, Repository } from "typeorm";
 import { Injectable } from "@nestjs/common";
 import { TicketRepository } from "@app/domain/interface/repository/ticket.repository";
 import { Ticket } from "@app/infrastructure/entity/ticket.entity";
+import { TicketEntity } from "@app/domain/entity/ticket.entity";
+import TicketMapper from "@app/infrastructure/mapper/ticket.mapper";
 
 @Injectable()
 export class TicketRepositoryImpl implements TicketRepository {
@@ -39,7 +41,7 @@ export class TicketRepositoryImpl implements TicketRepository {
   async findByIds(
     ticketIds: number[],
     _manager?: EntityManager,
-  ): Promise<Ticket[]> {
+  ): Promise<TicketEntity[]> {
     const manager = _manager ?? this.ticket.manager;
 
     const entities = await manager.find(Ticket, {
@@ -53,14 +55,14 @@ export class TicketRepositoryImpl implements TicketRepository {
       },
     });
 
-    return entities;
+    return entities.map((ticket) => TicketMapper.toDomain(ticket));
   }
 
   async findByIdsAndUserId(
     userId: number,
     ticketIds: number[],
     _manager?: EntityManager,
-  ): Promise<Ticket[]> {
+  ): Promise<TicketEntity[]> {
     const manager = _manager ?? this.ticket.manager;
 
     const entities = await manager.find(Ticket, {
@@ -77,6 +79,6 @@ export class TicketRepositoryImpl implements TicketRepository {
       },
     });
 
-    return entities;
+    return entities.map((ticket) => TicketMapper.toDomain(ticket));
   }
 }

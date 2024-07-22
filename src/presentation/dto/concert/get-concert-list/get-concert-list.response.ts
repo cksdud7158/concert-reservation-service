@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Concert } from "@app/infrastructure/entity/concert.entity";
+import { ConcertEntity } from "@app/domain/entity/concert.entity";
 
 const concertsExample = [
   {
@@ -22,7 +22,7 @@ export class GetConcertListResponse {
     name: string;
   }[];
 
-  static toResponse(concerts: Partial<Concert>[]): GetConcertListResponse {
+  static toResponse(concerts: ConcertEntity[]): GetConcertListResponse {
     return {
       total: concerts.length,
       concert: concerts.map((concert) => ({

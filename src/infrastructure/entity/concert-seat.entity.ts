@@ -30,7 +30,7 @@ export class ConcertSeat {
     },
   )
   @JoinColumn()
-  schedule: Partial<ConcertSchedule>;
+  schedule: ConcertSchedule;
 
   @Column({
     type: "enum",

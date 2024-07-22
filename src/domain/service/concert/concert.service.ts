@@ -7,15 +7,15 @@ import {
   ConcertSeatRepository,
   ConcertSeatRepositorySymbol,
 } from "@app/domain/interface/repository/concert-seat.repository";
-import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
 import {
   ConcertRepository,
   ConcertRepositorySymbol,
 } from "@app/domain/interface/repository/concert.repository";
-import { Concert } from "@app/infrastructure/entity/concert.entity";
 import ConcertSeatStatus from "@app/domain/enum/concert-seat-status.enum";
 import { EntityManager } from "typeorm";
 import { ConcertScheduleEntity } from "@app/domain/entity/concert-schedule.entity";
+import { ConcertEntity } from "@app/domain/entity/concert.entity";
+import { ConcertSeatEntity } from "@app/domain/entity/concert-seat.entity";
 
 @Injectable()
 export class ConcertService {
@@ -29,13 +29,8 @@ export class ConcertService {
   ) {}
 
   // 콘서트 목록 조회
-  async getConcertList(): Promise<Concert[]> {
+  async getConcertList(): Promise<ConcertEntity[]> {
     return await this.concertRepository.selectAll();
-  }
-
-  //콘서트 정보 조회
-  async getConcert(concertId: number): Promise<Concert> {
-    return this.concertRepository.findById(concertId);
   }
 
   //좌석들의 판매 가능 상태 조회
@@ -62,7 +57,7 @@ export class ConcertService {
   }
 
   // 좌석 리스트 조회
-  async getSeatList(concertScheduleId: number): Promise<ConcertSeat[]> {
+  async getSeatList(concertScheduleId: number): Promise<ConcertSeatEntity[]> {
     // status 가 PENDING 인것중 update_at 가 5분 지났으면 SALE 상태로 변경
     await this.concertSeatRepository.updatePendingToSale();
 

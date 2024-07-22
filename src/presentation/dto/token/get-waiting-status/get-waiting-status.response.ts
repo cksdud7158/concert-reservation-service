@@ -1,7 +1,7 @@
 import { IsEnum, IsNumber } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 import WaitingQueueStatus from "@app/domain/enum/waiting-queue-status.enum";
-import { WaitingQueue } from "@app/infrastructure/entity/waiting-queue.entity";
+import WaitingQueueEntity from "@app/domain/entity/waiting-queue.entity";
 
 export class GetWaitingStatusResponse {
   @ApiProperty({
@@ -21,7 +21,9 @@ export class GetWaitingStatusResponse {
   @IsNumber()
   orderNum: number;
 
-  static toResponse(waitingQueue: WaitingQueue): GetWaitingStatusResponse {
+  static toResponse(
+    waitingQueue: WaitingQueueEntity,
+  ): GetWaitingStatusResponse {
     return {
       status: waitingQueue.status,
       orderNum: waitingQueue.orderNum,

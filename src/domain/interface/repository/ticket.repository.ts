@@ -1,5 +1,5 @@
 import { EntityManager } from "typeorm";
-import { Ticket } from "@app/infrastructure/entity/ticket.entity";
+import { TicketEntity } from "@app/domain/entity/ticket.entity";
 
 export const TicketRepositorySymbol = Symbol.for("TicketRepository");
 
@@ -12,10 +12,14 @@ export interface TicketRepository {
     _manager?: EntityManager,
   ): Promise<number[]>;
 
-  findByIds(ticketIds: number[], _manager?: EntityManager): Promise<Ticket[]>;
+  findByIds(
+    ticketIds: number[],
+    _manager?: EntityManager,
+  ): Promise<TicketEntity[]>;
+
   findByIdsAndUserId(
     userId: number,
     ticketIds: number[],
     _manager?: EntityManager,
-  ): Promise<Ticket[]>;
+  ): Promise<TicketEntity[]>;
 }

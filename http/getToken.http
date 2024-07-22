@@ -3,5 +3,5 @@ POST localhost:3000/token
 Content-Type: application/json
 
 {
-  "userId": 1
+  "userId": 5
 }

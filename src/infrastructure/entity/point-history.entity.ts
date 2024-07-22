@@ -32,7 +32,7 @@ export class PointHistory {
     nullable: false,
   })
   @JoinColumn()
-  user: Partial<User>;
+  user: User;
 
   @Column({
     type: "enum",

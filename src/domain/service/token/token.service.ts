@@ -11,7 +11,6 @@ import {
 } from "../../interface/repository/waiting-queue.repository";
 import { EntityManager } from "typeorm";
 import WaitingQueueStatus from "@app/domain/enum/waiting-queue-status.enum";
-import { WaitingQueue } from "@app/infrastructure/entity/waiting-queue.entity";
 import WaitingQueuesEntity from "@app/domain/entity/waiting-queues.entity";
 import WaitingQueueEntity from "@app/domain/entity/waiting-queue.entity";
 
@@ -47,13 +46,13 @@ export class TokenService {
       ? 0
       : waitingQueuesEntity.getPendingStatusLength() + 1;
 
-    let waitingQueue = {
+    let waitingQueue = new WaitingQueueEntity({
       user_id: userId,
+      orderNum: orderNum,
       status: isAvailable
         ? WaitingQueueStatus.AVAILABLE
         : WaitingQueueStatus.PENDING,
-      orderNum: orderNum,
-    } as WaitingQueue;
+    });
 
     // 해당 상태로 테이블 insert
     waitingQueue = await this.waitingQueueRepository.save(
