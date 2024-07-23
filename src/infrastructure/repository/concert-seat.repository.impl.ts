@@ -63,8 +63,8 @@ export class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
         id: In(seatIds),
         status: ConcertScheduleStatus.SALE,
       },
-      select: {
-        id: true,
+      relations: {
+        schedule: true,
       },
     });
 
@@ -100,5 +100,25 @@ export class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
       .execute();
 
     return entities.map((seat) => ConcertSeatMapper.toDomain(seat));
+  }
+
+  async update(
+    concertSeat: ConcertSeatEntity,
+    _manager?: EntityManager,
+  ): Promise<void> {
+    console.log(concertSeat.version);
+    const manager = _manager ?? this.concertSeat.manager;
+    await manager
+      .createQueryBuilder(ConcertSeat, "seat")
+      .update(ConcertSeat)
+      .set({
+        status: concertSeat.status,
+        price: concertSeat.price,
+        seat_number: concertSeat.seat_number,
+        schedule: concertSeat.schedule,
+      })
+      .where("id = :id", { id: concertSeat.id })
+      .andWhere("version = :version", { version: concertSeat.version }) // 버전 비교
+      .execute();
   }
 }

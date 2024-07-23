@@ -8,14 +8,16 @@ class WaitingQueueEntity {
   user_id: number;
   orderNum: number;
   status: WaitingQueueStatus;
-  constructor(args: {
-    id?: number;
-    creat_at?: Date;
-    update_at?: Date;
-    user_id: number;
-    orderNum: number;
-    status: WaitingQueueStatus;
-  }) {
+  constructor(
+    args: Partial<{
+      id: number;
+      creat_at: Date;
+      update_at: Date;
+      user_id: number;
+      orderNum: number;
+      status: WaitingQueueStatus;
+    }>,
+  ) {
     Object.assign(this, args);
   }
 
