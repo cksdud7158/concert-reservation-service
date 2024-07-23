@@ -6,6 +6,7 @@ import { ConcertService } from "@app/domain/service/concert/concert.service";
 import ConcertScheduleStatus from "@app/domain/enum/concert-seat-status.enum";
 import { DataSource } from "typeorm";
 import { PaymentEntity } from "@app/domain/entity/payment.entity";
+import { TokenService } from "@app/domain/service/token/token.service";
 
 @Injectable()
 export class PayUseCase {
@@ -14,6 +15,7 @@ export class PayUseCase {
     @Inject() private readonly reservationService: ReservationService,
     @Inject() private readonly userService: UserService,
     @Inject() private readonly concertService: ConcertService,
+    @Inject() private readonly tokenService: TokenService,
     private readonly dataSource: DataSource,
   ) {}
 
@@ -49,6 +51,9 @@ export class PayUseCase {
           totalPrice,
           manager,
         );
+
+        // 대기열 만료 처리
+        await this.tokenService.changeToExpired(userId, manager);
 
         return payment;
       });

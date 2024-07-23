@@ -22,8 +22,8 @@ export class GetScheduleListResponse {
     concertSchedules: ConcertScheduleEntity[],
   ): GetScheduleListResponse {
     return {
-      total: concertSchedules.length,
-      schedules: concertSchedules.map((schedule) => ({
+      total: concertSchedules?.length,
+      schedules: concertSchedules?.map((schedule) => ({
         id: schedule.id,
         date: schedule.date,
       })),

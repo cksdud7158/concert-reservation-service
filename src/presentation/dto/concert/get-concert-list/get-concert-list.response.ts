@@ -24,8 +24,8 @@ export class GetConcertListResponse {
 
   static toResponse(concerts: ConcertEntity[]): GetConcertListResponse {
     return {
-      total: concerts.length,
-      concert: concerts.map((concert) => ({
+      total: concerts?.length,
+      concert: concerts?.map((concert) => ({
         id: concert.id,
         creat_at: concert.creat_at,
         update_at: concert.update_at,

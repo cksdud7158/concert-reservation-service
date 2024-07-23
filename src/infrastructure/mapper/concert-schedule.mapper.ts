@@ -10,8 +10,10 @@ class ConcertScheduleMapper {
       creat_at: concertSchedule.creat_at,
       update_at: concertSchedule.update_at,
       date: concertSchedule.date,
-      concert: ConcertMapper.toDomain(concertSchedule.concert),
-      seats: concertSchedule.seats.map((seat) =>
+      concert: concertSchedule.concert
+        ? ConcertMapper.toDomain(concertSchedule.concert)
+        : null,
+      seats: concertSchedule.seats?.map((seat) =>
         ConcertSeatMapper.toDomain(seat),
       ),
     });

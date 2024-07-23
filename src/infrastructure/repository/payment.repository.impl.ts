@@ -45,6 +45,9 @@ export class PaymentRepositoryImpl implements PaymentRepository {
   ): Promise<PaymentEntity> {
     const manager = _manager ?? this.payment.manager;
     const entity = await manager.findOne(Payment, {
+      relations: {
+        user: true,
+      },
       where: {
         id: paymentId,
       },

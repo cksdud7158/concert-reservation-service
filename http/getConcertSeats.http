@@ -1,3 +1,3 @@
-# 토큰 발급 API
-GET localhost:3000/token/waiting-status
+# 콘서트 목록 조회 API
+GET localhost:3000/concerts/35/schedules/35/seats
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjgsImlhdCI6MTcyMTY5MDcyMCwiZXhwIjoxNzIxNjk3OTIwfQ.lYNSNk4UrdbEiVINhbOVbZuVRXvogyidzPp3PHzLjjk

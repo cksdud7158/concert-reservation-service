@@ -25,8 +25,8 @@ export class GetSeatListResponse {
 
   static toResponse(concertSeatList: ConcertSeatEntity[]): GetSeatListResponse {
     return {
-      total: concertSeatList.length,
-      seats: concertSeatList.map((seat) => ({
+      total: concertSeatList?.length,
+      seats: concertSeatList?.map((seat) => ({
         id: seat.id,
         seatNum: seat.seat_number,
         price: seat.price,
