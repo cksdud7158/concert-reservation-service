@@ -6,17 +6,18 @@ export class ConcertScheduleEntity {
   creat_at: Date;
   update_at: Date;
   date: Date;
-  concert?: ConcertEntity;
-  seats?: ConcertSeatEntity[];
-  constructor(args: {
-    id?: number;
-    creat_at?: Date;
-    update_at?: Date;
-    date: Date;
-    concert?: ConcertEntity;
-
-    seats?: ConcertSeatEntity[];
-  }) {
+  concert: ConcertEntity;
+  seats: ConcertSeatEntity[];
+  constructor(
+    args: Partial<{
+      id: number;
+      creat_at: Date;
+      update_at: Date;
+      date: Date;
+      concert: ConcertEntity;
+      seats: ConcertSeatEntity[];
+    }>,
+  ) {
     Object.assign(this, args);
   }
 }

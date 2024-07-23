@@ -10,15 +10,17 @@ export class PaymentEntity {
   status: PaymentStatus;
   tickets: TicketEntity[];
   user: UserEntity;
-  constructor(args: {
-    id?: number;
-    creat_at?: Date;
-    update_at?: Date;
-    price: number;
-    status: PaymentStatus;
-    tickets?: TicketEntity[];
-    user?: UserEntity;
-  }) {
+  constructor(
+    args: Partial<{
+      id: number;
+      creat_at: Date;
+      update_at: Date;
+      price: number;
+      status: PaymentStatus;
+      tickets: TicketEntity[];
+      user: UserEntity;
+    }>,
+  ) {
     Object.assign(this, args);
   }
 }
