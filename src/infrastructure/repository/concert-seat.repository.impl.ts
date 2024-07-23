@@ -63,8 +63,8 @@ export class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
         id: In(seatIds),
         status: ConcertScheduleStatus.SALE,
       },
-      relations: {
-        schedule: true,
+      lock: {
+        mode: "pessimistic_write",
       },
     });
 
@@ -106,7 +106,6 @@ export class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
     concertSeat: ConcertSeatEntity,
     _manager?: EntityManager,
   ): Promise<void> {
-    console.log(concertSeat.version);
     const manager = _manager ?? this.concertSeat.manager;
     const res = await manager
       .createQueryBuilder(ConcertSeat, "seat")
@@ -115,10 +114,8 @@ export class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
         status: concertSeat.status,
         price: concertSeat.price,
         seat_number: concertSeat.seat_number,
-        schedule: concertSeat.schedule,
       })
       .where("id = :id", { id: concertSeat.id })
-      .andWhere("version = :version", { version: concertSeat.version }) // 버전 비교
       .execute();
 
     if (res.affected === 0) {
