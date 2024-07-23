@@ -11,8 +11,8 @@ class PaymentMapper {
       update_at: payment.update_at,
       price: payment.price,
       status: payment.status,
-      tickets: payment.tickets.map((ticket) => TicketMapper.toDomain(ticket)),
-      user: UserMapper.toDomain(payment.user),
+      tickets: payment.tickets?.map((ticket) => TicketMapper.toDomain(ticket)),
+      user: payment.user ? UserMapper.toDomain(payment.user) : null,
     });
   }
 }

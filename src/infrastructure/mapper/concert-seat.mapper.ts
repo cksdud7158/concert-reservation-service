@@ -11,7 +11,9 @@ class ConcertSeatMapper {
       status: concertSeat.status,
       price: concertSeat.price,
       seat_number: concertSeat.seat_number,
-      schedule: ConcertScheduleMapper.toDomain(concertSeat.schedule),
+      schedule: concertSeat.schedule
+        ? ConcertScheduleMapper.toDomain(concertSeat.schedule)
+        : null,
     });
   }
 }

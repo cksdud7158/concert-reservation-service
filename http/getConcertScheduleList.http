@@ -1,2 +1,3 @@
 # 콘서트 예약 가능 날짜 조회 API
-GET localhost:3000/concerts/1/schedules
+GET localhost:3000/concerts/35/schedules
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjgsImlhdCI6MTcyMTY5MDcyMCwiZXhwIjoxNzIxNjk3OTIwfQ.lYNSNk4UrdbEiVINhbOVbZuVRXvogyidzPp3PHzLjjk

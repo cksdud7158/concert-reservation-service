@@ -9,7 +9,7 @@ import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
 import { Ticket } from "@app/infrastructure/entity/ticket.entity";
 import { ConcertService } from "@app/domain/service/concert/concert.service";
 import ConcertSeatStatus from "@app/domain/enum/concert-seat-status.enum";
-import { ReserveConcertUseCase } from "@app/application/use-case/reservation/reserve-concert/reserve-concert.use-case";
+import { ReserveConcertUseCase } from "@app/application/use-case/reservation/reserve-concert.use-case";
 
 describe("ReserveConcertUseCase", () => {
   let app: INestApplication;

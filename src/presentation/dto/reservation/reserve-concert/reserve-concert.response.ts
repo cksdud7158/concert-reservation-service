@@ -48,8 +48,8 @@ export class ReserveConcertResponse {
 
   static toResponse(ticketList: TicketEntity[]): ReserveConcertResponse {
     return {
-      total: ticketList.length,
-      tickets: ticketList.map((ticket) => {
+      total: ticketList?.length,
+      tickets: ticketList?.map((ticket) => {
         return {
           id: ticket.id,
           status: ticket.status,

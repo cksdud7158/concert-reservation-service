@@ -6,7 +6,7 @@ import WaitingQueueEntity from "@app/domain/entity/waiting-queue.entity";
 export class GetWaitingStatusUseCase {
   constructor(@Inject() private readonly tokenService: TokenService) {}
 
-  async execute(userId: number): Promise<WaitingQueueEntity> {
-    return await this.tokenService.getWaitingQueue(userId);
+  async execute(id: number): Promise<WaitingQueueEntity> {
+    return await this.tokenService.getWaitingQueue(id);
   }
 }

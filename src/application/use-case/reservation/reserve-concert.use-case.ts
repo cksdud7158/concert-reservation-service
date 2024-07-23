@@ -3,7 +3,6 @@ import { ReservationService } from "@app/domain/service/reservation/reservation.
 import { ConcertService } from "@app/domain/service/concert/concert.service";
 import ConcertSeatStatus from "@app/domain/enum/concert-seat-status.enum";
 import { DataSource } from "typeorm";
-import { TokenService } from "@app/domain/service/token/token.service";
 import { TicketEntity } from "@app/domain/entity/ticket.entity";
 
 @Injectable()
@@ -11,7 +10,6 @@ export class ReserveConcertUseCase {
   constructor(
     @Inject() private readonly reservationService: ReservationService,
     @Inject() private readonly concertService: ConcertService,
-    @Inject() private readonly tokenService: TokenService,
     private readonly dataSource: DataSource,
   ) {}
 
@@ -42,9 +40,6 @@ export class ReserveConcertUseCase {
           seatIds,
           manager,
         );
-
-        // 대기열 만료 처리
-        await this.tokenService.changeToExpired(userId, manager);
 
         return ticketList;
       });
