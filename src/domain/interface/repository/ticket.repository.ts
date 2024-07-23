@@ -4,13 +4,10 @@ import { TicketEntity } from "@app/domain/entity/ticket.entity";
 export const TicketRepositorySymbol = Symbol.for("TicketRepository");
 
 export interface TicketRepository {
-  insert(
-    userId: number,
-    concertId: number,
-    concertScheduleId: number,
-    seatIds: number[],
+  save(
+    tickets: TicketEntity[],
     _manager?: EntityManager,
-  ): Promise<number[]>;
+  ): Promise<TicketEntity[]>;
 
   findByIds(
     ticketIds: number[],

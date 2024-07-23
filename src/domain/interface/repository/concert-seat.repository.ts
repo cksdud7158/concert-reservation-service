@@ -28,4 +28,9 @@ export interface ConcertSeatRepository {
     seatIds: number[],
     _manager?: EntityManager,
   ): Promise<ConcertSeatEntity[]>;
+
+  update(
+    concertSeat: ConcertSeatEntity,
+    _manager?: EntityManager,
+  ): Promise<void>;
 }

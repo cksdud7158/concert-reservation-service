@@ -1,4 +1,9 @@
-import { BadRequestException, Inject, Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from "@nestjs/common";
 import {
   ConcertScheduleRepository,
   ConcertScheduleRepositorySymbol,
@@ -11,8 +16,7 @@ import {
   ConcertRepository,
   ConcertRepositorySymbol,
 } from "@app/domain/interface/repository/concert.repository";
-import ConcertSeatStatus from "@app/domain/enum/concert-seat-status.enum";
-import { EntityManager } from "typeorm";
+import { EntityManager, OptimisticLockVersionMismatchError } from "typeorm";
 import { ConcertScheduleEntity } from "@app/domain/entity/concert-schedule.entity";
 import { ConcertEntity } from "@app/domain/entity/concert.entity";
 import { ConcertSeatEntity } from "@app/domain/entity/concert-seat.entity";
@@ -34,21 +38,34 @@ export class ConcertService {
   }
 
   //좌석들의 판매 가능 상태 조회
-  async checkSaleSeat(seatIds: number[]): Promise<void> {
+  async checkSaleSeat(
+    seatIds: number[],
+    _manager?: EntityManager,
+  ): Promise<ConcertSeatEntity[]> {
     const concertSeatList =
-      await this.concertSeatRepository.findByIdAndStatusSale(seatIds);
+      await this.concertSeatRepository.findByIdAndStatusSale(seatIds, _manager);
     if (seatIds.length !== concertSeatList.length) {
       throw new BadRequestException("이미 판매된 좌석입니다.");
     }
+
+    return concertSeatList;
   }
 
   // 좌석들의 판매 상태 변경
-  async changeStatus(
-    seatIds: number[],
-    status: ConcertSeatStatus,
+  async changeSeatStatus(
+    concertSeatEntities: ConcertSeatEntity[],
     _manager?: EntityManager,
   ): Promise<void> {
-    await this.concertSeatRepository.updateStatus(seatIds, status, _manager);
+    try {
+      concertSeatEntities.forEach((seat) =>
+        this.concertSeatRepository.update(seat, _manager),
+      );
+    } catch (e) {
+      if (e instanceof OptimisticLockVersionMismatchError) {
+        throw new BadRequestException("Update failed due to version conflict");
+      }
+      throw new InternalServerErrorException(e);
+    }
   }
 
   // 일정 리스트 조회
@@ -65,10 +82,15 @@ export class ConcertService {
   }
 
   // 구매 가능 여부 체크
-  async checkExpiredTime(seatIds: number[]): Promise<void> {
+  async checkExpiredTime(
+    seatIds: number[],
+    _manager?: EntityManager,
+  ): Promise<void> {
     // 5분이 지났는가 확인
-    const seatList =
-      await this.concertSeatRepository.findByExpiredTime(seatIds);
+    const seatList = await this.concertSeatRepository.findByExpiredTime(
+      seatIds,
+      _manager,
+    );
 
     // 지났으면 SALE 로 변경 및 에러 처리
     if (seatList.length) {

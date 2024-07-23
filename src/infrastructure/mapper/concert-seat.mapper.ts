@@ -14,6 +14,7 @@ class ConcertSeatMapper {
       schedule: concertSeat.schedule
         ? ConcertScheduleMapper.toDomain(concertSeat.schedule)
         : null,
+      version: concertSeat.version,
     });
   }
 }

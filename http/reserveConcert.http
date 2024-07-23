@@ -1,11 +1,11 @@
 # 콘서트 좌석 예매 API
 POST localhost:3000/reservation
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjgsImlhdCI6MTcyMTY5MDcyMCwiZXhwIjoxNzIxNjk3OTIwfQ.lYNSNk4UrdbEiVINhbOVbZuVRXvogyidzPp3PHzLjjk
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEwLCJpYXQiOjE3MjE3NDMwNTIsImV4cCI6MTcyMTc1MDI1Mn0.qQFFp30fJSOZJDeKlTCe1pZ2DIc_5oHm5UxHpbp53T8
 Content-Type: application/json
 
 {
   "userId": 1,
   "concertId":35,
   "concertScheduleId": 35,
-  "seatIds":[33]
+  "seatIds":[1]
 }

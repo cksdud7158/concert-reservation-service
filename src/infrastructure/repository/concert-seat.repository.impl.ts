@@ -108,7 +108,7 @@ export class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
   ): Promise<void> {
     console.log(concertSeat.version);
     const manager = _manager ?? this.concertSeat.manager;
-    await manager
+    const res = await manager
       .createQueryBuilder(ConcertSeat, "seat")
       .update(ConcertSeat)
       .set({
@@ -120,5 +120,11 @@ export class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
       .where("id = :id", { id: concertSeat.id })
       .andWhere("version = :version", { version: concertSeat.version }) // 버전 비교
       .execute();
+
+    if (res.affected === 0) {
+      throw new Error(
+        "Update failed due to version mismatch or user not found",
+      );
+    }
   }
 }

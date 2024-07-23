@@ -13,29 +13,14 @@ export class TicketRepositoryImpl implements TicketRepository {
     private readonly ticket: Repository<Ticket>,
   ) {}
 
-  async insert(
-    userId: number,
-    concertId: number,
-    concertScheduleId: number,
-    seatIds: number[],
+  async save(
+    tickets: TicketEntity[],
     _manager?: EntityManager,
-  ): Promise<number[]> {
-    const tickets = seatIds.map((seatId) => ({
-      user: { id: userId },
-      schedule: { id: concertScheduleId },
-      seat: { id: seatId },
-      concert: { id: concertId },
-    }));
-
+  ): Promise<TicketEntity[]> {
     const manager = _manager ?? this.ticket.manager;
-    const res = await manager
-      .createQueryBuilder()
-      .insert()
-      .into(Ticket)
-      .values(tickets)
-      .execute();
+    const entities = await manager.save(Ticket, tickets);
 
-    return res.identifiers.map((val) => val.id);
+    return entities.map((entity) => TicketMapper.toDomain(entity));
   }
 
   async findByIds(

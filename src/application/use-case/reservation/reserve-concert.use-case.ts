@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { ReservationService } from "@app/domain/service/reservation/reservation.service";
 import { ConcertService } from "@app/domain/service/concert/concert.service";
-import ConcertSeatStatus from "@app/domain/enum/concert-seat-status.enum";
+import ConcertScheduleStatus from "@app/domain/enum/concert-seat-status.enum";
 import { DataSource } from "typeorm";
 import { TicketEntity } from "@app/domain/entity/ticket.entity";
 
@@ -19,18 +19,19 @@ export class ReserveConcertUseCase {
     concertScheduleId: number,
     seatIds: number[],
   ): Promise<TicketEntity[]> {
-    // 판매 가능 여부 체크
-    await this.concertService.checkSaleSeat(seatIds);
-
     return await this.dataSource
       .createEntityManager()
       .transaction(async (manager) => {
-        // Pending 상태로 변경
-        await this.concertService.changeStatus(
+        // 판매 가능 여부 체크
+        const concertSeatList = await this.concertService.checkSaleSeat(
           seatIds,
-          ConcertSeatStatus.PENDING,
           manager,
         );
+        concertSeatList.forEach((seat) => {
+          seat.status = ConcertScheduleStatus.PENDING;
+        });
+        // Pending 상태로 변경
+        await this.concertService.changeSeatStatus(concertSeatList, manager);
 
         // 티켓 발행
         const ticketList = await this.reservationService.makeTickets(

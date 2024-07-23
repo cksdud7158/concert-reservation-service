@@ -6,6 +6,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  VersionColumn,
 } from "typeorm";
 import { ConcertSchedule } from "@app/infrastructure/entity/concert-schedule.entity";
 import ConcertScheduleStatus from "@app/domain/enum/concert-seat-status.enum";
@@ -44,4 +45,7 @@ export class ConcertSeat {
 
   @Column({ type: "integer", nullable: false })
   seat_number: number;
+
+  @VersionColumn()
+  version: number;
 }
