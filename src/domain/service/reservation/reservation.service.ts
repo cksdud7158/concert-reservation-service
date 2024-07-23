@@ -6,6 +6,10 @@ import {
 } from "@app/domain/interface/repository/ticket.repository";
 import { EntityManager } from "typeorm";
 import { TicketEntity } from "@app/domain/entity/ticket.entity";
+import { UserEntity } from "@app/domain/entity/user.entity";
+import { ConcertEntity } from "@app/domain/entity/concert.entity";
+import { ConcertSeatEntity } from "@app/domain/entity/concert-seat.entity";
+import { ConcertScheduleEntity } from "@app/domain/entity/concert-schedule.entity";
 
 @Injectable()
 export class ReservationService {
@@ -22,21 +26,17 @@ export class ReservationService {
     _manager?: EntityManager,
   ): Promise<TicketEntity[]> {
     // 티켓 여러개 만들기
-    const ticketIds = await this.ticketRepository.insert(
-      userId,
-      concertId,
-      concertScheduleId,
-      seatIds,
-      _manager,
+    let ticketList = seatIds.map(
+      (seatId) =>
+        new TicketEntity({
+          user: new UserEntity({ id: userId }),
+          concert: new ConcertEntity({ id: concertId }),
+          seat: new ConcertSeatEntity({ id: seatId }),
+          schedule: new ConcertScheduleEntity({ id: concertScheduleId }),
+        }),
     );
 
-    // 해당 seat pending 처리
-
-    // 티켓 리스트 조회
-    const ticketList = await this.ticketRepository.findByIds(
-      ticketIds,
-      _manager,
-    );
+    ticketList = await this.ticketRepository.save(ticketList, _manager);
 
     return ticketList;
   }
@@ -44,10 +44,12 @@ export class ReservationService {
   async getTicketList(
     userId: number,
     ticketIds: number[],
+    _manager?: EntityManager,
   ): Promise<TicketEntity[]> {
     const ticketList = await this.ticketRepository.findByIdsAndUserId(
       userId,
       ticketIds,
+      _manager,
     );
 
     if (ticketList.length !== ticketIds.length) {
