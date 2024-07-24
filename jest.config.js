@@ -13,4 +13,5 @@ module.exports = {
   testEnvironment: "node",
   maxWorkers: 1,
   setupFilesAfterEnv: ["<rootDir>/mock/config/jest-setup.ts"],
+  detectOpenHandles: true,
 };
