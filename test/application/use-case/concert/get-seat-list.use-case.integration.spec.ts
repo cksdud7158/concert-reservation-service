@@ -1,12 +1,12 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { GetSeatListUseCase } from "@app/application/use-case/concert/get-seat-list/get-seat-list.use-case";
 import { INestApplication } from "@nestjs/common";
 import { DataSource } from "typeorm";
 import { Concert } from "@app/infrastructure/entity/concert.entity";
 import { ConcertSchedule } from "@app/infrastructure/entity/concert-schedule.entity";
 import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
-import ConcertScheduleStatus from "@app/infrastructure/enum/concert-seat-status.enum";
-import { mockAppModule } from "../../../../mock/App.module";
+import ConcertScheduleStatus from "@app/domain/enum/concert-seat-status.enum";
+import { mockAppModule } from "../../../mock/App.module";
+import { GetSeatListUseCase } from "@app/application/use-case/concert/get-seat-list.use-case";
 
 describe("GetSeatListUseCase", () => {
   let app: INestApplication;
