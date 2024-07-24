@@ -63,9 +63,6 @@ export class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
         id: In(seatIds),
         status: ConcertScheduleStatus.SALE,
       },
-      lock: {
-        mode: "pessimistic_write",
-      },
     });
 
     return entities.map((seat) => ConcertSeatMapper.toDomain(seat));

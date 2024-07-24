@@ -9,11 +9,17 @@ import { ConcertModule } from "@app/module/concert/concert.module";
 import { TokenModule } from "@app/module/token/token.module";
 import ticketProvider from "@app/module/provider/ticket.provider";
 import { ReserveConcertUseCase } from "@app/application/use-case/reservation/reserve-concert.use-case";
+import { RedisModule } from "@app/module/redis/redis.module";
 
 @Module({
   controllers: [ReservationController],
   providers: [ReserveConcertUseCase, ReservationService, ticketProvider],
-  imports: [TypeOrmModule.forFeature([Ticket]), ConcertModule, TokenModule],
+  imports: [
+    TypeOrmModule.forFeature([Ticket]),
+    ConcertModule,
+    TokenModule,
+    RedisModule,
+  ],
   exports: [
     ReservationService,
     {
