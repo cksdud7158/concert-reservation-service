@@ -81,7 +81,7 @@ describe("ReserveConcertUseCase", () => {
       expect(res[0].status).toBe(TicketStatus.PENDING);
     });
 
-    it("ReserveConcertUseCase 동시성 테스트(낙관적 락)", async () => {
+    it("ReserveConcertUseCase 동시성 테스트", async () => {
       // given
 
       const requests = userList.map((user) => {
