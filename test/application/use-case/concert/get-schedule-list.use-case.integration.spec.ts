@@ -1,11 +1,11 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { GetScheduleListUseCase } from "@app/application/use-case/concert/get-schedule-list/get-schedule-list.use-case";
 import { INestApplication } from "@nestjs/common";
 import { DataSource } from "typeorm";
 import { Concert } from "@app/infrastructure/entity/concert.entity";
 import { ConcertSchedule } from "@app/infrastructure/entity/concert-schedule.entity";
 import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
-import { mockAppModule } from "../../../../mock/App.module";
+import { mockAppModule } from "../../../mock/App.module";
+import { GetScheduleListUseCase } from "@app/application/use-case/concert/get-schedule-list.use-case";
 
 describe("GetScheduleListUseCase", () => {
   let app: INestApplication;
