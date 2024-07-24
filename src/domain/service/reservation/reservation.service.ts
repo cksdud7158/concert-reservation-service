@@ -1,10 +1,15 @@
-import { BadRequestException, Inject, Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from "@nestjs/common";
 
 import {
   TicketRepository,
   TicketRepositorySymbol,
 } from "@app/domain/interface/repository/ticket.repository";
-import { EntityManager } from "typeorm";
+import { EntityManager, OptimisticLockVersionMismatchError } from "typeorm";
 import { TicketEntity } from "@app/domain/entity/ticket.entity";
 import { UserEntity } from "@app/domain/entity/user.entity";
 import { ConcertEntity } from "@app/domain/entity/concert.entity";
@@ -46,16 +51,30 @@ export class ReservationService {
     ticketIds: number[],
     _manager?: EntityManager,
   ): Promise<TicketEntity[]> {
-    const ticketList = await this.ticketRepository.findByIdsAndUserId(
-      userId,
-      ticketIds,
-      _manager,
-    );
+    const ticketList =
+      await this.ticketRepository.findByIdsAndUserIdWithPending(
+        userId,
+        ticketIds,
+        _manager,
+      );
 
     if (ticketList.length !== ticketIds.length) {
       throw new BadRequestException("잘못된 요청입니다.");
     }
 
     return ticketList;
+  }
+
+  async changeStatus(tickets: TicketEntity[], _manager?: EntityManager) {
+    try {
+      tickets.forEach((ticket) =>
+        this.ticketRepository.updateStatus(ticket, _manager),
+      );
+    } catch (e) {
+      if (e instanceof OptimisticLockVersionMismatchError) {
+        throw new BadRequestException("Update failed due to version conflict");
+      }
+      throw new InternalServerErrorException(e);
+    }
   }
 }

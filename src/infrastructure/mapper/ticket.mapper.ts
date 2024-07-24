@@ -18,6 +18,7 @@ class TicketMapper {
         : null,
       concert: ticket.concert ? ConcertMapper.toDomain(ticket.concert) : null,
       user: ticket.user ? UserMapper.toDomain(ticket.user) : null,
+      version: ticket.version,
     });
   }
 }

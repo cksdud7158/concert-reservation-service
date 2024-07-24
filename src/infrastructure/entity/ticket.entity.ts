@@ -6,6 +6,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  VersionColumn,
 } from "typeorm";
 import TicketStatus from "@app/domain/enum/ticket-status.enum";
 import { User } from "@app/infrastructure/entity/user.entity";
@@ -58,4 +59,7 @@ export class Ticket {
   })
   @JoinColumn()
   concert: Concert;
+
+  @VersionColumn()
+  version: number;
 }
