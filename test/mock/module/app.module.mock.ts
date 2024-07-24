@@ -7,6 +7,7 @@ import { ConcertModule } from "@app/module/concert/concert.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { UserModule } from "@app/module/user/user.module";
 import { ReservationModule } from "@app/module/reservation/reservation.module";
+import { RedisModule } from "@app/module/redis/redis.module";
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { ReservationModule } from "@app/module/reservation/reservation.module";
     ReservationModule,
     UserModule,
     PaymentModule,
+    RedisModule,
     TypeOrmModule.forRoot(typeormConfigMock),
   ],
   controllers: [AppController],
