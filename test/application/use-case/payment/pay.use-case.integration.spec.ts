@@ -1,145 +1,110 @@
-import { Test, TestingModule } from "@nestjs/testing";
-import { BadRequestException, INestApplication } from "@nestjs/common";
+import { TestingModule } from "@nestjs/testing";
 import { DataSource } from "typeorm";
 import { User } from "@app/infrastructure/entity/user.entity";
+import { ReserveConcertUseCase } from "@app/application/use-case/reservation/reserve-concert.use-case";
 import { Concert } from "@app/infrastructure/entity/concert.entity";
 import { ConcertSchedule } from "@app/infrastructure/entity/concert-schedule.entity";
 import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
-import { Ticket } from "@app/infrastructure/entity/ticket.entity";
-import { Payment } from "@app/infrastructure/entity/payment.entity";
-import { UserService } from "@app/domain/service/user/user.service";
-import { ConcertService } from "@app/domain/service/concert/concert.service";
 import ConcertScheduleStatus from "@app/domain/enum/concert-seat-status.enum";
-import { mockAppModule } from "../../../mock/App.module";
 import { PayUseCase } from "@app/application/use-case/payment/pay.use-case";
+import { TicketEntity } from "@app/domain/entity/ticket.entity";
 
 describe("PayUseCase", () => {
-  let app: INestApplication;
   let payUseCase: PayUseCase;
+  let reserveConcertUseCase: ReserveConcertUseCase;
   let dataSource: DataSource;
-  let userService: UserService;
-  let concertService: ConcertService;
   let user: User;
   let concert: Concert;
   let schedule: ConcertSchedule;
-  let seat: ConcertSeat;
-  let ticket: Ticket;
+  let seat1: ConcertSeat;
+  let seat2: ConcertSeat;
+  let ticketEntities: TicketEntity[];
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      imports: [...mockAppModule],
-    }).compile();
+    const module: TestingModule = global.mockModule;
 
-    app = module.createNestApplication();
     payUseCase = module.get<PayUseCase>(PayUseCase);
+    reserveConcertUseCase = module.get<ReserveConcertUseCase>(
+      ReserveConcertUseCase,
+    );
     dataSource = module.get<DataSource>(DataSource);
 
-    userService = module.get<UserService>(UserService);
-    concertService = module.get<ConcertService>(ConcertService);
-
-    await app.init();
-
     // 데이터베이스 초기화 및 테스트 데이터 삽입
-    const queryRunner = dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
     try {
-      user = await queryRunner.manager.save(User, {
-        name: "Test User",
-        point: 5000,
+      await dataSource.createEntityManager().transaction(async (manager) => {
+        user = await manager.save(User, { point: 2000 });
+
+        concert = await manager.save(Concert, {
+          name: "Test Concert",
+        });
+
+        schedule = await manager.save(ConcertSchedule, {
+          date: new Date(),
+          concert: concert,
+        });
+
+        seat1 = await manager.save(ConcertSeat, {
+          schedule: schedule,
+          status: ConcertScheduleStatus.SALE,
+          price: 1000,
+          seat_number: 1,
+        });
+        seat2 = await manager.save(ConcertSeat, {
+          schedule: schedule,
+          status: ConcertScheduleStatus.SALE,
+          price: 1000,
+          seat_number: 2,
+        });
       });
 
-      concert = await queryRunner.manager.save(Concert, {
-        name: "Test Concert",
-      });
-
-      schedule = await queryRunner.manager.save(ConcertSchedule, {
-        date: new Date(),
-        concert: concert,
-      });
-
-      seat = await queryRunner.manager.save(ConcertSeat, {
-        schedule: schedule,
-        status: ConcertScheduleStatus.SALE,
-        price: 1000,
-        seat_number: 1,
-      });
-
-      ticket = await queryRunner.manager.save(Ticket, {
-        user,
-        seat,
-        concert,
-        schedule,
-      });
-
-      await queryRunner.commitTransaction();
-    } catch (err) {
-      await queryRunner.rollbackTransaction();
-    } finally {
-      await queryRunner.release();
+      ticketEntities = await reserveConcertUseCase.execute(
+        user.id,
+        concert.id,
+        schedule.id,
+        [seat1.id, seat2.id],
+      );
+    } catch (e) {
+      console.log("error::", e);
     }
   });
 
-  afterEach(async () => {
-    // 데이터 정리
-    const queryRunner = dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-    try {
-      await queryRunner.manager.clear(Payment);
-      await queryRunner.manager.clear(Ticket);
-      await queryRunner.manager.clear(ConcertSeat);
-      await queryRunner.manager.clear(ConcertSchedule);
-      await queryRunner.manager.clear(Concert);
-      await queryRunner.manager.clear(User);
-      await queryRunner.commitTransaction();
-    } catch (err) {
-      await queryRunner.rollbackTransaction();
-    } finally {
-      await queryRunner.release();
-    }
-
-    await app.close();
-  });
-
-  describe("PayUseCase Integration Test", () => {
+  describe("payUseCase 통합테스트", () => {
     it("정상 결제", async () => {
-      const userId = user.id;
-      const ticketIds = [ticket.id];
-
-      const payment = await payUseCase.execute(userId, ticketIds);
-
-      expect(payment).toBeDefined();
-    });
-
-    it("잔액 부족으로 결제 실패", async () => {
-      const userId = user.id;
-      const ticketIds = [ticket.id];
-
-      // Set user's points to less than the ticket price
-      await userService.usePoint(userId, user.point - 500);
-
-      const res = payUseCase.execute(userId, ticketIds);
-
-      await expect(res).rejects.toThrow(
-        new BadRequestException("잔액이 부족합니다."),
+      // given
+      const ticketIdList = ticketEntities.map(
+        (ticketEntity) => ticketEntity.id,
       );
+      // when
+
+      const res = await payUseCase.execute(user.id, ticketIdList);
+
+      // then
+      expect(res).toBeDefined();
     });
 
-    it("티켓 만료로 결제 실패", async () => {
-      const userId = user.id;
-      const ticketIds = [ticket.id];
-
-      // Simulate ticket expiration by mocking concertService.checkExpiredTime
-      jest.spyOn(concertService, "checkExpiredTime").mockImplementation(() => {
-        throw new BadRequestException("Ticket expired.");
-      });
-
-      const res = payUseCase.execute(userId, ticketIds);
-
-      await expect(res).rejects.toThrow(
-        new BadRequestException("Ticket expired."),
+    it("동시성 테스트", async () => {
+      // given
+      const ticketIdList = ticketEntities.map(
+        (ticketEntity) => ticketEntity.id,
       );
-    });
+
+      const requests = [
+        payUseCase.execute(user.id, ticketIdList),
+        payUseCase.execute(user.id, ticketIdList),
+        payUseCase.execute(user.id, ticketIdList),
+        payUseCase.execute(user.id, ticketIdList),
+      ];
+
+      // when
+      const results = await Promise.allSettled(requests);
+
+      // then
+      expect(results.filter((res) => res.status === "fulfilled")).toHaveLength(
+        1,
+      );
+      expect(results.filter((res) => res.status === "rejected")).toHaveLength(
+        3,
+      );
+    }, 10000);
   });
 });

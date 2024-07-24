@@ -16,10 +16,15 @@ import {
   ConcertRepository,
   ConcertRepositorySymbol,
 } from "@app/domain/interface/repository/concert.repository";
-import { EntityManager, OptimisticLockVersionMismatchError } from "typeorm";
+import {
+  DataSource,
+  EntityManager,
+  OptimisticLockVersionMismatchError,
+} from "typeorm";
 import { ConcertScheduleEntity } from "@app/domain/entity/concert-schedule.entity";
 import { ConcertEntity } from "@app/domain/entity/concert.entity";
 import { ConcertSeatEntity } from "@app/domain/entity/concert-seat.entity";
+import ConcertScheduleStatus from "@app/domain/enum/concert-seat-status.enum";
 
 @Injectable()
 export class ConcertService {
@@ -30,6 +35,7 @@ export class ConcertService {
     private readonly concertScheduleRepository: ConcertScheduleRepository,
     @Inject(ConcertSeatRepositorySymbol)
     private readonly concertSeatRepository: ConcertSeatRepository,
+    private readonly dataSource: DataSource,
   ) {}
 
   // 콘서트 목록 조회
@@ -94,6 +100,15 @@ export class ConcertService {
 
     // 지났으면 SALE 로 변경 및 에러 처리
     if (seatList.length) {
+      await this.dataSource
+        .createEntityManager()
+        .transaction(async (manager) => {
+          await this.concertSeatRepository.updateStatus(
+            seatIds,
+            ConcertScheduleStatus.SALE,
+            manager,
+          );
+        });
       throw new BadRequestException("5분이 지나 구매가 불가능합니다.");
     }
   }

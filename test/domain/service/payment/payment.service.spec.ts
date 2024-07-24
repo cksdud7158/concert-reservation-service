@@ -4,9 +4,9 @@ import {
   PaymentRepository,
   PaymentRepositorySymbol,
 } from "@app/domain/interface/repository/payment.repository";
-import { Payment } from "@app/infrastructure/entity/payment.entity";
 import PaymentStatus from "@app/domain/enum/payment-status.enum";
 import { mockPaymentProvider } from "../../../mock/repositroy-mocking/payment-repository.mock";
+import { PaymentEntity } from "@app/domain/entity/payment.entity";
 
 describe("PaymentService", () => {
   let service: PaymentService;
@@ -33,17 +33,16 @@ describe("PaymentService", () => {
       const ticketIds = [1, 2];
       const price = 1000;
 
-      const payment: Partial<Payment> = {
+      const payment = new PaymentEntity({
         id: 1,
         creat_at: undefined,
         update_at: undefined,
         price: 10000,
         status: PaymentStatus.PAID,
         tickets: [],
-      };
+      });
 
       //when
-      //
       jest.spyOn(paymentRepository, "findOneById").mockResolvedValue(payment);
       const res = await service.pay(userId, ticketIds, price);
 

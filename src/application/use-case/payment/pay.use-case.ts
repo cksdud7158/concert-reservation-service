@@ -22,7 +22,7 @@ export class PayUseCase {
     return await this.dataSource
       .createEntityManager()
       .transaction(async (manager) => {
-        // 티켓 조회
+        // PENDING 상태 티켓 조회
         const ticketList = await this.reservationService.getTicketList(
           userId,
           ticketIds,
@@ -38,6 +38,9 @@ export class PayUseCase {
         await this.userService.usePoint(userId, totalPrice, manager);
 
         const seatList = ticketList.map((ticket) => ticket.seat);
+
+        // ticket AVAILABLE 로 변경
+        await this.reservationService.changeStatus(ticketList, manager);
 
         // 좌석 판매 완료로 변경
         await this.concertService.changeSeatStatus(seatList, manager);
