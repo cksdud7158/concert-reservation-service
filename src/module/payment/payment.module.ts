@@ -13,7 +13,6 @@ import { PayUseCase } from "@app/application/use-case/payment/pay.use-case";
 @Module({
   controllers: [PaymentController],
   providers: [PayUseCase, PaymentService, paymentProvider],
-
   imports: [
     TypeOrmModule.forFeature([Payment]),
     ReservationModule,

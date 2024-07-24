@@ -1,6 +1,6 @@
 # 콘서트 좌석 예매 API
 POST localhost:3000/reservation
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEwLCJpYXQiOjE3MjE3NDMwNTIsImV4cCI6MTcyMTc1MDI1Mn0.qQFFp30fJSOZJDeKlTCe1pZ2DIc_5oHm5UxHpbp53T8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEyLCJpYXQiOjE3MjE4MjMwNjAsImV4cCI6MTcyMTgzMDI2MH0.bW7Rcle2SEQKj8OiWnMeCVBpGP9ipDZQ-6UtaqxrE2w
 Content-Type: application/json
 
 {
