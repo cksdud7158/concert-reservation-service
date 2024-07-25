@@ -1,5 +1,4 @@
 import { EntityManager } from "typeorm";
-import ConcertSeatStatus from "@app/domain/enum/concert-seat-status.enum";
 import { ConcertSeatEntity } from "@app/domain/entity/concert-seat.entity";
 
 export const ConcertSeatRepositorySymbol = Symbol.for("ConcertSeatRepository");
@@ -19,8 +18,7 @@ export interface ConcertSeatRepository {
   ): Promise<ConcertSeatEntity[]>;
 
   updateStatus(
-    seatIds: number[],
-    status: ConcertSeatStatus,
+    seat: ConcertSeatEntity,
     _manager?: EntityManager,
   ): Promise<void>;
 

@@ -4,7 +4,6 @@ import { EntityManager, In, Repository } from "typeorm";
 import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
 import { ConcertSeatRepository } from "@app/domain/interface/repository/concert-seat.repository";
 import ConcertScheduleStatus from "@app/domain/enum/concert-seat-status.enum";
-import ConcertSeatStatus from "@app/domain/enum/concert-seat-status.enum";
 import { ConcertSeatEntity } from "@app/domain/entity/concert-seat.entity";
 import ConcertSeatMapper from "@app/infrastructure/mapper/concert-seat.mapper";
 
@@ -69,17 +68,25 @@ export class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
   }
 
   async updateStatus(
-    seatIds: number[],
-    status: ConcertSeatStatus,
+    concertSeat: ConcertSeatEntity,
     _manager?: EntityManager,
   ): Promise<void> {
     const manager = _manager ?? this.concertSeat.manager;
-    await manager
-      .createQueryBuilder()
+    const res = await manager
+      .createQueryBuilder(ConcertSeat, "seat")
       .update(ConcertSeat)
-      .set({ status: status })
-      .where("id IN (:...seatIds)", { seatIds: seatIds })
+      .set({
+        status: concertSeat.status,
+      })
+      .where("id = :id", { id: concertSeat.id })
+      .andWhere("version = :version", { version: concertSeat.version }) // 버전 비교
       .execute();
+
+    if (res.affected === 0) {
+      throw new Error(
+        "Update failed due to version mismatch or user not found",
+      );
+    }
   }
 
   async findByExpiredTime(
