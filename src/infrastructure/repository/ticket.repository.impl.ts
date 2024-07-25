@@ -79,21 +79,21 @@ export class TicketRepositoryImpl implements TicketRepository {
   }
 
   async updateStatus(
-    tickets: TicketEntity[],
+    ticket: TicketEntity,
     _manager?: EntityManager,
   ): Promise<void> {
-    const ticketIds = tickets.map((ticket) => ticket.id);
     const manager = _manager ?? this.ticket.manager;
     const res = await manager
       .createQueryBuilder(Ticket, "ticket")
       .update(Ticket)
       .set({
-        status: tickets[0].status,
+        status: ticket.status,
       })
-      .where("ticket.id IN (:...ticketIds)", { ticketIds })
+      .where("id = :id", { id: ticket.id })
+      .andWhere("version = :version", { version: ticket.version }) // 버전 비교
       .execute();
 
-    if (res.affected != tickets.length) {
+    if (res.affected === 0) {
       throw new Error(
         "Update failed due to version mismatch or user not found",
       );
