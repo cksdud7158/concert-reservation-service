@@ -13,7 +13,6 @@ export interface TicketRepository {
     ticketIds: number[],
     _manager?: EntityManager,
   ): Promise<TicketEntity[]>;
-
   findByIdsAndUserIdWithPending(
     userId: number,
     ticketIds: number[],

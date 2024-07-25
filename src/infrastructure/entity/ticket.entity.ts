@@ -60,6 +60,7 @@ export class Ticket {
   @JoinColumn()
   concert: Concert;
 
+
   @VersionColumn()
   version: number;
 }

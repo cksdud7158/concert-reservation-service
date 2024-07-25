@@ -28,6 +28,11 @@ export class ReserveConcertUseCase {
           manager,
         );
 
+        // pending 으로 상태 변경
+        concertSeatList.forEach((seat) => {
+          seat.status = ConcertScheduleStatus.PENDING;
+        });
+
         // Pending 상태로 변경 업데이트
         await this.concertService.changeSeatStatus(
           concertSeatList,
