@@ -13,6 +13,7 @@ import { winstoneConfig } from "@app/config/winstone/winstone.config";
 import { APP_INTERCEPTOR } from "@nestjs/core";
 import { LoggingInterceptor } from "@app/presentation/interceptor/logging/logging.interceptor";
 import { ScheduleModule } from "@nestjs/schedule";
+import { RedisModule } from "@app/module/redis/redis.module";
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { ScheduleModule } from "@nestjs/schedule";
     ReservationModule,
     UserModule,
     PaymentModule,
+    RedisModule,
     TypeOrmModule.forRoot(typeORMConfig),
     WinstonModule.forRoot(winstoneConfig),
     ScheduleModule.forRoot(),

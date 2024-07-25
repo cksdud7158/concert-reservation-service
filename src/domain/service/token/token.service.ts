@@ -10,21 +10,22 @@ import {
   WaitingQueueRepositorySymbol,
 } from "../../interface/repository/waiting-queue.repository";
 import { EntityManager } from "typeorm";
-import WaitingQueueStatus from "@app/infrastructure/enum/waiting-queue-status.enum";
-import { WaitingQueue } from "@app/infrastructure/entity/waiting-queue.entity";
+import WaitingQueueStatus from "@app/domain/enum/waiting-queue-status.enum";
 import WaitingQueuesEntity from "@app/domain/entity/waiting-queues.entity";
+import WaitingQueueEntity from "@app/domain/entity/waiting-queue.entity";
 
 @Injectable()
 export class TokenService {
   constructor(
-    @Inject() private readonly jwtService: JwtService,
+    private readonly jwtService: JwtService,
     @Inject(WaitingQueueRepositorySymbol)
     private readonly waitingQueueRepository: WaitingQueueRepository,
   ) {}
 
   async getToken(userId: number, _manager?: EntityManager): Promise<string> {
-    // 대기열 상태 정리
-    const waitingQueuesEntity = await this.checkWaitingQueues(_manager);
+    // 만료 상태 아닌 목록 조회
+    const waitingQueuesEntity =
+      await this.waitingQueueRepository.findByNotExpiredStatus(_manager);
 
     // 기존 queue 에 해당 유저가 활성 상태로 있으면 만료 상태로 변경
     const waitingQueueIdList = waitingQueuesEntity.findByUserId(userId);
@@ -45,13 +46,13 @@ export class TokenService {
       ? 0
       : waitingQueuesEntity.getPendingStatusLength() + 1;
 
-    let waitingQueue = {
+    let waitingQueue = new WaitingQueueEntity({
       user_id: userId,
+      orderNum: orderNum,
       status: isAvailable
         ? WaitingQueueStatus.AVAILABLE
         : WaitingQueueStatus.PENDING,
-      orderNum: orderNum,
-    } as WaitingQueue;
+    });
 
     // 해당 상태로 테이블 insert
     waitingQueue = await this.waitingQueueRepository.save(
@@ -76,7 +77,7 @@ export class TokenService {
     }
 
     // 이용 가능 상태면 update_at 업데이트
-    waitingQueue.update_at = new Date();
+    waitingQueue.updateUpdateAt(new Date());
     waitingQueue = await this.waitingQueueRepository.save(
       waitingQueue,
       _manager,
@@ -117,5 +118,13 @@ export class TokenService {
       WaitingQueueStatus.EXPIRED,
       _manager,
     );
+  }
+
+  // 토큰 정보 조회
+  async getWaitingQueue(
+    id: number,
+    _manager?: EntityManager,
+  ): Promise<WaitingQueueEntity> {
+    return await this.waitingQueueRepository.findOneById(id, _manager);
   }
 }

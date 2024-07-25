@@ -4,11 +4,11 @@ import { IdPipe } from "@app/presentation/pipe/id.pipe";
 import { GetSeatListResponse } from "@app/presentation/dto/concert/get-seat-list/get-seat-list.response";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { ApiTag } from "@app/config/swagger/api-tag-enum";
-import { GetSeatListUseCase } from "@app/application/use-case/concert/get-seat-list/get-seat-list.use-case";
-import { GetScheduleListUseCase } from "@app/application/use-case/concert/get-schedule-list/get-schedule-list.use-case";
-import { GetConcertListUseCase } from "@app/application/use-case/concert/get-concert-list/get-concert-list.use-case";
 import { GetConcertListResponse } from "@app/presentation/dto/concert/get-concert-list/get-concert-list.response";
 import { TokenGuard } from "@app/presentation/guard/token.guard";
+import { GetConcertListUseCase } from "@app/application/use-case/concert/get-concert-list.use-case";
+import { GetScheduleListUseCase } from "@app/application/use-case/concert/get-schedule-list.use-case";
+import { GetSeatListUseCase } from "@app/application/use-case/concert/get-seat-list.use-case";
 
 @Controller("concerts")
 @ApiTags(ApiTag.Concert)
@@ -40,7 +40,7 @@ export class ConcertController {
   }
 
   @ApiOperation({ summary: "콘서트 좌석 정보 조회 API" })
-  @Get("/schedules/:concertScheduleId/seats")
+  @Get("/:concertId/schedules/:concertScheduleId/seats")
   @UseGuards(TokenGuard)
   async getSeatList(
     @Param("concertScheduleId", IdPipe) concertScheduleId: number,

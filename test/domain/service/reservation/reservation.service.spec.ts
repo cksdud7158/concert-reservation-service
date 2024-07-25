@@ -6,10 +6,10 @@ import {
 import { ReservationService } from "@app/domain/service/reservation/reservation.service";
 import { Ticket } from "@app/infrastructure/entity/ticket.entity";
 import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
-import TicketStatus from "@app/infrastructure/enum/ticket-status.enum";
+import TicketStatus from "@app/domain/enum/ticket-status.enum";
 import { Concert } from "@app/infrastructure/entity/concert.entity";
 import { ConcertSchedule } from "@app/infrastructure/entity/concert-schedule.entity";
-import ConcertSeatStatus from "@app/infrastructure/enum/concert-seat-status.enum";
+import ConcertSeatStatus from "@app/domain/enum/concert-seat-status.enum";
 import { User } from "@app/infrastructure/entity/user.entity";
 import { mockTicketProvider } from "../../../mock/repositroy-mocking/ticket-repository.mock";
 

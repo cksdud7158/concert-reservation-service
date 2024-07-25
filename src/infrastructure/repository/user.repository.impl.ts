@@ -4,6 +4,8 @@ import { InjectRepository } from "@nestjs/typeorm";
 import PointEntity from "@app/domain/entity/point.entity";
 import { EntityManager, Repository } from "typeorm";
 import { Injectable } from "@nestjs/common";
+import { UserEntity } from "@app/domain/entity/user.entity";
+import UserMapper from "@app/infrastructure/mapper/user.mapper";
 
 @Injectable()
 export class UserRepositoryImpl implements UserRepository {
@@ -12,7 +14,10 @@ export class UserRepositoryImpl implements UserRepository {
     private readonly user: Repository<User>,
   ) {}
 
-  async findOneById(userId: number, _manager?: EntityManager): Promise<User> {
+  async findOneById(
+    userId: number,
+    _manager?: EntityManager,
+  ): Promise<UserEntity> {
     const manager = _manager ?? this.user.manager;
     const entity = await manager.findOne(User, {
       where: {
@@ -20,7 +25,7 @@ export class UserRepositoryImpl implements UserRepository {
       },
     });
 
-    return entity;
+    return UserMapper.toDomain(entity);
   }
 
   async findOnePointById(

@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import ConcertScheduleStatus from "@app/infrastructure/enum/concert-seat-status.enum";
-import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
+import ConcertScheduleStatus from "@app/domain/enum/concert-seat-status.enum";
+import { ConcertSeatEntity } from "@app/domain/entity/concert-seat.entity";
 
 const seatsExample = [
   {
@@ -23,12 +23,10 @@ export class GetSeatListResponse {
     price: number;
   }[];
 
-  static toResponse(
-    concertSeatList: Partial<ConcertSeat>[],
-  ): GetSeatListResponse {
+  static toResponse(concertSeatList: ConcertSeatEntity[]): GetSeatListResponse {
     return {
-      total: concertSeatList.length,
-      seats: concertSeatList.map((seat) => ({
+      total: concertSeatList?.length,
+      seats: concertSeatList?.map((seat) => ({
         id: seat.id,
         seatNum: seat.seat_number,
         price: seat.price,

@@ -4,7 +4,9 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { WaitingQueueRepository } from "@app/domain/interface/repository/waiting-queue.repository";
 import { WaitingQueue } from "@app/infrastructure/entity/waiting-queue.entity";
 import WaitingQueuesEntity from "@app/domain/entity/waiting-queues.entity";
-import WaitingQueueStatus from "@app/infrastructure/enum/waiting-queue-status.enum";
+import WaitingQueueStatus from "@app/domain/enum/waiting-queue-status.enum";
+import WaitingQueueEntity from "@app/domain/entity/waiting-queue.entity";
+import WaitingQueueMapper from "@app/infrastructure/mapper/waiting-queue.mapper";
 
 @Injectable()
 export class WaitingQueueRepositoryImpl implements WaitingQueueRepository {
@@ -16,11 +18,11 @@ export class WaitingQueueRepositoryImpl implements WaitingQueueRepository {
   async save(
     waitingQueue: WaitingQueue,
     _manager?: EntityManager,
-  ): Promise<WaitingQueue> {
+  ): Promise<WaitingQueueEntity> {
     const manager = _manager ?? this.waitingQueue.manager;
     const entity = await manager.save(WaitingQueue, waitingQueue);
 
-    return entity;
+    return WaitingQueueMapper.toDomain(entity);
   }
 
   async findByNotExpiredStatus(
@@ -31,7 +33,9 @@ export class WaitingQueueRepositoryImpl implements WaitingQueueRepository {
       status: Not(WaitingQueueStatus.EXPIRED),
     });
 
-    return new WaitingQueuesEntity(entity);
+    return new WaitingQueuesEntity(
+      entity.map((val) => WaitingQueueMapper.toDomain(val)),
+    );
   }
 
   async updateStatusToExpired(
@@ -50,11 +54,11 @@ export class WaitingQueueRepositoryImpl implements WaitingQueueRepository {
   async findOneById(
     id: number,
     _manager?: EntityManager,
-  ): Promise<WaitingQueue> {
+  ): Promise<WaitingQueueEntity> {
     const manager = _manager ?? this.waitingQueue.manager;
-    const entity = manager.findOneBy(WaitingQueue, { id: id });
+    const entity = await manager.findOneBy(WaitingQueue, { id: id });
 
-    return entity;
+    return WaitingQueueMapper.toDomain(entity);
   }
 
   async updateEntities(

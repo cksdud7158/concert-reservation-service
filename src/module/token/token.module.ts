@@ -7,17 +7,23 @@ import { TokenController } from "@app/presentation/controller/token/token.contro
 import key from "@app/config/token/key";
 import { TokenService } from "@app/domain/service/token/token.service";
 import waitingQueueProvider from "@app/module/provider/waiting-queue.provider";
-import { GetTokenUseCase } from "@app/application/use-case/token/get-token/get-token.use-case";
+import { GetWaitingStatusUseCase } from "@app/application/use-case/token/get-waiting-status.use-case";
+import { GetTokenUseCase } from "@app/application/use-case/token/get-token.use-case";
 
 @Module({
   controllers: [TokenController],
-  providers: [GetTokenUseCase, TokenService, waitingQueueProvider],
+  providers: [
+    GetTokenUseCase,
+    GetWaitingStatusUseCase,
+    TokenService,
+    waitingQueueProvider,
+  ],
   imports: [
     UserModule,
     JwtModule.register({
       global: true,
       secret: key,
-      signOptions: { expiresIn: "15m" },
+      signOptions: { expiresIn: "2h" },
     }),
     TypeOrmModule.forFeature([WaitingQueue]),
   ],

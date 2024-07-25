@@ -3,8 +3,8 @@ import {
   PaymentRepository,
   PaymentRepositorySymbol,
 } from "@app/domain/interface/repository/payment.repository";
-import { Payment } from "@app/infrastructure/entity/payment.entity";
 import { EntityManager } from "typeorm";
+import { PaymentEntity } from "@app/domain/entity/payment.entity";
 
 @Injectable()
 export class PaymentService {
@@ -19,7 +19,7 @@ export class PaymentService {
     ticketIds: number[],
     price: number,
     _manager?: EntityManager,
-  ): Promise<Partial<Payment>> {
+  ): Promise<PaymentEntity> {
     const paymentId = await this.paymentRepository.insert(
       userId,
       ticketIds,

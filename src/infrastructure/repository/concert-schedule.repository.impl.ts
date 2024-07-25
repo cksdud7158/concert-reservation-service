@@ -3,6 +3,8 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { EntityManager, Repository } from "typeorm";
 import { ConcertScheduleRepository } from "@app/domain/interface/repository/concert-schedule.repository";
 import { ConcertSchedule } from "@app/infrastructure/entity/concert-schedule.entity";
+import { ConcertScheduleEntity } from "@app/domain/entity/concert-schedule.entity";
+import ConcertScheduleMapper from "@app/infrastructure/mapper/concert-schedule.mapper";
 
 @Injectable()
 export class ConcertScheduleRepositoryImpl
@@ -16,9 +18,9 @@ export class ConcertScheduleRepositoryImpl
   async findById(
     concertId: number,
     _manager?: EntityManager,
-  ): Promise<ConcertSchedule[]> {
+  ): Promise<ConcertScheduleEntity[]> {
     const manager = _manager ?? this.concertSchedule.manager;
-    const entity = await manager.find(ConcertSchedule, {
+    const entities = await manager.find(ConcertSchedule, {
       where: {
         concert: {
           id: concertId,
@@ -26,6 +28,6 @@ export class ConcertScheduleRepositoryImpl
       },
     });
 
-    return entity;
+    return entities.map((schedule) => ConcertScheduleMapper.toDomain(schedule));
   }
 }

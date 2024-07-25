@@ -1,21 +1,27 @@
 import { EntityManager } from "typeorm";
-import { Ticket } from "@app/infrastructure/entity/ticket.entity";
+import { TicketEntity } from "@app/domain/entity/ticket.entity";
 
 export const TicketRepositorySymbol = Symbol.for("TicketRepository");
 
 export interface TicketRepository {
-  insert(
-    userId: number,
-    concertId: number,
-    concertScheduleId: number,
-    seatIds: number[],
+  save(
+    tickets: TicketEntity[],
     _manager?: EntityManager,
-  ): Promise<number[]>;
+  ): Promise<TicketEntity[]>;
 
-  findByIds(ticketIds: number[], _manager?: EntityManager): Promise<Ticket[]>;
-  findByIdsAndUserId(
+  findByIds(
+    ticketIds: number[],
+    _manager?: EntityManager,
+  ): Promise<TicketEntity[]>;
+
+  findByIdsAndUserIdWithPending(
     userId: number,
     ticketIds: number[],
     _manager?: EntityManager,
-  ): Promise<Ticket[]>;
+  ): Promise<TicketEntity[]>;
+
+  updateStatus(
+    tickets: TicketEntity[],
+    _manager?: EntityManager,
+  ): Promise<void>;
 }

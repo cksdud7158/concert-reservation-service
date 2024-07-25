@@ -1,0 +1,3 @@
+# 토큰 발급 API
+GET localhost:3000/token/waiting-status
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjgsImlhdCI6MTcyMTY5MDcyMCwiZXhwIjoxNzIxNjk3OTIwfQ.lYNSNk4UrdbEiVINhbOVbZuVRXvogyidzPp3PHzLjjk

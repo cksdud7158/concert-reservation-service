@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import PaymentStatus from "@app/infrastructure/enum/payment-status.enum";
+import PaymentStatus from "@app/domain/enum/payment-status.enum";
 import { Ticket } from "@app/infrastructure/entity/ticket.entity";
 import { User } from "@app/infrastructure/entity/user.entity";
 
@@ -37,12 +37,12 @@ export class Payment {
     nullable: false,
   })
   @JoinColumn()
-  tickets: Partial<Ticket[]>;
+  tickets: Ticket[];
 
   @ManyToOne(() => User, (user) => user.id, {
     createForeignKeyConstraints: false,
     nullable: false,
   })
   @JoinColumn()
-  user: Partial<User>;
+  user: User;
 }

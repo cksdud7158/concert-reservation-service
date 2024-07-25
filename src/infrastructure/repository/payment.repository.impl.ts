@@ -4,6 +4,8 @@ import { Injectable } from "@nestjs/common";
 import { PaymentRepository } from "@app/domain/interface/repository/payment.repository";
 import { Payment } from "@app/infrastructure/entity/payment.entity";
 import { Ticket } from "@app/infrastructure/entity/ticket.entity";
+import { PaymentEntity } from "@app/domain/entity/payment.entity";
+import PaymentMapper from "@app/infrastructure/mapper/payment.mapper";
 
 @Injectable()
 export class PaymentRepositoryImpl implements PaymentRepository {
@@ -40,14 +42,17 @@ export class PaymentRepositoryImpl implements PaymentRepository {
   async findOneById(
     paymentId: number,
     _manager?: EntityManager,
-  ): Promise<Partial<Payment>> {
+  ): Promise<PaymentEntity> {
     const manager = _manager ?? this.payment.manager;
     const entity = await manager.findOne(Payment, {
+      relations: {
+        user: true,
+      },
       where: {
         id: paymentId,
       },
     });
 
-    return entity;
+    return PaymentMapper.toDomain(entity);
   }
 }

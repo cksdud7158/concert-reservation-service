@@ -1,14 +1,14 @@
-import { WaitingQueue } from "@app/infrastructure/entity/waiting-queue.entity";
-import WaitingQueueStatus from "@app/infrastructure/enum/waiting-queue-status.enum";
+import WaitingQueueStatus from "@app/domain/enum/waiting-queue-status.enum";
+import WaitingQueueEntity from "@app/domain/entity/waiting-queue.entity";
 
 class WaitingQueuesEntity {
-  constructor(private _waitingQueueList: WaitingQueue[]) {}
+  constructor(private _waitingQueueList: WaitingQueueEntity[]) {}
 
-  get waitingQueueList(): WaitingQueue[] {
+  get waitingQueueList(): WaitingQueueEntity[] {
     return this._waitingQueueList;
   }
 
-  set waitingQueueList(value: WaitingQueue[]) {
+  set waitingQueueList(value: WaitingQueueEntity[]) {
     this._waitingQueueList = value;
   }
 
@@ -30,10 +30,7 @@ class WaitingQueuesEntity {
       const afterFifteenMin = waitingQueue.update_at.getTime() + 60 * 1000 * 15;
       // 지났으면 만료 처리
       if (now > afterFifteenMin) {
-        return {
-          ...waitingQueue,
-          status: WaitingQueueStatus.EXPIRED,
-        };
+        waitingQueue.changeStatus(WaitingQueueStatus.EXPIRED);
       }
 
       if (waitingQueue.status === WaitingQueueStatus.AVAILABLE) {
@@ -53,7 +50,7 @@ class WaitingQueuesEntity {
       if (i >= _waitingQueueList.length) break;
 
       if (_waitingQueueList[i].status === WaitingQueueStatus.PENDING) {
-        _waitingQueueList[i].status = WaitingQueueStatus.AVAILABLE;
+        _waitingQueueList[i].changeStatus(WaitingQueueStatus.AVAILABLE);
         availableNum++;
       }
       i++;
@@ -63,7 +60,7 @@ class WaitingQueuesEntity {
     let orderNum = 1;
     for (let j = 0; j < _waitingQueueList.length; j++) {
       if (_waitingQueueList[j].status === WaitingQueueStatus.PENDING) {
-        _waitingQueueList[j].orderNum = orderNum++;
+        _waitingQueueList[j].changeOrderNum(orderNum++);
       }
     }
 

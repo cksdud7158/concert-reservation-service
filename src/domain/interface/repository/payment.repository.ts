@@ -1,5 +1,5 @@
 import { EntityManager } from "typeorm";
-import { Payment } from "@app/infrastructure/entity/payment.entity";
+import { PaymentEntity } from "@app/domain/entity/payment.entity";
 
 export const PaymentRepositorySymbol = Symbol.for("PaymentRepository");
 
@@ -14,5 +14,5 @@ export interface PaymentRepository {
   findOneById(
     paymentId: number,
     _manager?: EntityManager,
-  ): Promise<Partial<Payment>>;
+  ): Promise<PaymentEntity>;
 }
