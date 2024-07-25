@@ -40,7 +40,11 @@ export class ReserveConcertUseCase {
         });
 
         // Pending 상태로 변경 업데이트
-        await this.concertService.changeSeatStatus(concertSeatList, manager);
+        await this.concertService.changeSeatStatus(
+          concertSeatList,
+          ConcertScheduleStatus.PENDING,
+          manager,
+        );
 
         // 티켓 발행
         const ticketList = await this.reservationService.makeTickets(

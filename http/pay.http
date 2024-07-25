@@ -1,9 +1,9 @@
 # 콘서트 좌석 예매 API
 POST localhost:3000/payment
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjgsImlhdCI6MTcyMTY5MDcyMCwiZXhwIjoxNzIxNjk3OTIwfQ.lYNSNk4UrdbEiVINhbOVbZuVRXvogyidzPp3PHzLjjk
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjI1LCJpYXQiOjE3MjE4ODc0ODksImV4cCI6MTcyMTg5NDY4OX0.2wx_HHMzgaOaM1cv1awQ6-EmaeqEDI17V5VVnBGjT0g
 Content-Type: application/json
 
 {
   "userId": 1,
-  "ticketIds":[11]
+  "ticketIds":[7]
 }

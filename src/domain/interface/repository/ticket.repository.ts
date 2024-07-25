@@ -20,5 +20,8 @@ export interface TicketRepository {
     _manager?: EntityManager,
   ): Promise<TicketEntity[]>;
 
-  updateStatus(ticket: TicketEntity, _manager?: EntityManager): Promise<void>;
+  updateStatus(
+    tickets: TicketEntity[],
+    _manager?: EntityManager,
+  ): Promise<void>;
 }
