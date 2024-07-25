@@ -90,35 +90,12 @@ export class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
     const manager = _manager ?? this.concertSeat.manager;
     const entities = await manager
       .createQueryBuilder(ConcertSeat, "seat")
-      .select()
+      .select(["seat.id"])
       .where("id IN (:...seatIds)", { seatIds: seatIds })
       .andWhere("status = :status", { status: ConcertScheduleStatus.PENDING })
       .andWhere("update_at < :date", { date: fiveMinutesAgo.toISOString() })
       .execute();
 
     return entities.map((seat) => ConcertSeatMapper.toDomain(seat));
-  }
-
-  async update(
-    concertSeat: ConcertSeatEntity,
-    _manager?: EntityManager,
-  ): Promise<void> {
-    const manager = _manager ?? this.concertSeat.manager;
-    const res = await manager
-      .createQueryBuilder(ConcertSeat, "seat")
-      .update(ConcertSeat)
-      .set({
-        status: concertSeat.status,
-        price: concertSeat.price,
-        seat_number: concertSeat.seat_number,
-      })
-      .where("id = :id", { id: concertSeat.id })
-      .execute();
-
-    if (res.affected === 0) {
-      throw new Error(
-        "Update failed due to version mismatch or user not found",
-      );
-    }
   }
 }

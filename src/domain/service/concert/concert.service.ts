@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-} from "@nestjs/common";
+import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import {
   ConcertScheduleRepository,
   ConcertScheduleRepositorySymbol,
@@ -16,15 +11,12 @@ import {
   ConcertRepository,
   ConcertRepositorySymbol,
 } from "@app/domain/interface/repository/concert.repository";
-import {
-  DataSource,
-  EntityManager,
-  OptimisticLockVersionMismatchError,
-} from "typeorm";
+import { DataSource, EntityManager } from "typeorm";
 import { ConcertScheduleEntity } from "@app/domain/entity/concert-schedule.entity";
 import { ConcertEntity } from "@app/domain/entity/concert.entity";
 import { ConcertSeatEntity } from "@app/domain/entity/concert-seat.entity";
 import ConcertScheduleStatus from "@app/domain/enum/concert-seat-status.enum";
+import ConcertSeatStatus from "@app/domain/enum/concert-seat-status.enum";
 
 @Injectable()
 export class ConcertService {
@@ -60,18 +52,11 @@ export class ConcertService {
   // 좌석들의 판매 상태 변경
   async changeSeatStatus(
     concertSeatEntities: ConcertSeatEntity[],
+    status: ConcertSeatStatus,
     _manager?: EntityManager,
   ): Promise<void> {
-    try {
-      concertSeatEntities.forEach((seat) =>
-        this.concertSeatRepository.update(seat, _manager),
-      );
-    } catch (e) {
-      if (e instanceof OptimisticLockVersionMismatchError) {
-        throw new BadRequestException("Update failed due to version conflict");
-      }
-      throw new InternalServerErrorException(e);
-    }
+    const seatIds = concertSeatEntities.map((seat) => seat.id);
+    await this.concertSeatRepository.updateStatus(seatIds, status, _manager);
   }
 
   // 일정 리스트 조회
@@ -92,6 +77,7 @@ export class ConcertService {
     seatIds: number[],
     _manager?: EntityManager,
   ): Promise<void> {
+    console.log("checkExpiredTime");
     // 5분이 지났는가 확인
     const seatList = await this.concertSeatRepository.findByExpiredTime(
       seatIds,
@@ -109,6 +95,7 @@ export class ConcertService {
             manager,
           );
         });
+
       throw new BadRequestException("5분이 지나 구매가 불가능합니다.");
     }
   }

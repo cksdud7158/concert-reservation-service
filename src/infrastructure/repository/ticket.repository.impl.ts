@@ -51,40 +51,49 @@ export class TicketRepositoryImpl implements TicketRepository {
   ): Promise<TicketEntity[]> {
     const manager = _manager ?? this.ticket.manager;
 
-    const entities = await manager.find(Ticket, {
-      where: {
-        id: In(ticketIds),
-        status: TicketStatus.PENDING,
-        user: {
-          id: userId,
-        },
-      },
-      relations: {
-        concert: true,
-        schedule: true,
-        seat: true,
-      },
-    });
+    const entities = await manager
+      .createQueryBuilder(Ticket, "ticket")
+      .where("ticket.id IN (:...ticketIds)", { ticketIds })
+      .andWhere("ticket.status = :status", { status: TicketStatus.PENDING })
+      .setLock("pessimistic_write")
+      .getMany();
 
-    return entities.map((ticket) => TicketMapper.toDomain(ticket));
+    // 조인된 테이블의 데이터 별도로 가져오기
+    const detailedTickets = await manager
+      .createQueryBuilder(Ticket, "ticket")
+      .leftJoinAndSelect("ticket.concert", "concert")
+      .leftJoinAndSelect("ticket.schedule", "schedule")
+      .leftJoinAndSelect("ticket.seat", "seat")
+      .leftJoinAndSelect("ticket.user", "user")
+      .where("ticket.id IN (:...ticketIds)", { ticketIds })
+      .andWhere("ticket.status = :status", { status: TicketStatus.PENDING })
+      .getMany();
+
+    return entities.map((ticket, index) => {
+      ticket.concert = detailedTickets[index].concert;
+      ticket.schedule = detailedTickets[index].schedule;
+      ticket.seat = detailedTickets[index].seat;
+      ticket.user = detailedTickets[index].user;
+      return TicketMapper.toDomain(ticket);
+    });
   }
 
   async updateStatus(
-    ticket: TicketEntity,
+    tickets: TicketEntity[],
     _manager?: EntityManager,
   ): Promise<void> {
+    const ticketIds = tickets.map((ticket) => ticket.id);
     const manager = _manager ?? this.ticket.manager;
     const res = await manager
       .createQueryBuilder(Ticket, "ticket")
       .update(Ticket)
       .set({
-        status: ticket.status,
+        status: tickets[0].status,
       })
-      .where("id = :id", { id: ticket.id })
-      .andWhere("version = :version", { version: ticket.version })
+      .where("ticket.id IN (:...ticketIds)", { ticketIds })
       .execute();
 
-    if (res.affected === 0) {
+    if (res.affected != tickets.length) {
       throw new Error(
         "Update failed due to version mismatch or user not found",
       );

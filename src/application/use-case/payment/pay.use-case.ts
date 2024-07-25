@@ -6,6 +6,8 @@ import { ConcertService } from "@app/domain/service/concert/concert.service";
 import { DataSource } from "typeorm";
 import { PaymentEntity } from "@app/domain/entity/payment.entity";
 import { TokenService } from "@app/domain/service/token/token.service";
+import TicketStatus from "@app/domain/enum/ticket-status.enum";
+import ConcertScheduleStatus from "@app/domain/enum/concert-seat-status.enum";
 
 @Injectable()
 export class PayUseCase {
@@ -28,6 +30,14 @@ export class PayUseCase {
           ticketIds,
           manager,
         );
+
+        // ticket AVAILABLE 로 변경
+        await this.reservationService.changeStatus(
+          ticketList,
+          TicketStatus.AVAILABLE,
+          manager,
+        );
+
         const seatIds = ticketList.map((ticket) => ticket.seat.id);
 
         // 5분 지났으면 구매 못함
@@ -39,11 +49,12 @@ export class PayUseCase {
 
         const seatList = ticketList.map((ticket) => ticket.seat);
 
-        // ticket AVAILABLE 로 변경
-        await this.reservationService.changeStatus(ticketList, manager);
-
         // 좌석 판매 완료로 변경
-        await this.concertService.changeSeatStatus(seatList, manager);
+        await this.concertService.changeSeatStatus(
+          seatList,
+          ConcertScheduleStatus.SOLD_OUT,
+          manager,
+        );
 
         // 결제
         const payment = await this.paymentService.pay(

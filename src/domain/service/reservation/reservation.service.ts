@@ -1,20 +1,16 @@
-import {
-  BadRequestException,
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-} from "@nestjs/common";
+import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 
 import {
   TicketRepository,
   TicketRepositorySymbol,
 } from "@app/domain/interface/repository/ticket.repository";
-import { EntityManager, OptimisticLockVersionMismatchError } from "typeorm";
+import { EntityManager } from "typeorm";
 import { TicketEntity } from "@app/domain/entity/ticket.entity";
 import { UserEntity } from "@app/domain/entity/user.entity";
 import { ConcertEntity } from "@app/domain/entity/concert.entity";
 import { ConcertSeatEntity } from "@app/domain/entity/concert-seat.entity";
 import { ConcertScheduleEntity } from "@app/domain/entity/concert-schedule.entity";
+import TicketStatus from "@app/domain/enum/ticket-status.enum";
 
 @Injectable()
 export class ReservationService {
@@ -65,16 +61,12 @@ export class ReservationService {
     return ticketList;
   }
 
-  async changeStatus(tickets: TicketEntity[], _manager?: EntityManager) {
-    try {
-      tickets.forEach((ticket) =>
-        this.ticketRepository.updateStatus(ticket, _manager),
-      );
-    } catch (e) {
-      if (e instanceof OptimisticLockVersionMismatchError) {
-        throw new BadRequestException("Update failed due to version conflict");
-      }
-      throw new InternalServerErrorException(e);
-    }
+  async changeStatus(
+    tickets: TicketEntity[],
+    status: TicketStatus,
+    _manager?: EntityManager,
+  ) {
+    tickets.forEach((ticket) => (ticket.status = status));
+    await this.ticketRepository.updateStatus(tickets, _manager);
   }
 }
