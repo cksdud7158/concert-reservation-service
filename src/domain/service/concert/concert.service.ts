@@ -15,7 +15,6 @@ import { DataSource, EntityManager } from "typeorm";
 import { ConcertScheduleEntity } from "@app/domain/entity/concert-schedule.entity";
 import { ConcertEntity } from "@app/domain/entity/concert.entity";
 import { ConcertSeatEntity } from "@app/domain/entity/concert-seat.entity";
-import ConcertScheduleStatus from "@app/domain/enum/concert-seat-status.enum";
 import ConcertSeatStatus from "@app/domain/enum/concert-seat-status.enum";
 
 @Injectable()
@@ -55,8 +54,10 @@ export class ConcertService {
     status: ConcertSeatStatus,
     _manager?: EntityManager,
   ): Promise<void> {
-    const seatIds = concertSeatEntities.map((seat) => seat.id);
-    await this.concertSeatRepository.updateStatus(seatIds, status, _manager);
+    concertSeatEntities.forEach((seat) => {
+      seat.status = status;
+      this.concertSeatRepository.updateStatus(seat, _manager);
+    });
   }
 
   // 일정 리스트 조회
@@ -89,11 +90,10 @@ export class ConcertService {
       await this.dataSource
         .createEntityManager()
         .transaction(async (manager) => {
-          await this.concertSeatRepository.updateStatus(
-            seatIds,
-            ConcertScheduleStatus.SALE,
-            manager,
-          );
+          seatList.forEach((seat) => {
+            seat.status = ConcertSeatStatus.SALE;
+            this.concertSeatRepository.updateStatus(seat, manager);
+          });
         });
 
       throw new BadRequestException("5분이 지나 구매가 불가능합니다.");

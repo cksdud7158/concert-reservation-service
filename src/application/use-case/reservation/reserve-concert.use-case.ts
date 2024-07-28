@@ -4,14 +4,12 @@ import { ConcertService } from "@app/domain/service/concert/concert.service";
 import ConcertScheduleStatus from "@app/domain/enum/concert-seat-status.enum";
 import { DataSource } from "typeorm";
 import { TicketEntity } from "@app/domain/entity/ticket.entity";
-import { LockService } from "@app/domain/service/redis/redis.service";
 
 @Injectable()
 export class ReserveConcertUseCase {
   constructor(
     @Inject() private readonly reservationService: ReservationService,
     @Inject() private readonly concertService: ConcertService,
-    @Inject() private readonly lockService: LockService,
     private readonly dataSource: DataSource,
   ) {}
 
@@ -21,11 +19,7 @@ export class ReserveConcertUseCase {
     concertScheduleId: number,
     seatIds: number[],
   ): Promise<TicketEntity[]> {
-    const key = `reserve-${concertId}-${concertScheduleId}-${seatIds}`;
-    // 락 획득
-    await this.lockService.acquireLock(key, key);
-
-    const ticketList = await this.dataSource
+    return await this.dataSource
       .createEntityManager()
       .transaction(async (manager) => {
         // 판매 가능 여부 체크
@@ -57,9 +51,5 @@ export class ReserveConcertUseCase {
 
         return ticketList;
       });
-
-    await this.lockService.releaseLock(key);
-
-    return ticketList;
   }
 }

@@ -13,15 +13,11 @@ export interface TicketRepository {
     ticketIds: number[],
     _manager?: EntityManager,
   ): Promise<TicketEntity[]>;
-
   findByIdsAndUserIdWithPending(
     userId: number,
     ticketIds: number[],
     _manager?: EntityManager,
   ): Promise<TicketEntity[]>;
 
-  updateStatus(
-    tickets: TicketEntity[],
-    _manager?: EntityManager,
-  ): Promise<void>;
+  updateStatus(tickets: TicketEntity, _manager?: EntityManager): Promise<void>;
 }

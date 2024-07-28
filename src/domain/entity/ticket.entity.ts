@@ -13,6 +13,7 @@ export class TicketEntity {
   schedule: ConcertScheduleEntity;
   seat: ConcertSeatEntity;
   concert: ConcertEntity;
+  version: number;
 
   constructor(
     args: Partial<{
@@ -24,6 +25,8 @@ export class TicketEntity {
       schedule: ConcertScheduleEntity;
       seat: ConcertSeatEntity;
       concert: ConcertEntity;
+      version: number;
+
     }>,
   ) {
     Object.assign(this, args);

@@ -65,8 +65,10 @@ export class ReservationService {
     tickets: TicketEntity[],
     status: TicketStatus,
     _manager?: EntityManager,
-  ) {
-    tickets.forEach((ticket) => (ticket.status = status));
-    await this.ticketRepository.updateStatus(tickets, _manager);
+  ): Promise<void> {
+    tickets.forEach((ticket) => {
+      ticket.status = status;
+      this.ticketRepository.updateStatus(ticket, _manager);
+    });
   }
 }
