@@ -63,16 +63,14 @@ describe("AuthController", () => {
   });
   describe("/token/waiting-status (GET)", () => {
     it("상태 조회 성공", async () => {
-      const req = { id: 1 };
+      const req = { user: { sub: 1 } };
 
-      const waitingQueue = new WaitingQueueEntity(
-        1,
-        new Date(),
-        new Date(),
-        1,
-        0,
-        WaitingQueueStatus.AVAILABLE,
-      );
+      const waitingQueue = new WaitingQueueEntity({
+        id: 1,
+        user_id: 1,
+        orderNum: 0,
+        status: WaitingQueueStatus.AVAILABLE,
+      });
 
       jest
         .spyOn(getWaitingStatusUseCase, "execute")
@@ -81,7 +79,9 @@ describe("AuthController", () => {
       const res = await controller.getWaitingStatus(req);
 
       expect(res).toEqual(GetWaitingStatusResponse.toResponse(waitingQueue));
-      expect(getWaitingStatusUseCase.execute).toHaveBeenCalledWith(req.id);
+      expect(getWaitingStatusUseCase.execute).toHaveBeenCalledWith(
+        req.user.sub,
+      );
     });
   });
 });

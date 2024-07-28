@@ -17,6 +17,9 @@ import { mockConcertScheduleProvider } from "../../../mock/repositroy-mocking/co
 import { datasourceProvider } from "../../../mock/lib/datasource.mock";
 import { PayUseCase } from "@app/application/use-case/payment/pay.use-case";
 import { PaymentEntity } from "@app/domain/entity/payment.entity";
+import { TokenService } from "@app/domain/service/token/token.service";
+import { JwtService } from "@nestjs/jwt";
+import { mockWaitingQueueProvider } from "../../../mock/repositroy-mocking/waiting-queue-repository.mock";
 
 describe("PaymentController", () => {
   let controller: PaymentController;
@@ -31,6 +34,8 @@ describe("PaymentController", () => {
         ReservationService,
         UserService,
         ConcertService,
+        TokenService,
+        JwtService,
         datasourceProvider,
         mockPaymentProvider,
         mockTicketProvider,
@@ -39,6 +44,7 @@ describe("PaymentController", () => {
         mockConcertProvider,
         mockConcertSeatProvider,
         mockConcertScheduleProvider,
+        mockWaitingQueueProvider,
       ],
     })
       .overrideGuard(TokenGuard)

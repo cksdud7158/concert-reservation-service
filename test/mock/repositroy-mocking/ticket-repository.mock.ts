@@ -1,9 +1,10 @@
 import { TicketRepositorySymbol } from "@app/domain/interface/repository/ticket.repository";
 
 export const mockTicketRepository = {
-  insert: jest.fn(),
+  save: jest.fn(),
   findByIds: jest.fn(),
-  findByIdsAndUserId: jest.fn(),
+  findByIdsAndUserIdWithPending: jest.fn(),
+  updateStatus: jest.fn(),
 };
 
 export const mockTicketProvider = {

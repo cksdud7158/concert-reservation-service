@@ -4,7 +4,6 @@ import {
   ConcertScheduleRepository,
   ConcertScheduleRepositorySymbol,
 } from "@app/domain/interface/repository/concert-schedule.repository";
-import { ConcertSchedule } from "@app/infrastructure/entity/concert-schedule.entity";
 import {
   ConcertSeatRepository,
   ConcertSeatRepositorySymbol,
@@ -21,6 +20,8 @@ import { mockConcertScheduleProvider } from "../../../mock/repositroy-mocking/co
 import { mockConcertSeatProvider } from "../../../mock/repositroy-mocking/concert-seat-repository.mock";
 import { ConcertScheduleEntity } from "@app/domain/entity/concert-schedule.entity";
 import { ConcertEntity } from "@app/domain/entity/concert.entity";
+import { ConcertSeatEntity } from "@app/domain/entity/concert-seat.entity";
+import { datasourceProvider } from "../../../mock/lib/datasource.mock";
 
 describe("ConcertService", () => {
   let service: ConcertService;
@@ -40,6 +41,7 @@ describe("ConcertService", () => {
         mockConcertProvider,
         mockConcertScheduleProvider,
         mockConcertSeatProvider,
+        datasourceProvider,
       ],
     }).compile();
 
@@ -56,6 +58,17 @@ describe("ConcertService", () => {
     id: 1,
     date: date,
   });
+
+  const concertSeatList: ConcertSeat[] = [
+    new ConcertSeatEntity({
+      id: 1,
+      status: ConcertScheduleStatus.SALE,
+      price: 1000,
+      seat_number: 1,
+      creat_at: date,
+      update_at: date,
+    }),
+  ];
 
   describe("콘서트 예약 가능 날짜 조회 method(getScheduleList)", () => {
     it("콘서트 날짜 조회 완료", async () => {
@@ -90,17 +103,6 @@ describe("ConcertService", () => {
   });
 
   describe("좌석들의 판매 가능 상태 조회 method(checkSaleSeat)", () => {
-    const concertSeatList: ConcertSeat[] = [
-      {
-        id: 1,
-        status: ConcertScheduleStatus.SALE,
-        price: 1000,
-        seat_number: 1,
-        creat_at: date,
-        update_at: date,
-        schedule: {} as ConcertSchedule,
-      },
-    ];
     it("좌석들의 판매 가능 상태 조회 완료", async () => {
       // given
 
@@ -130,7 +132,7 @@ describe("ConcertService", () => {
     });
   });
 
-  describe("좌석들의 판매 상태 변경 method(changeStatus)", () => {
+  describe("좌석들의 판매 상태 변경 method(changeSeatStatus)", () => {
     it("좌석들의 판매 상태 변경 완료", async () => {
       // given
 
@@ -138,7 +140,10 @@ describe("ConcertService", () => {
 
       const updateStatus = jest.spyOn(concertSeatRepository, "updateStatus");
 
-      await service.changeStatus([1, 2], ConcertScheduleStatus.SOLD_OUT);
+      await service.changeSeatStatus(
+        concertSeatList,
+        ConcertScheduleStatus.SOLD_OUT,
+      );
 
       //then
       expect(updateStatus).toBeCalled();

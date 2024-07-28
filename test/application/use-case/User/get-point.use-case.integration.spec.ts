@@ -4,6 +4,7 @@ import { DataSource } from "typeorm";
 import { User } from "@app/infrastructure/entity/user.entity";
 import { mockAppModule } from "../../../mock/App.module";
 import { GetPointUseCase } from "@app/application/use-case/user/get-point.use-case";
+import "../../../mock/config/jest-setup";
 
 describe("GetPointUseCase", () => {
   let app: INestApplication;

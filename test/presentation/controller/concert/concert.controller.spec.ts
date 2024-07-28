@@ -15,6 +15,7 @@ import { GetSeatListUseCase } from "@app/application/use-case/concert/get-seat-l
 import { ConcertScheduleEntity } from "@app/domain/entity/concert-schedule.entity";
 import { ConcertEntity } from "@app/domain/entity/concert.entity";
 import { ConcertSeatEntity } from "@app/domain/entity/concert-seat.entity";
+import { datasourceProvider } from "../../../mock/lib/datasource.mock";
 
 describe("ConcertController", () => {
   let controller: ConcertController;
@@ -35,6 +36,7 @@ describe("ConcertController", () => {
         GetSeatListUseCase,
         GetConcertListUseCase,
         ConcertService,
+        datasourceProvider,
         mockConcertProvider,
         mockConcertScheduleProvider,
         mockConcertSeatProvider,
@@ -93,31 +95,23 @@ describe("ConcertController", () => {
   describe("/concerts/dates/{concertDateId}/seats (GET)", () => {
     it("콘서트 좌석 정보 조회 성공", async () => {
       //given
-      const concertSeat: ConcertSeatEntity = {
-        id: 1,
-        creat_at: date,
-        update_at: date,
-        status: ConcertScheduleStatus.SALE,
-        price: 20000,
-        seat_number: 1,
-      };
+      const concertSeatList = [
+        new ConcertSeatEntity({
+          id: 1,
+          creat_at: date,
+          update_at: date,
+          status: ConcertScheduleStatus.SALE,
+          price: 20000,
+          seat_number: 1,
+        }),
+      ];
 
-      const response: GetSeatListResponse = {
-        total: 1,
-        seats: [
-          {
-            id: 1,
-            seatNum: 1,
-            status: ConcertScheduleStatus.SALE,
-            price: 20000,
-          },
-        ],
-      };
+      const response = GetSeatListResponse.toResponse(concertSeatList);
 
       //when
       jest
         .spyOn(getSeatListUseCase, "execute")
-        .mockResolvedValue([concertSeat]);
+        .mockResolvedValue(concertSeatList);
 
       //then
       const res = await controller.getSeatList(concertDateId);

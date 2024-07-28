@@ -46,14 +46,12 @@ describe("TokenService", () => {
       // given
       const token =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInN0YXR1cyI6MCwiaWF0IjoxNzIwMzU0NjU1LCJleHAiOjE3MjAzNTgyNTV9.RoRR1NcQ-TWzWXxMXL2_XlWYB1I8LUlE4TR1doeosOM";
-      const waitingQueue = new WaitingQueueEntity(
-        1,
-        new Date(),
-        new Date(),
-        userId,
-        0,
-        WaitingQueueStatus.AVAILABLE,
-      ) as WaitingQueueEntity;
+      const waitingQueue = new WaitingQueueEntity({
+        id: 1,
+        user_id: userId,
+        orderNum: 0,
+        status: WaitingQueueStatus.AVAILABLE,
+      }) as WaitingQueueEntity;
 
       const waitingQueuesEntity = new WaitingQueuesEntity([waitingQueue]);
       //when

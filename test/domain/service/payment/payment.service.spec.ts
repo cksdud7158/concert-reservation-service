@@ -7,6 +7,7 @@ import {
 import PaymentStatus from "@app/domain/enum/payment-status.enum";
 import { mockPaymentProvider } from "../../../mock/repositroy-mocking/payment-repository.mock";
 import { PaymentEntity } from "@app/domain/entity/payment.entity";
+import { datasourceProvider } from "../../../mock/lib/datasource.mock";
 
 describe("PaymentService", () => {
   let service: PaymentService;
@@ -19,7 +20,7 @@ describe("PaymentService", () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [PaymentService, mockPaymentProvider],
+      providers: [PaymentService, mockPaymentProvider, datasourceProvider],
     }).compile();
 
     service = module.get<PaymentService>(PaymentService);

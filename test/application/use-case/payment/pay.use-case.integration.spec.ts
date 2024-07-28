@@ -1,3 +1,4 @@
+import "../../../mock/config/jest-setup";
 import { TestingModule } from "@nestjs/testing";
 import { DataSource } from "typeorm";
 import { User } from "@app/infrastructure/entity/user.entity";
