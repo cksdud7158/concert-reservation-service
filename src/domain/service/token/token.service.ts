@@ -92,11 +92,24 @@ export class TokenService {
   }
 
   // 토큰 정보 조회
-  async getWaitingQueue(
-    id: number,
-    _manager?: EntityManager,
-  ): Promise<WaitingQueueEntity> {
-    return await this.waitingQueueRepository.findOneById(id, _manager);
+  async getWaitingQueue(userId: number): Promise<string> {
+    let orderNum = 0;
+    let status = WaitingQueueStatus.AVAILABLE;
+
+    // Active tokens 에서 데이터 조회
+    const activeToken = await this.getActiveToken(userId);
+
+    // 없으면 Waiting tokens 에서 순서 조회
+    if (!activeToken) {
+      orderNum = (await this.getOrderNum(userId)) + 1;
+      status = WaitingQueueStatus.PENDING;
+    }
+
+    return this.jwtService.signAsync({
+      userId,
+      orderNum,
+      status,
+    });
   }
 
   private async setActiveToken(userIds: number[]): Promise<void> {

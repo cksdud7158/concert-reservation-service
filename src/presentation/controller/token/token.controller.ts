@@ -36,10 +36,8 @@ export class TokenController {
   @Get("waiting-status")
   @ApiOperation({ summary: "대기 상태 조회 API" })
   @UseGuards(TokenGuard)
-  async getWaitingStatus(@Request() req): Promise<GetWaitingStatusResponse> {
+  async getWaitingStatus(@Request() req): Promise<string> {
     const id = req.user.sub;
-    return GetWaitingStatusResponse.toResponse(
-      await this.getWaitingStatusUseCase.execute(id),
-    );
+    return await this.getWaitingStatusUseCase.execute(id);
   }
 }
