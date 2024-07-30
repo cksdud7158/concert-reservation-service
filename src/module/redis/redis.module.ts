@@ -5,6 +5,6 @@ import { LockService } from "@app/domain/service/redis/redis.service";
 @Global()
 @Module({
   providers: [redisProvider, LockService],
-  exports: [LockService],
+  exports: [LockService, redisProvider],
 })
 export class RedisModule {}

@@ -9,17 +9,22 @@ import { TokenService } from "@app/domain/service/token/token.service";
 import waitingQueueProvider from "@app/module/provider/waiting-queue.provider";
 import { GetWaitingStatusUseCase } from "@app/application/use-case/token/get-waiting-status.use-case";
 import { GetTokenUseCase } from "@app/application/use-case/token/get-token.use-case";
+import { TokenScheduler } from "@app/presentation/schedule/token/token.scheduler";
+import { CheckWaitingQueuesUseCase } from "@app/application/use-case/token/check-waiting-queues.use-case";
+import { RedisModule } from "@app/module/redis/redis.module";
 
 @Module({
   controllers: [TokenController],
   providers: [
     GetTokenUseCase,
     GetWaitingStatusUseCase,
+    CheckWaitingQueuesUseCase,
     TokenService,
     waitingQueueProvider,
   ],
   imports: [
     UserModule,
+    RedisModule,
     JwtModule.register({
       global: true,
       secret: key,

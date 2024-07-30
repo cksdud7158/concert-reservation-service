@@ -20,10 +20,7 @@ export class UserService {
   ) {}
 
   async hasUser(userId: number): Promise<void> {
-    const user = await this.userRepository.findOneById(userId);
-    if (!user) {
-      throw new BadRequestException("없는 유저입니다.");
-    }
+    await this.userRepository.findOneById(userId);
   }
 
   async getPoint(userId: number): Promise<number> {
