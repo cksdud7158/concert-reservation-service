@@ -5,13 +5,7 @@ import {
   InternalServerErrorException,
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
-import {
-  WaitingQueueRepository,
-  WaitingQueueRepositorySymbol,
-} from "@app/domain/interface/repository/waiting-queue.repository";
-import { EntityManager } from "typeorm";
 import WaitingQueueStatus from "@app/domain/enum/waiting-queue-status.enum";
-import WaitingQueueEntity from "@app/domain/entity/waiting-queue.entity";
 import RedisKey from "@app/domain/enum/redis-key.enum";
 import { RedisClientSymbol } from "@app/module/provider/redis.provider";
 import Redis from "ioredis";
@@ -21,8 +15,6 @@ import { PayloadType } from "@app/domain/type/token/payload.type";
 export class TokenService {
   constructor(
     private readonly jwtService: JwtService,
-    @Inject(WaitingQueueRepositorySymbol)
-    private readonly waitingQueueRepository: WaitingQueueRepository,
     @Inject(RedisClientSymbol) private readonly redis: Redis,
   ) {}
 
@@ -83,12 +75,13 @@ export class TokenService {
   }
 
   // 토큰 만료 처리
-  async changeToExpired(userId: number, _manager?: EntityManager) {
-    await this.waitingQueueRepository.updateStatusByUserId(
-      userId,
-      WaitingQueueStatus.EXPIRED,
-      _manager,
-    );
+  async changeToExpired(userId: number): Promise<void> {
+    const activeToken = await this.getToken(userId);
+
+    if (!activeToken) {
+      throw new InternalServerErrorException();
+    }
+    await this.removeActiveToken([activeToken]);
   }
 
   // 토큰 정보 조회
