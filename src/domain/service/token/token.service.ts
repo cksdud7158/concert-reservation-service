@@ -3,7 +3,6 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
-  ServiceUnavailableException,
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import {
@@ -12,7 +11,6 @@ import {
 } from "@app/domain/interface/repository/waiting-queue.repository";
 import { EntityManager } from "typeorm";
 import WaitingQueueStatus from "@app/domain/enum/waiting-queue-status.enum";
-import WaitingQueuesEntity from "@app/domain/entity/waiting-queues.entity";
 import WaitingQueueEntity from "@app/domain/entity/waiting-queue.entity";
 import RedisKey from "@app/domain/enum/redis-key.enum";
 import { RedisClientSymbol } from "@app/module/provider/redis.provider";
@@ -25,7 +23,6 @@ export class TokenService {
     private readonly jwtService: JwtService,
     @Inject(WaitingQueueRepositorySymbol)
     private readonly waitingQueueRepository: WaitingQueueRepository,
-
     @Inject(RedisClientSymbol) private readonly redis: Redis,
   ) {}
 
@@ -74,23 +71,15 @@ export class TokenService {
     await this.updateActiveToken(activeToken);
   }
 
-  // 전체 상태 체크해서 상태 변경(스케쥴용)
-  async checkWaitingQueues(
-    _manager?: EntityManager,
-  ): Promise<WaitingQueuesEntity> {
-    // 만료 상태 아닌 목록 조회
-    const waitingQueuesEntity =
-      await this.waitingQueueRepository.findByNotExpiredStatus(_manager);
+  // 스케쥴용
+  async checkWaitingQueues(): Promise<void> {
+    // active tokens 에서 만료된 토큰 삭제
+    await this.removeExpiredActiveTokens();
 
-    waitingQueuesEntity.checkWaitingQueues();
+    // waiting tokens 에서 일정 인원 active tokens 로 삽입
+    await this.waitingTokensToActiveTokens();
 
-    // 변경 사항 업데이트
-    await this.waitingQueueRepository.updateEntities(
-      waitingQueuesEntity,
-      _manager,
-    );
-
-    return waitingQueuesEntity;
+    return;
   }
 
   // 토큰 만료 처리
@@ -168,5 +157,48 @@ export class TokenService {
 
     const userId = parseInt(token.split("::")[0]);
     await this.setActiveToken([userId]);
+  }
+
+  private async removeExpiredActiveTokens(): Promise<void> {
+    // Active Tokens 데이터 조회
+    const memberList = await this.redis.smembers(RedisKey.ACTIVE_TOKENS);
+
+    if (!memberList.length) return;
+
+    const tenMinutesAgo = Date.now() - 10 * 60 * 1000;
+
+    // 10분 지난 데이터만 필터링
+    const filteredMemberList = memberList.filter((member) => {
+      const [_, timestamp] = member.split("::");
+      // 10분 지났는지 확인
+      return Number(timestamp) < tenMinutesAgo;
+    });
+
+    if (!filteredMemberList.length) return;
+
+    // 해당 데이터 삭제
+    await this.removeActiveToken(filteredMemberList);
+  }
+
+  private async removeWaitingToken(tokens: number[]) {
+    const res = await this.redis.zrem(RedisKey.WAITING_TOKENS, ...tokens);
+    if (!res) {
+      throw new InternalServerErrorException("대기열 토큰 삭제 실패" + tokens);
+    }
+  }
+
+  private async waitingTokensToActiveTokens(): Promise<void> {
+    // Waiting Tokens 50명씩 불러오기
+    const waitingTokens = (
+      await this.redis.zrange(RedisKey.WAITING_TOKENS, 0, 5)
+    ).map((token) => Number(token));
+
+    if (!waitingTokens.length) return;
+
+    // Active Tokens 에 삽입
+    await this.setActiveToken(waitingTokens);
+
+    // Waiting Tokens 에서 삭제
+    await this.removeWaitingToken(waitingTokens);
   }
 }
