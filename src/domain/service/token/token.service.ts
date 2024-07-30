@@ -17,6 +17,7 @@ import WaitingQueueEntity from "@app/domain/entity/waiting-queue.entity";
 import RedisKey from "@app/domain/enum/redis-key.enum";
 import { RedisClientSymbol } from "@app/module/provider/redis.provider";
 import Redis from "ioredis";
+import { PayloadType } from "@app/domain/type/token/payload.type";
 
 @Injectable()
 export class TokenService {
@@ -56,32 +57,21 @@ export class TokenService {
   }
 
   // 이용 가능 여부 확인
-  async isAvailable(id: number, _manager?: EntityManager): Promise<void> {
-    // 데이터 조회
-    let waitingQueue = await this.waitingQueueRepository.findOneById(id);
+  async isAvailable(payload: PayloadType): Promise<void> {
+    // PENDING or EXPIRED 상태면 막기
+    if (payload.status === WaitingQueueStatus.PENDING) {
+      throw new BadRequestException(`대기번호 ${payload.orderNum}번 입니다.`);
+    }
 
-    // 결과가 없거나 EXPIRED 상태면
-    if (
-      !waitingQueue.id ||
-      waitingQueue.status === WaitingQueueStatus.EXPIRED
-    ) {
+    if (payload.status === WaitingQueueStatus.EXPIRED) {
       throw new BadRequestException("만료된 토큰입니다.");
     }
 
-    // 이용 가능 상태면 update_at 업데이트
-    waitingQueue.updateUpdateAt(new Date());
-    waitingQueue = await this.waitingQueueRepository.save(
-      waitingQueue,
-      _manager,
-    );
+    // ActiveTokens 에서 토큰 확인 -> 없으면 만료
+    const activeToken = await this.getActiveToken(payload.userId);
 
-    // 대기 상태면
-    if (waitingQueue.status === WaitingQueueStatus.PENDING) {
-      throw new ServiceUnavailableException(
-        `대기번호 ${waitingQueue.orderNum}번 입니다.`,
-      );
-    }
-    // AVAILABLE 상태면 리턴
+    // 만료 안됐으면 timestamp 업데이트 -> 사용 연장
+    await this.updateActiveToken(activeToken);
   }
 
   // 전체 상태 체크해서 상태 변경(스케쥴용)
@@ -151,5 +141,32 @@ export class TokenService {
 
   private async getOrderNum(userId: number): Promise<number> {
     return this.redis.zrank(RedisKey.WAITING_TOKENS, userId);
+  }
+
+  private async getActiveToken(userId: number): Promise<string> {
+    const memberList = await this.redis.smembers(RedisKey.ACTIVE_TOKENS);
+    const activeToken = memberList.find((member) =>
+      member.startsWith(userId + ""),
+    );
+
+    if (!activeToken) {
+      throw new BadRequestException("만료된 토큰입니다.");
+    }
+
+    return activeToken;
+  }
+
+  private async removeActiveToken(tokens: string[]): Promise<void> {
+    const res = await this.redis.srem(RedisKey.ACTIVE_TOKENS, ...tokens);
+    if (!res) {
+      throw new InternalServerErrorException("액티브 토큰 삭제 실패" + tokens);
+    }
+  }
+
+  private async updateActiveToken(token: string): Promise<void> {
+    await this.removeActiveToken([token]);
+
+    const userId = parseInt(token.split("::")[0]);
+    await this.setActiveToken([userId]);
   }
 }

@@ -31,8 +31,8 @@ export class TokenGuard implements CanActivate {
       secret: key,
     });
 
-    // 내 상태 조회
-    await this.tokenService.isAvailable(payload.sub);
+    // 내 상태 체크
+    await this.tokenService.isAvailable(payload);
 
     request["user"] = payload;
     return true;

@@ -1,19 +1,17 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { JwtService } from "@nestjs/jwt";
-import {
-  WaitingQueueRepository,
-  WaitingQueueRepositorySymbol,
-} from "@app/domain/interface/repository/waiting-queue.repository";
-import WaitingQueuesEntity from "@app/domain/entity/waiting-queues.entity";
 import WaitingQueueStatus from "@app/domain/enum/waiting-queue-status.enum";
 import { TokenService } from "@app/domain/service/token/token.service";
-import { mockWaitingQueueProvider } from "../../../mock/repositroy-mocking/waiting-queue-repository.mock";
 import WaitingQueueEntity from "@app/domain/entity/waiting-queue.entity";
+import { BadRequestException } from "@nestjs/common";
+import { PayloadType } from "@app/domain/type/token/payload.type";
+import { RedisClientSymbol } from "@app/module/provider/redis.provider";
+import Redis from "ioredis";
 
 describe("TokenService", () => {
   let service: TokenService;
   let jwtService: JwtService;
-  let waitingQueueRepository: jest.Mocked<WaitingQueueRepository>;
+  let redis: Redis;
 
   beforeAll(() => {
     // Modern fake timers 사용
@@ -24,11 +22,21 @@ describe("TokenService", () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         TokenService,
-        mockWaitingQueueProvider,
         {
           provide: JwtService,
           useValue: {
             signAsync: jest.fn(),
+          },
+        },
+        {
+          provide: RedisClientSymbol,
+          useValue: {
+            scard: jest.fn(),
+            sadd: jest.fn(),
+            zadd: jest.fn(),
+            zrank: jest.fn(),
+            smembers: jest.fn(),
+            srem: jest.fn(),
           },
         },
       ],
@@ -36,7 +44,7 @@ describe("TokenService", () => {
 
     service = module.get<TokenService>(TokenService);
     jwtService = module.get<JwtService>(JwtService);
-    waitingQueueRepository = module.get(WaitingQueueRepositorySymbol);
+    redis = module.get<Redis>(RedisClientSymbol);
   });
 
   const userId = 1;
@@ -47,20 +55,12 @@ describe("TokenService", () => {
       const token =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInN0YXR1cyI6MCwiaWF0IjoxNzIwMzU0NjU1LCJleHAiOjE3MjAzNTgyNTV9.RoRR1NcQ-TWzWXxMXL2_XlWYB1I8LUlE4TR1doeosOM";
       const waitingQueue = new WaitingQueueEntity({
-        id: 1,
-        user_id: userId,
+        userId: userId,
         orderNum: 0,
         status: WaitingQueueStatus.AVAILABLE,
       }) as WaitingQueueEntity;
 
-      const waitingQueuesEntity = new WaitingQueuesEntity([waitingQueue]);
       //when
-      jest
-        .spyOn(waitingQueueRepository, "findByNotExpiredStatus")
-        .mockResolvedValue(waitingQueuesEntity);
-      jest
-        .spyOn(waitingQueueRepository, "save")
-        .mockResolvedValue(waitingQueue);
       const signAsync = jest
         .spyOn(jwtService, "signAsync")
         .mockResolvedValue(token);
@@ -69,6 +69,46 @@ describe("TokenService", () => {
       //then
       expect(signAsync).toBeCalled();
       expect(res).toBe(token);
+    });
+  });
+
+  describe("이용 가능 여부 확인 (isAvailable)", () => {
+    it("PENDING 상태면 에러 ", async () => {
+      const payload = {
+        userId: 1,
+        orderNum: 1,
+        status: WaitingQueueStatus.PENDING,
+      } as PayloadType;
+
+      await expect(service.isAvailable(payload)).rejects.toThrow(
+        new BadRequestException(`대기번호 ${payload.orderNum}번 입니다.`),
+      );
+    });
+
+    it("토큰 만료시 에러", async () => {
+      const payload = {
+        userId: 1,
+        orderNum: 1,
+        status: WaitingQueueStatus.EXPIRED,
+      } as PayloadType;
+
+      await expect(service.isAvailable(payload)).rejects.toThrow(
+        new BadRequestException("만료된 토큰입니다."),
+      );
+    });
+
+    it("Active Tokens 에 없다면 에러", async () => {
+      const payload = {
+        userId: 1,
+        orderNum: 1,
+        status: WaitingQueueStatus.AVAILABLE,
+      } as PayloadType;
+
+      jest.spyOn(redis, "smembers").mockResolvedValue([]);
+
+      await expect(service.isAvailable(payload)).rejects.toThrow(
+        new BadRequestException("만료된 토큰입니다."),
+      );
     });
   });
 });
