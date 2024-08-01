@@ -11,15 +11,20 @@ import RedisKey from "@app/domain/enum/redis-key.enum";
 
 @Injectable()
 export class WaitingQueueRepositoryImpl implements WaitingQueueRepository {
+  private readonly MEMORY_THRESHOLD = 0.5;
+
   constructor(@Inject(RedisClientSymbol) private readonly redis: Redis) {}
 
-  async getActiveNum(): Promise<number> {
-    const val = await this.redis.get(RedisKey.ACTIVE_NUM);
-    return val ? Number(val) : 0;
-  }
+  async isMemoryUsageHigh(): Promise<boolean> {
+    const info = await this.redis.info("memory");
+    const usedMemory = parseInt(info.match(/used_memory:(\d+)/)[1], 10);
+    const totalMemory = parseInt(
+      info.match(/total_system_memory:(\d+)/)[1],
+      10,
+    );
 
-  async setActiveNum(num: number): Promise<void> {
-    this.redis.set(RedisKey.ACTIVE_NUM, num);
+    const memoryUsageRatio = usedMemory / totalMemory;
+    return memoryUsageRatio > this.MEMORY_THRESHOLD;
   }
 
   async hasActiveUser(userId: number): Promise<boolean> {

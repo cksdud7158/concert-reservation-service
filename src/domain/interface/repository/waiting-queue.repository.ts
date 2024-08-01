@@ -3,8 +3,7 @@ export const WaitingQueueRepositorySymbol = Symbol.for(
 );
 
 export interface WaitingQueueRepository {
-  getActiveNum(): Promise<number>;
-  setActiveNum(num: number): Promise<void>;
+  isMemoryUsageHigh(): Promise<boolean>;
   hasActiveUser(userId: number): Promise<boolean>;
   setActiveUser(userId: number): Promise<void>;
   removeActiveUser(userId: number): Promise<void>;

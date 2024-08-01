@@ -19,13 +19,13 @@ export class TokenService {
     let orderNum = 0;
     let status = WaitingQueueStatus.AVAILABLE;
 
-    // key ActiveNum 에 저장된 num 체크
-    const activeNum = await this.waitingQueueRepository.getActiveNum();
+    // 메모리 사용량 여부에 따라 대기 여부 판단
+    const isMemoryUsageHigh =
+      await this.waitingQueueRepository.isMemoryUsageHigh();
 
     // 일정 숫자 이하면 바로 Active Tokens 에 저장
-    if (activeNum < 4) {
+    if (!isMemoryUsageHigh) {
       await this.waitingQueueRepository.setActiveUser(userId);
-      await this.waitingQueueRepository.setActiveNum(activeNum + 1);
     }
     // 이상이면 Waiting Tokens 에 저장
     else {
@@ -73,12 +73,9 @@ export class TokenService {
 
     if (!userIdList.length) return;
 
-    let activeNum = await this.waitingQueueRepository.getActiveNum();
     // Active user 삽입
     for (const userId of userIdList) {
       await this.waitingQueueRepository.setActiveUser(userId);
-      activeNum++;
-      await this.waitingQueueRepository.setActiveNum(activeNum);
     }
 
     // Waiting users 에서 삭제
@@ -92,6 +89,7 @@ export class TokenService {
 
   // 토큰 리프레쉬
   async refreshToken(user: PayloadType): Promise<string> {
+    //
     // 이용 가능 상태면 TTL 만 연장
     if (user.status === WaitingQueueStatus.AVAILABLE) {
       await this.waitingQueueRepository.setActiveUser(user.userId);
