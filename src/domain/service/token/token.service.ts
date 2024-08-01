@@ -33,12 +33,12 @@ export class TokenService {
 
     // 일정 숫자 이하면 바로 Active Tokens 에 저장
     if (activeNum < 4) {
-      await this.waitingQueueRepository.setActiveData(userId);
+      await this.waitingQueueRepository.setActiveUser(userId);
       await this.waitingQueueRepository.setActiveNum(activeNum + 1);
     }
     // 이상이면 Waiting Tokens 에 저장
     else {
-      await this.waitingQueueRepository.setWaitingData(userId);
+      await this.waitingQueueRepository.setWaitingUser(userId);
       orderNum = (await this.waitingQueueRepository.getWaitingNum(userId)) + 1;
       status = WaitingQueueStatus.PENDING;
     }
@@ -65,21 +65,29 @@ export class TokenService {
     const userId = payload.userId;
 
     // ActiveTokens 에서 토큰 확인 -> 없으면 만료된 것
-    await this.waitingQueueRepository.hasActiveData(userId);
+    await this.waitingQueueRepository.hasActiveUser(userId);
 
     // 만료 안됐으면 TTL 연장
-    await this.waitingQueueRepository.setActiveData(userId);
+    await this.waitingQueueRepository.setActiveUser(userId);
   }
 
-  // 스케쥴용
-  async checkWaitingQueues(): Promise<void> {
-    // active tokens 에서 만료된 토큰 삭제
-    await this.removeExpiredActiveTokens();
+  // 스케쥴용 (waiting 에서 일정 인원 active 로 변경)
+  async changeToActive(): Promise<void> {
+    // Waiting users 50명씩 불러오기
+    const userIdList = await this.waitingQueueRepository.getWaitingUsers(50);
 
-    // waiting tokens 에서 일정 인원 active tokens 로 삽입
-    await this.waitingTokensToActiveTokens();
+    if (!userIdList.length) return;
 
-    return;
+    let activeNum = await this.waitingQueueRepository.getActiveNum();
+    // Active user 삽입
+    for (const userId of userIdList) {
+      await this.waitingQueueRepository.setActiveUser(userId);
+      activeNum++;
+      await this.waitingQueueRepository.setActiveNum(activeNum);
+    }
+
+    // Waiting users 에서 삭제
+    await this.waitingQueueRepository.removeWaitingUsers(userIdList);
   }
 
   // 토큰 만료 처리
@@ -113,26 +121,12 @@ export class TokenService {
     });
   }
 
-  private async setActiveToken(userIds: number[]): Promise<void> {
-    const tokenList = userIds.map((userId) =>
-      [userId, new Date().getTime()].join("::"),
-    );
-
-    const res = await this.redis.sadd(RedisKey.ACTIVE_TOKENS, ...tokenList);
-
-    if (!res) {
-      throw new InternalServerErrorException(
-        "액티브 토큰 추가 실패" + tokenList,
-      );
-    }
-  }
-
   private async getOrderNum(userId: number): Promise<number> {
-    return this.redis.zrank(RedisKey.WAITING_TOKENS, userId);
+    return this.redis.zrank(RedisKey.WAITING_USERS, userId);
   }
 
   private async getActiveToken(userId: number): Promise<string> {
-    const memberList = await this.redis.smembers(RedisKey.ACTIVE_TOKENS);
+    const memberList = await this.redis.smembers(RedisKey.ACTIVE_USERS);
     const activeToken = memberList.find((member) =>
       member.startsWith(userId + ""),
     );
@@ -141,59 +135,9 @@ export class TokenService {
   }
 
   private async removeActiveToken(tokens: string[]): Promise<void> {
-    const res = await this.redis.srem(RedisKey.ACTIVE_TOKENS, ...tokens);
+    const res = await this.redis.srem(RedisKey.ACTIVE_USERS, ...tokens);
     if (!res) {
       throw new InternalServerErrorException("액티브 토큰 삭제 실패" + tokens);
     }
-  }
-
-  private async updateActiveToken(token: string): Promise<void> {
-    await this.removeActiveToken([token]);
-
-    const userId = parseInt(token.split("::")[0]);
-    await this.setActiveToken([userId]);
-  }
-
-  private async removeExpiredActiveTokens(): Promise<void> {
-    // Active Tokens 데이터 조회
-    const memberList = await this.redis.smembers(RedisKey.ACTIVE_TOKENS);
-
-    if (!memberList.length) return;
-
-    const tenMinutesAgo = Date.now() - 10 * 60 * 1000;
-
-    // 10분 지난 데이터만 필터링
-    const filteredMemberList = memberList.filter((member) => {
-      const [_, timestamp] = member.split("::");
-      // 10분 지났는지 확인
-      return Number(timestamp) < tenMinutesAgo;
-    });
-
-    if (!filteredMemberList.length) return;
-
-    // 해당 데이터 삭제
-    await this.removeActiveToken(filteredMemberList);
-  }
-
-  private async removeWaitingToken(tokens: number[]) {
-    const res = await this.redis.zrem(RedisKey.WAITING_TOKENS, ...tokens);
-    if (!res) {
-      throw new InternalServerErrorException("대기열 토큰 삭제 실패" + tokens);
-    }
-  }
-
-  private async waitingTokensToActiveTokens(): Promise<void> {
-    // Waiting Tokens 50명씩 불러오기
-    const waitingTokens = (
-      await this.redis.zrange(RedisKey.WAITING_TOKENS, 0, 5)
-    ).map((token) => Number(token));
-
-    if (!waitingTokens.length) return;
-
-    // Active Tokens 에 삽입
-    await this.setActiveToken(waitingTokens);
-
-    // Waiting Tokens 에서 삭제
-    await this.removeWaitingToken(waitingTokens);
   }
 }

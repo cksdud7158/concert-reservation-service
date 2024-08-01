@@ -6,7 +6,7 @@ import key from "@app/config/token/key";
 import { TokenService } from "@app/domain/service/token/token.service";
 import { GetWaitingStatusUseCase } from "@app/application/use-case/token/get-waiting-status.use-case";
 import { GetTokenUseCase } from "@app/application/use-case/token/get-token.use-case";
-import { CheckWaitingQueuesUseCase } from "@app/application/use-case/token/check-waiting-queues.use-case";
+import { ChangeToActiveQueuesUseCase } from "@app/application/use-case/token/change-to-active-queues.use-case";
 import { RedisModule } from "@app/module/redis/redis.module";
 import WaitingQueueProvider from "@app/module/provider/waiting-queue.provider";
 
@@ -15,7 +15,7 @@ import WaitingQueueProvider from "@app/module/provider/waiting-queue.provider";
   providers: [
     GetTokenUseCase,
     GetWaitingStatusUseCase,
-    CheckWaitingQueuesUseCase,
+    ChangeToActiveQueuesUseCase,
     TokenService,
     WaitingQueueProvider,
   ],

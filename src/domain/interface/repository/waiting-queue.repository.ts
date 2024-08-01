@@ -5,8 +5,10 @@ export const WaitingQueueRepositorySymbol = Symbol.for(
 export interface WaitingQueueRepository {
   getActiveNum(): Promise<number>;
   setActiveNum(num: number): Promise<void>;
-  hasActiveData(userId: number): Promise<void>;
-  setActiveData(userId: number): Promise<void>;
-  setWaitingData(userId: number): Promise<void>;
+  hasActiveUser(userId: number): Promise<void>;
+  setActiveUser(userId: number): Promise<void>;
+  setWaitingUser(userId: number): Promise<void>;
   getWaitingNum(userId: number): Promise<number>;
+  getWaitingUsers(maxNum: number): Promise<number[]>;
+  removeWaitingUsers(userIds: number[]): Promise<void>;
 }

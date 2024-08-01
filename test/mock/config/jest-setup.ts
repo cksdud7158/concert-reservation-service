@@ -30,7 +30,7 @@ beforeAll(async () => {
 afterAll(async () => {
   // 데이터 정리
   await dataSource.dropDatabase();
-  redis.del([RedisKey.ACTIVE_TOKENS, RedisKey.WAITING_TOKENS]);
+  redis.del([RedisKey.ACTIVE_USERS, RedisKey.WAITING_USERS]);
   redis.quit();
   await app.close();
 });

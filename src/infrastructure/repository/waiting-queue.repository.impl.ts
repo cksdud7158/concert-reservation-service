@@ -22,29 +22,29 @@ export class WaitingQueueRepositoryImpl implements WaitingQueueRepository {
     this.redis.set(RedisKey.ACTIVE_NUM, num);
   }
 
-  async hasActiveData(userId: number): Promise<void> {
-    const key = this.getActiveTokenKey(userId);
+  async hasActiveUser(userId: number): Promise<void> {
+    const key = this.getActiveUserKey(userId);
     const res = await this.redis.get(key);
 
     if (!res) {
-      throw new BadRequestException("만료된 토큰입니다.");
+      throw new BadRequestException("만료된 유저입니다.");
     }
   }
 
-  async setActiveData(userId: number): Promise<void> {
-    const key = this.getActiveTokenKey(userId);
+  async setActiveUser(userId: number): Promise<void> {
+    const key = this.getActiveUserKey(userId);
     const res = await this.redis.set(key, userId, "EX", 60 * 15);
 
     if (!res) {
-      throw new InternalServerErrorException("액티브 토큰 추가 실패" + userId);
+      throw new InternalServerErrorException("액티브 유저 추가 실패" + userId);
     }
   }
 
-  async setWaitingData(userId: number): Promise<void> {
+  async setWaitingUser(userId: number): Promise<void> {
     const timestamp = new Date().getTime();
 
     const res = await this.redis.zadd(
-      RedisKey.WAITING_TOKENS,
+      RedisKey.WAITING_USERS,
       "NX",
       timestamp,
       userId,
@@ -56,10 +56,23 @@ export class WaitingQueueRepositoryImpl implements WaitingQueueRepository {
   }
 
   async getWaitingNum(userId: number): Promise<number> {
-    return this.redis.zrank(RedisKey.WAITING_TOKENS, userId);
+    return this.redis.zrank(RedisKey.WAITING_USERS, userId);
   }
 
-  private getActiveTokenKey(userId: number): string {
-    return `${RedisKey.ACTIVE_TOKENS}-${userId}`;
+  async getWaitingUsers(maxNum: number): Promise<number[]> {
+    return (await this.redis.zrange(RedisKey.WAITING_USERS, 0, maxNum)).map(
+      (userId) => Number(userId),
+    );
+  }
+
+  async removeWaitingUsers(userIds: number[]): Promise<void> {
+    const res = await this.redis.zrem(RedisKey.WAITING_USERS, ...userIds);
+    if (!res) {
+      throw new InternalServerErrorException("대기열 유저 삭제 실패" + userIds);
+    }
+  }
+
+  private getActiveUserKey(userId: number): string {
+    return `${RedisKey.ACTIVE_USERS}-${userId}`;
   }
 }
