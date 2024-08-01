@@ -62,11 +62,13 @@ export class TokenService {
       throw new BadRequestException("만료된 토큰입니다.");
     }
 
-    // ActiveTokens 에서 토큰 확인 -> 없으면 만료
-    const activeToken = await this.getActiveToken(payload.userId);
+    const userId = payload.userId;
 
-    // 만료 안됐으면 timestamp 업데이트 -> 사용 연장
-    await this.updateActiveToken(activeToken);
+    // ActiveTokens 에서 토큰 확인 -> 없으면 만료된 것
+    await this.waitingQueueRepository.hasActiveData(userId);
+
+    // 만료 안됐으면 TTL 연장
+    await this.waitingQueueRepository.setActiveData(userId);
   }
 
   // 스케쥴용
@@ -134,10 +136,6 @@ export class TokenService {
     const activeToken = memberList.find((member) =>
       member.startsWith(userId + ""),
     );
-
-    if (!activeToken) {
-      throw new BadRequestException("만료된 토큰입니다.");
-    }
 
     return activeToken;
   }

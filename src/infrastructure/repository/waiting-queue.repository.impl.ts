@@ -22,6 +22,15 @@ export class WaitingQueueRepositoryImpl implements WaitingQueueRepository {
     this.redis.set(RedisKey.ACTIVE_NUM, num);
   }
 
+  async hasActiveData(userId: number): Promise<void> {
+    const key = this.getActiveTokenKey(userId);
+    const res = await this.redis.get(key);
+
+    if (!res) {
+      throw new BadRequestException("만료된 토큰입니다.");
+    }
+  }
+
   async setActiveData(userId: number): Promise<void> {
     const key = this.getActiveTokenKey(userId);
     const res = await this.redis.set(key, userId, "EX", 60 * 15);
