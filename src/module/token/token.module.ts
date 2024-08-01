@@ -8,6 +8,7 @@ import { GetWaitingStatusUseCase } from "@app/application/use-case/token/get-wai
 import { GetTokenUseCase } from "@app/application/use-case/token/get-token.use-case";
 import { CheckWaitingQueuesUseCase } from "@app/application/use-case/token/check-waiting-queues.use-case";
 import { RedisModule } from "@app/module/redis/redis.module";
+import WaitingQueueProvider from "@app/module/provider/waiting-queue.provider";
 
 @Module({
   controllers: [TokenController],
@@ -16,6 +17,7 @@ import { RedisModule } from "@app/module/redis/redis.module";
     GetWaitingStatusUseCase,
     CheckWaitingQueuesUseCase,
     TokenService,
+    WaitingQueueProvider,
   ],
   imports: [
     UserModule,

@@ -10,30 +10,36 @@ import RedisKey from "@app/domain/enum/redis-key.enum";
 import { RedisClientSymbol } from "@app/module/provider/redis.provider";
 import Redis from "ioredis";
 import { PayloadType } from "@app/domain/type/token/payload.type";
+import {
+  WaitingQueueRepository,
+  WaitingQueueRepositorySymbol,
+} from "@app/domain/interface/repository/waiting-queue.repository";
 
 @Injectable()
 export class TokenService {
   constructor(
     private readonly jwtService: JwtService,
+    @Inject(WaitingQueueRepositorySymbol)
+    private readonly waitingQueueRepository: WaitingQueueRepository,
     @Inject(RedisClientSymbol) private readonly redis: Redis,
   ) {}
 
   async getToken(userId: number): Promise<string> {
     let orderNum = 0;
     let status = WaitingQueueStatus.AVAILABLE;
-    const timestamp = new Date().getTime();
 
-    // Active Tokens 에 저장된 size 체크
-    const size = await this.redis.scard(RedisKey.ACTIVE_TOKENS);
+    // key ActiveNum 에 저장된 num 체크
+    const activeNum = await this.waitingQueueRepository.getActiveNum();
 
     // 일정 숫자 이하면 바로 Active Tokens 에 저장
-    if (size < 4) {
-      await this.setActiveToken([userId]);
+    if (activeNum < 4) {
+      await this.waitingQueueRepository.setActiveData(userId);
+      await this.waitingQueueRepository.setActiveNum(activeNum + 1);
     }
     // 이상이면 Waiting Tokens 에 저장
     else {
-      await this.setWaitingToken(userId, timestamp);
-      orderNum = (await this.getOrderNum(userId)) + 1;
+      await this.waitingQueueRepository.setWaitingData(userId);
+      orderNum = (await this.waitingQueueRepository.getWaitingNum(userId)) + 1;
       status = WaitingQueueStatus.PENDING;
     }
 
@@ -116,21 +122,6 @@ export class TokenService {
       throw new InternalServerErrorException(
         "액티브 토큰 추가 실패" + tokenList,
       );
-    }
-  }
-
-  private async setWaitingToken(
-    userId: number,
-    timestamp: number,
-  ): Promise<void> {
-    const res = await this.redis.zadd(
-      RedisKey.WAITING_TOKENS,
-      "NX",
-      timestamp,
-      userId,
-    );
-    if (res === 0) {
-      throw new BadRequestException("이미 토큰이 존재합니다.");
     }
   }
 
