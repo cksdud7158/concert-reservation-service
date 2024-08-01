@@ -4,7 +4,7 @@ import { UserModule } from "@app/module/user/user.module";
 import { TokenController } from "@app/presentation/controller/token/token.controller";
 import key from "@app/config/token/key";
 import { TokenService } from "@app/domain/service/token/token.service";
-import { GetWaitingStatusUseCase } from "@app/application/use-case/token/get-waiting-status.use-case";
+import { RefreshTokenUseCase } from "@app/application/use-case/token/refresh-token.use-case";
 import { GetTokenUseCase } from "@app/application/use-case/token/get-token.use-case";
 import { ChangeToActiveQueuesUseCase } from "@app/application/use-case/token/change-to-active-queues.use-case";
 import { RedisModule } from "@app/module/redis/redis.module";
@@ -14,7 +14,7 @@ import WaitingQueueProvider from "@app/module/provider/waiting-queue.provider";
   controllers: [TokenController],
   providers: [
     GetTokenUseCase,
-    GetWaitingStatusUseCase,
+    RefreshTokenUseCase,
     ChangeToActiveQueuesUseCase,
     TokenService,
     WaitingQueueProvider,

@@ -6,7 +6,6 @@ import {
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import WaitingQueueStatus from "@app/domain/enum/waiting-queue-status.enum";
-import RedisKey from "@app/domain/enum/redis-key.enum";
 import { RedisClientSymbol } from "@app/module/provider/redis.provider";
 import Redis from "ioredis";
 import { PayloadType } from "@app/domain/type/token/payload.type";
@@ -14,6 +13,7 @@ import {
   WaitingQueueRepository,
   WaitingQueueRepositorySymbol,
 } from "@app/domain/interface/repository/waiting-queue.repository";
+import RedisKey from "@app/domain/enum/redis-key.enum";
 
 @Injectable()
 export class TokenService {
@@ -59,13 +59,17 @@ export class TokenService {
     }
 
     if (payload.status === WaitingQueueStatus.EXPIRED) {
-      throw new BadRequestException("만료된 토큰입니다.");
+      throw new BadRequestException("만료된 유저입니다.");
     }
 
     const userId = payload.userId;
 
     // ActiveTokens 에서 토큰 확인 -> 없으면 만료된 것
-    await this.waitingQueueRepository.hasActiveUser(userId);
+    const hasActiveUser =
+      await this.waitingQueueRepository.hasActiveUser(userId);
+    if (!hasActiveUser) {
+      throw new BadRequestException("만료된 유저입니다.");
+    }
 
     // 만료 안됐으면 TTL 연장
     await this.waitingQueueRepository.setActiveUser(userId);
@@ -100,38 +104,32 @@ export class TokenService {
     await this.removeActiveToken([activeToken]);
   }
 
-  // 토큰 정보 조회
-  async getWaitingQueue(userId: number): Promise<string> {
-    let orderNum = 0;
-    let status = WaitingQueueStatus.AVAILABLE;
+  // 토큰 리프레쉬
+  async refreshToken(user: PayloadType): Promise<string> {
+    // 이용 가능 상태면 TTL 만 연장
+    if (user.status === WaitingQueueStatus.AVAILABLE) {
+      await this.waitingQueueRepository.setActiveUser(user.userId);
+    } else {
+      // user.status 가 대기 상태면 active 에 있는지 확인
+      const hasActiveUser = await this.waitingQueueRepository.hasActiveUser(
+        user.userId,
+      );
 
-    // Active tokens 에서 데이터 조회
-    const activeToken = await this.getActiveToken(userId);
-
-    // 없으면 Waiting tokens 에서 순서 조회
-    if (!activeToken) {
-      orderNum = (await this.getOrderNum(userId)) + 1;
-      status = WaitingQueueStatus.PENDING;
+      if (hasActiveUser) {
+        user.status = WaitingQueueStatus.AVAILABLE;
+        await this.waitingQueueRepository.setActiveUser(user.userId);
+      } else {
+        // 대기 번호 조회
+        user.orderNum =
+          (await this.waitingQueueRepository.getWaitingNum(user.userId)) + 1;
+      }
     }
 
     return this.jwtService.signAsync({
-      userId,
-      orderNum,
-      status,
+      userId: user.userId,
+      orderNum: user.orderNum,
+      status: user.status,
     });
-  }
-
-  private async getOrderNum(userId: number): Promise<number> {
-    return this.redis.zrank(RedisKey.WAITING_USERS, userId);
-  }
-
-  private async getActiveToken(userId: number): Promise<string> {
-    const memberList = await this.redis.smembers(RedisKey.ACTIVE_USERS);
-    const activeToken = memberList.find((member) =>
-      member.startsWith(userId + ""),
-    );
-
-    return activeToken;
   }
 
   private async removeActiveToken(tokens: string[]): Promise<void> {

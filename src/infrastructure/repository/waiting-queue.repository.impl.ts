@@ -22,13 +22,10 @@ export class WaitingQueueRepositoryImpl implements WaitingQueueRepository {
     this.redis.set(RedisKey.ACTIVE_NUM, num);
   }
 
-  async hasActiveUser(userId: number): Promise<void> {
+  async hasActiveUser(userId: number): Promise<boolean> {
     const key = this.getActiveUserKey(userId);
     const res = await this.redis.get(key);
-
-    if (!res) {
-      throw new BadRequestException("만료된 유저입니다.");
-    }
+    return !!res;
   }
 
   async setActiveUser(userId: number): Promise<void> {

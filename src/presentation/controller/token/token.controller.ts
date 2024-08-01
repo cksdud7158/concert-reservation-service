@@ -10,17 +10,17 @@ import {
 import { ApiCreatedResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { ApiTag } from "@app/config/swagger/api-tag-enum";
 import { TokenRequest } from "@app/presentation/dto/token/get-token/token.request";
-import { GetWaitingStatusResponse } from "@app/presentation/dto/token/get-waiting-status/get-waiting-status.response";
 import { TokenGuard } from "@app/presentation/guard/token.guard";
-import { GetWaitingStatusUseCase } from "@app/application/use-case/token/get-waiting-status.use-case";
+import { RefreshTokenUseCase } from "@app/application/use-case/token/refresh-token.use-case";
 import { GetTokenUseCase } from "@app/application/use-case/token/get-token.use-case";
+import { RefreshTokenGuard } from "@app/presentation/guard/refresh-token.guard";
 
 @Controller("token")
 @ApiTags(ApiTag.Token)
 export class TokenController {
   constructor(
     @Inject() private readonly getTokenUseCase: GetTokenUseCase,
-    @Inject() private readonly getWaitingStatusUseCase: GetWaitingStatusUseCase,
+    @Inject() private readonly refreshTokenUseCase: RefreshTokenUseCase,
   ) {}
 
   @Post("")
@@ -33,11 +33,11 @@ export class TokenController {
     return await this.getTokenUseCase.execute(tokenRequest.userId);
   }
 
-  @Get("waiting-status")
-  @ApiOperation({ summary: "대기 상태 조회 API" })
-  @UseGuards(TokenGuard)
-  async getWaitingStatus(@Request() req): Promise<string> {
-    const id = req.user.sub;
-    return await this.getWaitingStatusUseCase.execute(id);
+  @Get("refresh")
+  @ApiOperation({ summary: "토큰 리프레쉬 API" })
+  @UseGuards(RefreshTokenGuard)
+  async refreshToken(@Request() req): Promise<string> {
+    const user = req.user;
+    return await this.refreshTokenUseCase.execute(user);
   }
 }
