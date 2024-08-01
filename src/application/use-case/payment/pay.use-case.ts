@@ -68,7 +68,7 @@ export class PayUseCase {
       });
 
     // 대기열 만료 처리
-    await this.tokenService.changeToExpired(userId);
+    await this.tokenService.removeActiveUser(userId);
 
     return payment;
   }

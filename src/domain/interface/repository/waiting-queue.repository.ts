@@ -7,6 +7,7 @@ export interface WaitingQueueRepository {
   setActiveNum(num: number): Promise<void>;
   hasActiveUser(userId: number): Promise<boolean>;
   setActiveUser(userId: number): Promise<void>;
+  removeActiveUser(userId: number): Promise<void>;
   setWaitingUser(userId: number): Promise<void>;
   getWaitingNum(userId: number): Promise<number>;
   getWaitingUsers(maxNum: number): Promise<number[]>;

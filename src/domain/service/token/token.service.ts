@@ -1,19 +1,11 @@
-import {
-  BadRequestException,
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-} from "@nestjs/common";
+import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import WaitingQueueStatus from "@app/domain/enum/waiting-queue-status.enum";
-import { RedisClientSymbol } from "@app/module/provider/redis.provider";
-import Redis from "ioredis";
 import { PayloadType } from "@app/domain/type/token/payload.type";
 import {
   WaitingQueueRepository,
   WaitingQueueRepositorySymbol,
 } from "@app/domain/interface/repository/waiting-queue.repository";
-import RedisKey from "@app/domain/enum/redis-key.enum";
 
 @Injectable()
 export class TokenService {
@@ -21,7 +13,6 @@ export class TokenService {
     private readonly jwtService: JwtService,
     @Inject(WaitingQueueRepositorySymbol)
     private readonly waitingQueueRepository: WaitingQueueRepository,
-    @Inject(RedisClientSymbol) private readonly redis: Redis,
   ) {}
 
   async getToken(userId: number): Promise<string> {
@@ -95,13 +86,8 @@ export class TokenService {
   }
 
   // 토큰 만료 처리
-  async changeToExpired(userId: number): Promise<void> {
-    const activeToken = await this.getToken(userId);
-
-    if (!activeToken) {
-      throw new InternalServerErrorException();
-    }
-    await this.removeActiveToken([activeToken]);
+  async removeActiveUser(userId: number): Promise<void> {
+    await this.waitingQueueRepository.removeActiveUser(userId);
   }
 
   // 토큰 리프레쉬
@@ -130,12 +116,5 @@ export class TokenService {
       orderNum: user.orderNum,
       status: user.status,
     });
-  }
-
-  private async removeActiveToken(tokens: string[]): Promise<void> {
-    const res = await this.redis.srem(RedisKey.ACTIVE_USERS, ...tokens);
-    if (!res) {
-      throw new InternalServerErrorException("액티브 토큰 삭제 실패" + tokens);
-    }
   }
 }
