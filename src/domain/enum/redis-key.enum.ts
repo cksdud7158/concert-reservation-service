@@ -1,6 +1,9 @@
+const env = process.env.NODE_ENV;
+
 const RedisKey = {
-  WAITING_TOKENS: process.env.NODE_ENV + "-WAITING_TOKENS",
-  ACTIVE_TOKENS: process.env.NODE_ENV + "-ACTIVE_TOKENS",
+  WAITING_TOKENS: env + "-WAITING_TOKENS",
+  ACTIVE_TOKENS: env + "-ACTIVE_TOKENS",
+  SCHEDULE: env + "-SCHEDULE",
 } as const;
 
 export default RedisKey;
