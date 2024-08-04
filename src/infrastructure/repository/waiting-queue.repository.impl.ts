@@ -1,97 +1,88 @@
-import { Injectable } from "@nestjs/common";
-import { EntityManager, In, Not, Repository } from "typeorm";
-import { InjectRepository } from "@nestjs/typeorm";
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from "@nestjs/common";
 import { WaitingQueueRepository } from "@app/domain/interface/repository/waiting-queue.repository";
-import { WaitingQueue } from "@app/infrastructure/entity/waiting-queue.entity";
-import WaitingQueuesEntity from "@app/domain/entity/waiting-queues.entity";
-import WaitingQueueStatus from "@app/domain/enum/waiting-queue-status.enum";
-import WaitingQueueEntity from "@app/domain/entity/waiting-queue.entity";
-import WaitingQueueMapper from "@app/infrastructure/mapper/waiting-queue.mapper";
+import { RedisClientSymbol } from "@app/module/provider/redis.provider";
+import Redis from "ioredis";
+import RedisKey from "@app/domain/enum/redis-key.enum";
 
 @Injectable()
 export class WaitingQueueRepositoryImpl implements WaitingQueueRepository {
-  constructor(
-    @InjectRepository(WaitingQueue)
-    private readonly waitingQueue: Repository<WaitingQueue>,
-  ) {}
+  private readonly MEMORY_THRESHOLD = 0.5;
 
-  async save(
-    waitingQueue: WaitingQueue,
-    _manager?: EntityManager,
-  ): Promise<WaitingQueueEntity> {
-    const manager = _manager ?? this.waitingQueue.manager;
-    const entity = await manager.save(WaitingQueue, waitingQueue);
+  constructor(@Inject(RedisClientSymbol) private readonly redis: Redis) {}
 
-    return WaitingQueueMapper.toDomain(entity);
+  async isMemoryUsageHigh(): Promise<boolean> {
+    const info = await this.redis.info("memory");
+    const usedMemory = parseInt(info.match(/used_memory:(\d+)/)[1], 10);
+    const totalMemory = parseInt(
+      info.match(/total_system_memory:(\d+)/)[1],
+      10,
+    );
+
+    const memoryUsageRatio = usedMemory / totalMemory;
+    return memoryUsageRatio > this.MEMORY_THRESHOLD;
   }
 
-  async findByNotExpiredStatus(
-    _manager?: EntityManager,
-  ): Promise<WaitingQueuesEntity> {
-    const manager = _manager ?? this.waitingQueue.manager;
-    const entity = await manager.findBy(WaitingQueue, {
-      status: Not(WaitingQueueStatus.EXPIRED),
-    });
+  async hasActiveUser(userId: number): Promise<boolean> {
+    const key = this.getActiveUserKey(userId);
+    const res = await this.redis.get(key);
+    return !!res;
+  }
 
-    return new WaitingQueuesEntity(
-      entity.map((val) => WaitingQueueMapper.toDomain(val)),
+  async setActiveUser(userId: number): Promise<void> {
+    const key = this.getActiveUserKey(userId);
+    const res = await this.redis.set(key, userId, "EX", 60 * 15);
+
+    if (!res) {
+      throw new InternalServerErrorException("액티브 유저 추가 실패" + userId);
+    }
+  }
+
+  async removeActiveUser(userId: number): Promise<void> {
+    const key = this.getActiveUserKey(userId);
+    const res = await this.redis.del(key);
+    if (!res) {
+      throw new InternalServerErrorException("액티브 유저 삭제 실패" + userId);
+    }
+  }
+
+  async setWaitingUser(userId: number): Promise<void> {
+    const timestamp = new Date().getTime();
+
+    const res = await this.redis.zadd(
+      RedisKey.WAITING_USERS,
+      "NX",
+      timestamp,
+      userId,
+    );
+
+    if (res === 0) {
+      throw new BadRequestException("이미 대기중 입니다.");
+    }
+  }
+
+  async getWaitingNum(userId: number): Promise<number> {
+    return this.redis.zrank(RedisKey.WAITING_USERS, userId);
+  }
+
+  async getWaitingUsers(maxNum: number): Promise<number[]> {
+    return (await this.redis.zrange(RedisKey.WAITING_USERS, 0, maxNum)).map(
+      (userId) => Number(userId),
     );
   }
 
-  async updateStatusToExpired(
-    idList: number[],
-    _manager?: EntityManager,
-  ): Promise<void> {
-    const manager = _manager ?? this.waitingQueue.manager;
-    await manager
-      .createQueryBuilder()
-      .update(WaitingQueue)
-      .set({ status: WaitingQueueStatus.EXPIRED })
-      .where({ id: In(idList) })
-      .execute();
+  async removeWaitingUsers(userIds: number[]): Promise<void> {
+    const res = await this.redis.zrem(RedisKey.WAITING_USERS, ...userIds);
+    if (!res) {
+      throw new InternalServerErrorException("대기열 유저 삭제 실패" + userIds);
+    }
   }
 
-  async findOneById(
-    id: number,
-    _manager?: EntityManager,
-  ): Promise<WaitingQueueEntity> {
-    const manager = _manager ?? this.waitingQueue.manager;
-    const entity = await manager.findOneBy(WaitingQueue, { id: id });
-
-    return WaitingQueueMapper.toDomain(entity);
-  }
-
-  async updateEntities(
-    waitingQueues: WaitingQueuesEntity,
-    _manager?: EntityManager,
-  ) {
-    const manager = _manager ?? this.waitingQueue.manager;
-    waitingQueues.waitingQueueList.forEach((waitingQueue) => {
-      manager
-        .createQueryBuilder()
-        .update(WaitingQueue)
-        .set({
-          orderNum: waitingQueue.orderNum,
-          status: waitingQueue.status,
-        })
-        .where("id = :id", { id: waitingQueue.id })
-        .execute();
-    });
-  }
-
-  async updateStatusByUserId(
-    userId: number,
-    status: WaitingQueueStatus,
-    _manager?: EntityManager,
-  ): Promise<void> {
-    const manager = _manager ?? this.waitingQueue.manager;
-    await manager
-      .createQueryBuilder()
-      .update(WaitingQueue)
-      .set({
-        status: status,
-      })
-      .where("user_id = :userId", { userId: userId })
-      .execute();
+  private getActiveUserKey(userId: number): string {
+    return `${RedisKey.ACTIVE_USERS}-${userId}`;
   }
 }

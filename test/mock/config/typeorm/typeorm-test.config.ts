@@ -15,5 +15,5 @@ export const typeormTestConfig: TypeOrmModuleOptions = {
   ],
   synchronize: true,
   namingStrategy: new SnakeNamingStrategy(),
-  logging: true,
+  // logging: true,
 };

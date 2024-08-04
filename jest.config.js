@@ -12,6 +12,6 @@ module.exports = {
   coverageDirectory: "../coverage",
   testEnvironment: "node",
   maxWorkers: 1,
-  setupFilesAfterEnv: ["<rootDir>/mock/config/jest-setup.ts"],
   detectOpenHandles: true,
+  testTimeout: 20000,
 };

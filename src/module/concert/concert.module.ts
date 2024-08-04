@@ -12,6 +12,7 @@ import concertProvider from "@app/module/provider/concert.provider";
 import { GetConcertListUseCase } from "@app/application/use-case/concert/get-concert-list.use-case";
 import { GetScheduleListUseCase } from "@app/application/use-case/concert/get-schedule-list.use-case";
 import { GetSeatListUseCase } from "@app/application/use-case/concert/get-seat-list.use-case";
+import concertScheduleCacheProvider from "@app/module/provider/concert-schedule.cache.provider";
 
 @Module({
   controllers: [ConcertController],
@@ -22,6 +23,7 @@ import { GetSeatListUseCase } from "@app/application/use-case/concert/get-seat-l
     ConcertService,
     concertProvider,
     concertScheduleProvider,
+    concertScheduleCacheProvider,
     concertSeatProvider,
   ],
   imports: [

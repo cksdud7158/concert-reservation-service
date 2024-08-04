@@ -16,6 +16,10 @@ import { ConcertScheduleEntity } from "@app/domain/entity/concert-schedule.entit
 import { ConcertEntity } from "@app/domain/entity/concert.entity";
 import { ConcertSeatEntity } from "@app/domain/entity/concert-seat.entity";
 import ConcertSeatStatus from "@app/domain/enum/concert-seat-status.enum";
+import {
+  ConcertScheduleCacheRepository,
+  ConcertScheduleCacheRepositorySymbol,
+} from "@app/domain/interface/cache/concert-schedule.cache.repository";
 
 @Injectable()
 export class ConcertService {
@@ -24,6 +28,8 @@ export class ConcertService {
     private readonly concertRepository: ConcertRepository,
     @Inject(ConcertScheduleRepositorySymbol)
     private readonly concertScheduleRepository: ConcertScheduleRepository,
+    @Inject(ConcertScheduleCacheRepositorySymbol)
+    private readonly concertScheduleCacheRepository: ConcertScheduleCacheRepository,
     @Inject(ConcertSeatRepositorySymbol)
     private readonly concertSeatRepository: ConcertSeatRepository,
     private readonly dataSource: DataSource,
@@ -62,7 +68,25 @@ export class ConcertService {
 
   // 일정 리스트 조회
   async getScheduleList(concertId: number): Promise<ConcertScheduleEntity[]> {
-    return this.concertScheduleRepository.findById(concertId);
+    // 캐시 조회
+    let concertScheduleEntityList =
+      await this.concertScheduleCacheRepository.findById(concertId);
+
+    // 있으면 캐시 데이터 리턴
+    if (concertScheduleEntityList) {
+      return concertScheduleEntityList;
+    }
+
+    // 없으면 DB 조회 및 캐시 설정
+    concertScheduleEntityList =
+      await this.concertScheduleRepository.findById(concertId);
+
+    this.concertScheduleCacheRepository.insert(
+      concertId,
+      concertScheduleEntityList,
+    );
+
+    return concertScheduleEntityList;
   }
 
   // 좌석 리스트 조회

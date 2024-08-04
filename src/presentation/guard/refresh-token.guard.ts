@@ -1,21 +1,16 @@
 import {
   CanActivate,
   ExecutionContext,
-  Inject,
   Injectable,
   UnauthorizedException,
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import key from "@app/config/token/key";
-import { TokenService } from "@app/domain/service/token/token.service";
 import { PayloadType } from "@app/domain/type/token/payload.type";
 
 @Injectable()
-export class TokenGuard implements CanActivate {
-  constructor(
-    private jwtService: JwtService,
-    @Inject() private readonly tokenService: TokenService,
-  ) {}
+export class RefreshTokenGuard implements CanActivate {
+  constructor(private jwtService: JwtService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -30,9 +25,6 @@ export class TokenGuard implements CanActivate {
     const payload: PayloadType = await this.jwtService.verifyAsync(token, {
       secret: key,
     });
-
-    // 내 상태 체크
-    await this.tokenService.isAvailable(payload);
 
     request["user"] = payload;
     return true;

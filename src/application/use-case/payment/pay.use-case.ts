@@ -21,7 +21,7 @@ export class PayUseCase {
   ) {}
 
   async execute(userId: number, ticketIds: number[]): Promise<PaymentEntity> {
-    return await this.dataSource
+    const payment = await this.dataSource
       .createEntityManager()
       .transaction(async (manager) => {
         // PENDING 상태 티켓 조회
@@ -64,10 +64,12 @@ export class PayUseCase {
           manager,
         );
 
-        // 대기열 만료 처리
-        await this.tokenService.changeToExpired(userId, manager);
-
         return payment;
       });
+
+    // 대기열 만료 처리
+    await this.tokenService.removeActiveUser(userId);
+
+    return payment;
   }
 }

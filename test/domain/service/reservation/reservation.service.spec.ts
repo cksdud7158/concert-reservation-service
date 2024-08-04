@@ -4,14 +4,13 @@ import {
   TicketRepositorySymbol,
 } from "@app/domain/interface/repository/ticket.repository";
 import { ReservationService } from "@app/domain/service/reservation/reservation.service";
-import { Ticket } from "@app/infrastructure/entity/ticket.entity";
-import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
-import TicketStatus from "@app/domain/enum/ticket-status.enum";
-import { Concert } from "@app/infrastructure/entity/concert.entity";
-import { ConcertSchedule } from "@app/infrastructure/entity/concert-schedule.entity";
-import ConcertSeatStatus from "@app/domain/enum/concert-seat-status.enum";
-import { User } from "@app/infrastructure/entity/user.entity";
+import ConcertScheduleStatus from "@app/domain/enum/concert-seat-status.enum";
 import { mockTicketProvider } from "../../../mock/repositroy-mocking/ticket-repository.mock";
+import { TicketEntity } from "@app/domain/entity/ticket.entity";
+import { ConcertEntity } from "@app/domain/entity/concert.entity";
+import { ConcertScheduleEntity } from "@app/domain/entity/concert-schedule.entity";
+import { ConcertSeatEntity } from "@app/domain/entity/concert-seat.entity";
+import { datasourceProvider } from "../../../mock/lib/datasource.mock";
 
 describe("ReservationService", () => {
   let service: ReservationService;
@@ -24,7 +23,7 @@ describe("ReservationService", () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [ReservationService, mockTicketProvider],
+      providers: [ReservationService, mockTicketProvider, datasourceProvider],
     }).compile();
 
     service = module.get<ReservationService>(ReservationService);
@@ -35,38 +34,39 @@ describe("ReservationService", () => {
     it("티켓 발급 완료", async () => {
       // given
       const date = new Date();
-      const ticketList: Ticket[] = [
-        {
-          id: 11,
-          status: TicketStatus.PENDING,
-          creat_at: date,
-          update_at: date,
-          user: {} as User,
-          concert: {
+      const ticketList = [
+        new TicketEntity({
+          concert: new ConcertEntity({
             id: 1,
             creat_at: date,
             update_at: date,
             name: "프로미스9",
-          } as Concert,
-          schedule: {
+          }),
+          creat_at: undefined,
+          id: 1,
+          schedule: new ConcertScheduleEntity({
             id: 1,
             creat_at: date,
             update_at: date,
             date: date,
-          } as ConcertSchedule,
-          seat: {
+          }),
+          seat: new ConcertSeatEntity({
             id: 1,
             creat_at: date,
             update_at: date,
-            status: ConcertSeatStatus.PENDING,
+            status: ConcertScheduleStatus.PENDING,
             price: 20000,
             seat_number: 1,
-          } as ConcertSeat,
-        },
+          }),
+          status: undefined,
+          update_at: undefined,
+          user: undefined,
+          version: 0,
+        }),
       ];
 
       //when
-      jest.spyOn(ticketRepository, "findByIds").mockResolvedValue(ticketList);
+      jest.spyOn(ticketRepository, "save").mockResolvedValue(ticketList);
 
       const res = await service.makeTickets(1, 1, 1, [1, 2]);
 

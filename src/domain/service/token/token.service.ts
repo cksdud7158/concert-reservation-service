@@ -1,18 +1,11 @@
-import {
-  BadRequestException,
-  Inject,
-  Injectable,
-  ServiceUnavailableException,
-} from "@nestjs/common";
+import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
+import WaitingQueueStatus from "@app/domain/enum/waiting-queue-status.enum";
+import { PayloadType } from "@app/domain/type/token/payload.type";
 import {
   WaitingQueueRepository,
   WaitingQueueRepositorySymbol,
-} from "../../interface/repository/waiting-queue.repository";
-import { EntityManager } from "typeorm";
-import WaitingQueueStatus from "@app/domain/enum/waiting-queue-status.enum";
-import WaitingQueuesEntity from "@app/domain/entity/waiting-queues.entity";
-import WaitingQueueEntity from "@app/domain/entity/waiting-queue.entity";
+} from "@app/domain/interface/repository/waiting-queue.repository";
 
 @Injectable()
 export class TokenService {
@@ -22,109 +15,104 @@ export class TokenService {
     private readonly waitingQueueRepository: WaitingQueueRepository,
   ) {}
 
-  async getToken(userId: number, _manager?: EntityManager): Promise<string> {
-    // 만료 상태 아닌 목록 조회
-    const waitingQueuesEntity =
-      await this.waitingQueueRepository.findByNotExpiredStatus(_manager);
+  async getToken(userId: number): Promise<string> {
+    let orderNum = 0;
+    let status = WaitingQueueStatus.AVAILABLE;
 
-    // 기존 queue 에 해당 유저가 활성 상태로 있으면 만료 상태로 변경
-    const waitingQueueIdList = waitingQueuesEntity.findByUserId(userId);
+    // 메모리 사용량 여부에 따라 대기 여부 판단
+    const isMemoryUsageHigh =
+      await this.waitingQueueRepository.isMemoryUsageHigh();
 
-    //있으면 만료 상태로 다 바꾸기
-    if (waitingQueueIdList?.length) {
-      await this.waitingQueueRepository.updateStatusToExpired(
-        waitingQueueIdList,
-        _manager,
-      );
+    // 일정 숫자 이하면 바로 Active Tokens 에 저장
+    if (!isMemoryUsageHigh) {
+      await this.waitingQueueRepository.setActiveUser(userId);
+    }
+    // 이상이면 Waiting Tokens 에 저장
+    else {
+      await this.waitingQueueRepository.setWaitingUser(userId);
+      orderNum = (await this.waitingQueueRepository.getWaitingNum(userId)) + 1;
+      status = WaitingQueueStatus.PENDING;
     }
 
-    // 이용 가능 여부 확인
-    const isAvailable = waitingQueuesEntity.isAvailable();
-
-    // 대기 순번 확인
-    const orderNum = isAvailable
-      ? 0
-      : waitingQueuesEntity.getPendingStatusLength() + 1;
-
-    let waitingQueue = new WaitingQueueEntity({
-      user_id: userId,
-      orderNum: orderNum,
-      status: isAvailable
-        ? WaitingQueueStatus.AVAILABLE
-        : WaitingQueueStatus.PENDING,
+    // 상태 리턴
+    return this.jwtService.signAsync({
+      userId,
+      orderNum,
+      status,
     });
-
-    // 해당 상태로 테이블 insert
-    waitingQueue = await this.waitingQueueRepository.save(
-      waitingQueue,
-      _manager,
-    );
-
-    return await this.jwtService.signAsync({ sub: waitingQueue.id });
   }
 
   // 이용 가능 여부 확인
-  async isAvailable(id: number, _manager?: EntityManager): Promise<void> {
-    // 데이터 조회
-    let waitingQueue = await this.waitingQueueRepository.findOneById(id);
-
-    // 결과가 없거나 EXPIRED 상태면
-    if (
-      !waitingQueue.id ||
-      waitingQueue.status === WaitingQueueStatus.EXPIRED
-    ) {
-      throw new BadRequestException("만료된 토큰입니다.");
+  async isAvailable(payload: PayloadType): Promise<void> {
+    // PENDING or EXPIRED 상태면 막기
+    if (payload.status === WaitingQueueStatus.PENDING) {
+      throw new BadRequestException(`대기번호 ${payload.orderNum}번 입니다.`);
     }
 
-    // 이용 가능 상태면 update_at 업데이트
-    waitingQueue.updateUpdateAt(new Date());
-    waitingQueue = await this.waitingQueueRepository.save(
-      waitingQueue,
-      _manager,
-    );
-
-    // 대기 상태면
-    if (waitingQueue.status === WaitingQueueStatus.PENDING) {
-      throw new ServiceUnavailableException(
-        `대기번호 ${waitingQueue.orderNum}번 입니다.`,
-      );
+    if (payload.status === WaitingQueueStatus.EXPIRED) {
+      throw new BadRequestException("만료된 유저입니다.");
     }
-    // AVAILABLE 상태면 리턴
+
+    const userId = payload.userId;
+
+    // ActiveTokens 에서 토큰 확인 -> 없으면 만료된 것
+    const hasActiveUser =
+      await this.waitingQueueRepository.hasActiveUser(userId);
+    if (!hasActiveUser) {
+      throw new BadRequestException("만료된 유저입니다.");
+    }
+
+    // 만료 안됐으면 TTL 연장
+    await this.waitingQueueRepository.setActiveUser(userId);
   }
 
-  // 전체 상태 체크해서 상태 변경(스케쥴용)
-  async checkWaitingQueues(
-    _manager?: EntityManager,
-  ): Promise<WaitingQueuesEntity> {
-    // 만료 상태 아닌 목록 조회
-    const waitingQueuesEntity =
-      await this.waitingQueueRepository.findByNotExpiredStatus(_manager);
+  // 스케쥴용 (waiting 에서 일정 인원 active 로 변경)
+  async changeToActive(): Promise<void> {
+    // Waiting users 50명씩 불러오기
+    const userIdList = await this.waitingQueueRepository.getWaitingUsers(50);
 
-    waitingQueuesEntity.checkWaitingQueues();
+    if (!userIdList.length) return;
 
-    // 변경 사항 업데이트
-    await this.waitingQueueRepository.updateEntities(
-      waitingQueuesEntity,
-      _manager,
-    );
+    // Active user 삽입
+    for (const userId of userIdList) {
+      await this.waitingQueueRepository.setActiveUser(userId);
+    }
 
-    return waitingQueuesEntity;
+    // Waiting users 에서 삭제
+    await this.waitingQueueRepository.removeWaitingUsers(userIdList);
   }
 
   // 토큰 만료 처리
-  async changeToExpired(userId: number, _manager?: EntityManager) {
-    await this.waitingQueueRepository.updateStatusByUserId(
-      userId,
-      WaitingQueueStatus.EXPIRED,
-      _manager,
-    );
+  async removeActiveUser(userId: number): Promise<void> {
+    await this.waitingQueueRepository.removeActiveUser(userId);
   }
 
-  // 토큰 정보 조회
-  async getWaitingQueue(
-    id: number,
-    _manager?: EntityManager,
-  ): Promise<WaitingQueueEntity> {
-    return await this.waitingQueueRepository.findOneById(id, _manager);
+  // 토큰 리프레쉬
+  async refreshToken(user: PayloadType): Promise<string> {
+    //
+    // 이용 가능 상태면 TTL 만 연장
+    if (user.status === WaitingQueueStatus.AVAILABLE) {
+      await this.waitingQueueRepository.setActiveUser(user.userId);
+    } else {
+      // user.status 가 대기 상태면 active 에 있는지 확인
+      const hasActiveUser = await this.waitingQueueRepository.hasActiveUser(
+        user.userId,
+      );
+
+      if (hasActiveUser) {
+        user.status = WaitingQueueStatus.AVAILABLE;
+        await this.waitingQueueRepository.setActiveUser(user.userId);
+      } else {
+        // 대기 번호 조회
+        user.orderNum =
+          (await this.waitingQueueRepository.getWaitingNum(user.userId)) + 1;
+      }
+    }
+
+    return this.jwtService.signAsync({
+      userId: user.userId,
+      orderNum: user.orderNum,
+      status: user.status,
+    });
   }
 }

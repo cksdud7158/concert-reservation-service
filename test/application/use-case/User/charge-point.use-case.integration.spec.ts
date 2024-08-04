@@ -4,6 +4,7 @@ import { User } from "@app/infrastructure/entity/user.entity";
 import { BadRequestException, INestApplication } from "@nestjs/common";
 import { mockAppModule } from "../../../mock/App.module";
 import { ChargePointUseCase } from "@app/application/use-case/user/charge-point.use-case";
+import "../../../mock/config/jest-setup";
 
 describe("ChargePointUseCase", () => {
   let app: INestApplication;

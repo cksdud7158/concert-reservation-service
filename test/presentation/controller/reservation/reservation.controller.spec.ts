@@ -1,10 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { ReservationController } from "@app/presentation/controller/reservation/reservation.controller";
-import TicketStatus from "@app/domain/enum/ticket-status.enum";
-import ConcertSeatStatus from "@app/domain/enum/concert-seat-status.enum";
-import { Concert } from "@app/infrastructure/entity/concert.entity";
-import { ConcertSchedule } from "@app/infrastructure/entity/concert-schedule.entity";
-import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
+import ConcertScheduleStatus from "@app/domain/enum/concert-seat-status.enum";
 import { ReservationService } from "@app/domain/service/reservation/reservation.service";
 import { ConcertService } from "@app/domain/service/concert/concert.service";
 import { JwtService } from "@nestjs/jwt";
@@ -17,6 +13,11 @@ import { mockConcertScheduleProvider } from "../../../mock/repositroy-mocking/co
 import { mockConcertSeatProvider } from "../../../mock/repositroy-mocking/concert-seat-repository.mock";
 import { datasourceProvider } from "../../../mock/lib/datasource.mock";
 import { ReserveConcertUseCase } from "@app/application/use-case/reservation/reserve-concert.use-case";
+import { TicketEntity } from "@app/domain/entity/ticket.entity";
+import { ConcertEntity } from "@app/domain/entity/concert.entity";
+import { ConcertScheduleEntity } from "@app/domain/entity/concert-schedule.entity";
+import { ConcertSeatEntity } from "@app/domain/entity/concert-seat.entity";
+import { ReserveConcertResponse } from "@app/presentation/dto/reservation/reserve-concert/reserve-concert.response";
 
 describe("ReservationController", () => {
   let controller: ReservationController;
@@ -61,60 +62,37 @@ describe("ReservationController", () => {
       const date = new Date();
       //given
       const ticketList = [
-        {
-          id: 11,
-          status: TicketStatus.PENDING,
-          concert: {
+        new TicketEntity({
+          concert: new ConcertEntity({
             id: 1,
             creat_at: date,
             update_at: date,
             name: "프로미스9",
-          } as Concert,
-          schedule: {
+          }),
+          creat_at: undefined,
+          id: 1,
+          schedule: new ConcertScheduleEntity({
             id: 1,
             creat_at: date,
             update_at: date,
             date: date,
-          } as ConcertSchedule,
-          seat: {
+          }),
+          seat: new ConcertSeatEntity({
             id: 1,
             creat_at: date,
             update_at: date,
-            status: ConcertSeatStatus.PENDING,
+            status: ConcertScheduleStatus.PENDING,
             price: 20000,
             seat_number: 1,
-          } as ConcertSeat,
-        },
+          }),
+          status: undefined,
+          update_at: undefined,
+          user: undefined,
+          version: 0,
+        }),
       ];
-      const response = {
-        total: 1,
-        tickets: [
-          {
-            id: 11,
-            status: "PENDING",
-            concert: {
-              id: 1,
-              creat_at: date,
-              update_at: date,
-              name: "프로미스9",
-            },
-            schedule: {
-              id: 1,
-              creat_at: date,
-              update_at: date,
-              date: date,
-            },
-            seat: {
-              id: 1,
-              creat_at: date,
-              update_at: date,
-              status: "PENDING",
-              price: 20000,
-              seat_number: 1,
-            },
-          },
-        ],
-      };
+
+      const response = ReserveConcertResponse.toResponse(ticketList);
 
       //when
       jest

@@ -1,4 +1,5 @@
 import { Test, TestingModule } from "@nestjs/testing";
+import "../../../mock/config/jest-setup";
 import { INestApplication } from "@nestjs/common";
 import { DataSource } from "typeorm";
 import { Concert } from "@app/infrastructure/entity/concert.entity";
