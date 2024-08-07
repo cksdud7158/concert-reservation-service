@@ -20,14 +20,17 @@ export class ConcertScheduleRepositoryImpl
     _manager?: EntityManager,
   ): Promise<ConcertScheduleEntity[]> {
     const manager = _manager ?? this.concertSchedule.manager;
-    const entities = await manager.find(ConcertSchedule, {
-      where: {
-        concert: {
-          id: concertId,
-        },
-      },
-    });
+    const entities = await manager
+      .createQueryBuilder()
+      .select()
+      .from(ConcertSchedule, "schedule")
+      .where("schedule.concert_id = :concertId", { concertId: concertId })
+      .execute();
 
     return entities.map((schedule) => ConcertScheduleMapper.toDomain(schedule));
+  }
+
+  async save(data: ConcertScheduleEntity[]): Promise<void> {
+    await this.concertSchedule.save(data);
   }
 }
