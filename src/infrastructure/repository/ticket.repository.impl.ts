@@ -79,7 +79,6 @@ export class TicketRepositoryImpl implements TicketRepository {
   }
 
   async updateStatus(
-
     ticket: TicketEntity,
     _manager?: EntityManager,
   ): Promise<void> {

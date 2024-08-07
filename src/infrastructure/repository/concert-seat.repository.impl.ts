@@ -19,16 +19,15 @@ export class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
     _manager?: EntityManager,
   ): Promise<ConcertSeatEntity[]> {
     const manager = _manager ?? this.concertSeat.manager;
-    const entities = await manager.find(ConcertSeat, {
-      where: {
-        schedule: {
-          id: concertScheduleId,
-        },
-      },
-      order: {
-        seat_number: "ASC",
-      },
-    });
+    const entities = await manager
+      .createQueryBuilder()
+      .select()
+      .from(ConcertSeat, "seat")
+      .where("seat.schedule_id = :schedule_id", {
+        schedule_id: concertScheduleId,
+      })
+      .orderBy("seat_number", "ASC")
+      .execute();
 
     return entities.map((seat) => ConcertSeatMapper.toDomain(seat));
   }
@@ -57,12 +56,13 @@ export class ConcertSeatRepositoryImpl implements ConcertSeatRepository {
     _manager?: EntityManager,
   ): Promise<ConcertSeatEntity[]> {
     const manager = _manager ?? this.concertSeat.manager;
-    const entities = await manager.find(ConcertSeat, {
-      where: {
-        id: In(seatIds),
-        status: ConcertScheduleStatus.SALE,
-      },
-    });
+    const entities = await manager
+      .createQueryBuilder()
+      .select()
+      .from(ConcertSeat, "seat")
+      .where("id IN (:...seatIds)", { seatIds: seatIds })
+      .andWhere("status = :status", { status: ConcertScheduleStatus.SALE })
+      .execute();
 
     return entities.map((seat) => ConcertSeatMapper.toDomain(seat));
   }
