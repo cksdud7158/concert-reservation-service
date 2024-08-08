@@ -5,9 +5,10 @@ import { UserService } from "@app/domain/service/user/user.service";
 import { ConcertService } from "@app/domain/service/concert/concert.service";
 import { DataSource } from "typeorm";
 import { PaymentEntity } from "@app/domain/entity/payment.entity";
-import { TokenService } from "@app/domain/service/token/token.service";
 import TicketStatus from "@app/domain/enum/ticket-status.enum";
 import ConcertScheduleStatus from "@app/domain/enum/concert-seat-status.enum";
+import { EventBus } from "@nestjs/cqrs";
+import { PayCompletedEvent } from "@app/application/event/pay-completed.event";
 
 @Injectable()
 export class PayUseCase {
@@ -16,8 +17,8 @@ export class PayUseCase {
     @Inject() private readonly reservationService: ReservationService,
     @Inject() private readonly userService: UserService,
     @Inject() private readonly concertService: ConcertService,
-    @Inject() private readonly tokenService: TokenService,
     private readonly dataSource: DataSource,
+    private readonly eventBus: EventBus,
   ) {}
 
   async execute(userId: number, ticketIds: number[]): Promise<PaymentEntity> {
@@ -57,18 +58,15 @@ export class PayUseCase {
         );
 
         // 결제
-        const payment = await this.paymentService.pay(
+        return await this.paymentService.pay(
           userId,
           ticketIds,
           totalPrice,
           manager,
         );
-
-        return payment;
       });
-
-    // 대기열 만료 처리
-    await this.tokenService.removeActiveUser(userId);
+    // 결제 완료 이벤트 발행
+    this.eventBus.publish(new PayCompletedEvent(payment));
 
     return payment;
   }

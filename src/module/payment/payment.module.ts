@@ -9,6 +9,7 @@ import { ConcertModule } from "@app/module/concert/concert.module";
 import { TokenModule } from "@app/module/token/token.module";
 import paymentProvider from "@app/module/provider/payment.provider";
 import { PayUseCase } from "@app/application/use-case/payment/pay.use-case";
+import { EventModule } from "@app/module/event/event.module";
 
 @Module({
   controllers: [PaymentController],
@@ -19,6 +20,7 @@ import { PayUseCase } from "@app/application/use-case/payment/pay.use-case";
     UserModule,
     ConcertModule,
     TokenModule,
+    EventModule,
   ],
 })
 export class PaymentModule {}
