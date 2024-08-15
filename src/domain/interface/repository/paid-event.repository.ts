@@ -6,7 +6,7 @@ export const PaidEventRepositorySymbol = Symbol.for("PaidEventRepository");
 
 export interface PaidEventRepository {
   insert(event: PaidEventEntity, _manager?: EntityManager): Promise<void>;
-  updateStatusById(
+  updateStatusByPaymentId(
     event: PaidEventEntity,
     _manager?: EntityManager,
   ): Promise<void>;

@@ -20,6 +20,9 @@ export class PaidEvent {
   @UpdateDateColumn({ type: "timestamptz" })
   update_at: Date;
 
+  @Column({ type: "integer" })
+  payment_id: number;
+
   @Column({
     type: "enum",
     enum: PaidEventStatus,

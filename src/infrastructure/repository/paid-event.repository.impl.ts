@@ -25,7 +25,7 @@ export class PaidEventRepositoryImpl implements PaidEventRepository {
       .execute();
   }
 
-  async updateStatusById(
+  async updateStatusByPaymentId(
     event: PaidEventEntity,
     _manager?: EntityManager,
   ): Promise<void> {

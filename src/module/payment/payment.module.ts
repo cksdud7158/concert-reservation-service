@@ -10,12 +10,21 @@ import { TokenModule } from "@app/module/token/token.module";
 import paymentProvider from "@app/module/provider/repository/payment.provider";
 import { PayUseCase } from "@app/application/use-case/payment/pay.use-case";
 import { EventModule } from "@app/module/event/event.module";
+import { PaidEventService } from "@app/domain/service/payment/paid-event.service";
+import paidEventProvider from "@app/module/provider/repository/paid-event.provider";
+import { PaidEvent } from "@app/infrastructure/entity/paid-event.entity";
 
 @Module({
   controllers: [PaymentController],
-  providers: [PayUseCase, PaymentService, paymentProvider],
+  providers: [
+    PayUseCase,
+    PaymentService,
+    PaidEventService,
+    paidEventProvider,
+    paymentProvider,
+  ],
   imports: [
-    TypeOrmModule.forFeature([Payment]),
+    TypeOrmModule.forFeature([Payment, PaidEvent]),
     ReservationModule,
     UserModule,
     ConcertModule,

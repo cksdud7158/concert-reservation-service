@@ -5,6 +5,7 @@ export class PaidEventEntity {
   id: number;
   creat_at: Date;
   update_at: Date;
+  payment_id: number;
   status: PaidEventStatus;
   message: MessageType;
 
@@ -13,6 +14,7 @@ export class PaidEventEntity {
       id: number;
       creat_at: Date;
       update_at: Date;
+      payment_id: number;
       status: PaidEventStatus;
       message: MessageType;
     }>,
