@@ -18,9 +18,9 @@ import { BadRequestException } from "@nestjs/common";
 import { mockConcertProvider } from "../../../mock/repositroy-mocking/concert-repository.mock";
 import { mockConcertScheduleProvider } from "../../../mock/repositroy-mocking/concert-schedule-repository.mock";
 import { mockConcertSeatProvider } from "../../../mock/repositroy-mocking/concert-seat-repository.mock";
-import { ConcertScheduleEntity } from "@app/domain/entity/concert-schedule.entity";
-import { ConcertEntity } from "@app/domain/entity/concert.entity";
-import { ConcertSeatEntity } from "@app/domain/entity/concert-seat.entity";
+import { ConcertScheduleEntity } from "@app/domain/entity/concert/concert-schedule.entity";
+import { ConcertEntity } from "@app/domain/entity/concert/concert.entity";
+import { ConcertSeatEntity } from "@app/domain/entity/concert/concert-seat.entity";
 import { datasourceProvider } from "../../../mock/lib/datasource.mock";
 
 describe("ConcertService", () => {

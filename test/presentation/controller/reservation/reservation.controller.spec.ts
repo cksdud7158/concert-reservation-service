@@ -12,10 +12,10 @@ import { mockConcertScheduleProvider } from "../../../mock/repositroy-mocking/co
 import { mockConcertSeatProvider } from "../../../mock/repositroy-mocking/concert-seat-repository.mock";
 import { datasourceProvider } from "../../../mock/lib/datasource.mock";
 import { ReserveConcertUseCase } from "@app/application/use-case/reservation/reserve-concert.use-case";
-import { TicketEntity } from "@app/domain/entity/ticket.entity";
-import { ConcertEntity } from "@app/domain/entity/concert.entity";
-import { ConcertScheduleEntity } from "@app/domain/entity/concert-schedule.entity";
-import { ConcertSeatEntity } from "@app/domain/entity/concert-seat.entity";
+import { TicketEntity } from "@app/domain/entity/ticket/ticket.entity";
+import { ConcertEntity } from "@app/domain/entity/concert/concert.entity";
+import { ConcertScheduleEntity } from "@app/domain/entity/concert/concert-schedule.entity";
+import { ConcertSeatEntity } from "@app/domain/entity/concert/concert-seat.entity";
 import { ReserveConcertResponse } from "@app/presentation/dto/reservation/reserve-concert/reserve-concert.response";
 import { mockConcertScheduleCacheProvider } from "../../../mock/repositroy-mocking/concert-schedule-cache-repository.mock";
 import { mockWaitingQueueProvider } from "../../../mock/repositroy-mocking/waiting-queue-repository.mock";

@@ -1,5 +1,5 @@
 import ConcertScheduleStatus from "@app/domain/enum/entity/concert-seat-status.enum";
-import { ConcertScheduleEntity } from "@app/domain/entity/concert-schedule.entity";
+import { ConcertScheduleEntity } from "@app/domain/entity/concert/concert-schedule.entity";
 
 export class ConcertSeatEntity {
   id: number;

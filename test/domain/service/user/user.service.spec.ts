@@ -9,7 +9,7 @@ import {
 } from "@app/domain/interface/repository/user.repository";
 import { User } from "@app/infrastructure/entity/user.entity";
 import { UserService } from "@app/domain/service/user/user.service";
-import PointEntity from "@app/domain/entity/point.entity";
+import PointEntity from "@app/domain/entity/user/point.entity";
 import { PointHistoryRepositorySymbol } from "@app/domain/interface/repository/point-history.repository";
 
 describe("UserService", () => {

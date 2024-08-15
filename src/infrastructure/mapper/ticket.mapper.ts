@@ -1,5 +1,5 @@
 import { Ticket } from "@app/infrastructure/entity/ticket.entity";
-import { TicketEntity } from "@app/domain/entity/ticket.entity";
+import { TicketEntity } from "@app/domain/entity/ticket/ticket.entity";
 import UserMapper from "@app/infrastructure/mapper/user.mapper";
 import ConcertSeatMapper from "@app/infrastructure/mapper/concert-seat.mapper";
 import ConcertScheduleMapper from "@app/infrastructure/mapper/concert-schedule.mapper";

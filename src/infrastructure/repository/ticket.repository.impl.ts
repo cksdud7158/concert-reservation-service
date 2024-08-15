@@ -3,7 +3,7 @@ import { EntityManager, In, Repository } from "typeorm";
 import { Injectable } from "@nestjs/common";
 import { TicketRepository } from "@app/domain/interface/repository/ticket.repository";
 import { Ticket } from "@app/infrastructure/entity/ticket.entity";
-import { TicketEntity } from "@app/domain/entity/ticket.entity";
+import { TicketEntity } from "@app/domain/entity/ticket/ticket.entity";
 import TicketMapper from "@app/infrastructure/mapper/ticket.mapper";
 import TicketStatus from "@app/domain/enum/entity/ticket-status.enum";
 

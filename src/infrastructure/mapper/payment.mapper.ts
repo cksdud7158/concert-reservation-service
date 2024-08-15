@@ -1,5 +1,5 @@
 import { Payment } from "@app/infrastructure/entity/payment.entity";
-import { PaymentEntity } from "@app/domain/entity/payment.entity";
+import { PaymentEntity } from "@app/domain/entity/payment/payment.entity";
 import TicketMapper from "@app/infrastructure/mapper/ticket.mapper";
 import UserMapper from "@app/infrastructure/mapper/user.mapper";
 

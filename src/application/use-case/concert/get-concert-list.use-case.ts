@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { ConcertService } from "@app/domain/service/concert/concert.service";
-import { ConcertEntity } from "@app/domain/entity/concert.entity";
+import { ConcertEntity } from "@app/domain/entity/concert/concert.entity";
 
 @Injectable()
 export class GetConcertListUseCase {

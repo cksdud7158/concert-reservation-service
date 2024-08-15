@@ -1,6 +1,6 @@
 import PaymentStatus from "@app/domain/enum/entity/payment-status.enum";
-import { TicketEntity } from "@app/domain/entity/ticket.entity";
-import { UserEntity } from "@app/domain/entity/user.entity";
+import { TicketEntity } from "@app/domain/entity/ticket/ticket.entity";
+import { UserEntity } from "@app/domain/entity/user/user.entity";
 
 export class PaymentEntity {
   id: number;

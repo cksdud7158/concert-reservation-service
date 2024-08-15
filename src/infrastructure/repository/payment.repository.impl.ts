@@ -4,7 +4,7 @@ import { Injectable } from "@nestjs/common";
 import { PaymentRepository } from "@app/domain/interface/repository/payment.repository";
 import { Payment } from "@app/infrastructure/entity/payment.entity";
 import { Ticket } from "@app/infrastructure/entity/ticket.entity";
-import { PaymentEntity } from "@app/domain/entity/payment.entity";
+import { PaymentEntity } from "@app/domain/entity/payment/payment.entity";
 import PaymentMapper from "@app/infrastructure/mapper/payment.mapper";
 
 @Injectable()

@@ -8,7 +8,7 @@ import { ConcertSchedule } from "@app/infrastructure/entity/concert-schedule.ent
 import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
 import ConcertScheduleStatus from "@app/domain/enum/entity/concert-seat-status.enum";
 import { PayUseCase } from "@app/application/use-case/payment/pay.use-case";
-import { TicketEntity } from "@app/domain/entity/ticket.entity";
+import { TicketEntity } from "@app/domain/entity/ticket/ticket.entity";
 
 describe("PayUseCase", () => {
   let payUseCase: PayUseCase;

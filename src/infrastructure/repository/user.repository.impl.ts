@@ -1,10 +1,10 @@
 import { UserRepository } from "@app/domain/interface/repository/user.repository";
 import { User } from "@app/infrastructure/entity/user.entity";
 import { InjectRepository } from "@nestjs/typeorm";
-import PointEntity from "@app/domain/entity/point.entity";
+import PointEntity from "@app/domain/entity/user/point.entity";
 import { EntityManager, Repository } from "typeorm";
 import { Injectable } from "@nestjs/common";
-import { UserEntity } from "@app/domain/entity/user.entity";
+import { UserEntity } from "@app/domain/entity/user/user.entity";
 import UserMapper from "@app/infrastructure/mapper/user.mapper";
 
 @Injectable()

@@ -12,9 +12,9 @@ import {
   ConcertRepositorySymbol,
 } from "@app/domain/interface/repository/concert.repository";
 import { DataSource, EntityManager } from "typeorm";
-import { ConcertScheduleEntity } from "@app/domain/entity/concert-schedule.entity";
-import { ConcertEntity } from "@app/domain/entity/concert.entity";
-import { ConcertSeatEntity } from "@app/domain/entity/concert-seat.entity";
+import { ConcertScheduleEntity } from "@app/domain/entity/concert/concert-schedule.entity";
+import { ConcertEntity } from "@app/domain/entity/concert/concert.entity";
+import { ConcertSeatEntity } from "@app/domain/entity/concert/concert-seat.entity";
 import ConcertSeatStatus from "@app/domain/enum/entity/concert-seat-status.enum";
 import {
   ConcertScheduleCacheRepository,
@@ -102,7 +102,6 @@ export class ConcertService {
     seatIds: number[],
     _manager?: EntityManager,
   ): Promise<void> {
-    console.log("checkExpiredTime");
     // 5분이 지났는가 확인
     const seatList = await this.concertSeatRepository.findByExpiredTime(
       seatIds,

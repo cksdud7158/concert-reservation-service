@@ -5,11 +5,11 @@ import {
   TicketRepositorySymbol,
 } from "@app/domain/interface/repository/ticket.repository";
 import { EntityManager } from "typeorm";
-import { TicketEntity } from "@app/domain/entity/ticket.entity";
-import { UserEntity } from "@app/domain/entity/user.entity";
-import { ConcertEntity } from "@app/domain/entity/concert.entity";
-import { ConcertSeatEntity } from "@app/domain/entity/concert-seat.entity";
-import { ConcertScheduleEntity } from "@app/domain/entity/concert-schedule.entity";
+import { TicketEntity } from "@app/domain/entity/ticket/ticket.entity";
+import { UserEntity } from "@app/domain/entity/user/user.entity";
+import { ConcertEntity } from "@app/domain/entity/concert/concert.entity";
+import { ConcertSeatEntity } from "@app/domain/entity/concert/concert-seat.entity";
+import { ConcertScheduleEntity } from "@app/domain/entity/concert/concert-schedule.entity";
 import TicketStatus from "@app/domain/enum/entity/ticket-status.enum";
 
 @Injectable()

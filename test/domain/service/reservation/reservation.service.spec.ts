@@ -6,10 +6,10 @@ import {
 import { ReservationService } from "@app/domain/service/reservation/reservation.service";
 import ConcertScheduleStatus from "@app/domain/enum/entity/concert-seat-status.enum";
 import { mockTicketProvider } from "../../../mock/repositroy-mocking/ticket-repository.mock";
-import { TicketEntity } from "@app/domain/entity/ticket.entity";
-import { ConcertEntity } from "@app/domain/entity/concert.entity";
-import { ConcertScheduleEntity } from "@app/domain/entity/concert-schedule.entity";
-import { ConcertSeatEntity } from "@app/domain/entity/concert-seat.entity";
+import { TicketEntity } from "@app/domain/entity/ticket/ticket.entity";
+import { ConcertEntity } from "@app/domain/entity/concert/concert.entity";
+import { ConcertScheduleEntity } from "@app/domain/entity/concert/concert-schedule.entity";
+import { ConcertSeatEntity } from "@app/domain/entity/concert/concert-seat.entity";
 import { datasourceProvider } from "../../../mock/lib/datasource.mock";
 
 describe("ReservationService", () => {

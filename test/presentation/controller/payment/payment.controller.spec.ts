@@ -16,7 +16,7 @@ import { mockConcertSeatProvider } from "../../../mock/repositroy-mocking/concer
 import { mockConcertScheduleProvider } from "../../../mock/repositroy-mocking/concert-schedule-repository.mock";
 import { datasourceProvider } from "../../../mock/lib/datasource.mock";
 import { PayUseCase } from "@app/application/use-case/payment/pay.use-case";
-import { PaymentEntity } from "@app/domain/entity/payment.entity";
+import { PaymentEntity } from "@app/domain/entity/payment/payment.entity";
 import { TokenService } from "@app/domain/service/token/token.service";
 import { JwtService } from "@nestjs/jwt";
 import { eventbusProvider } from "../../../mock/lib/eventbus.mock";

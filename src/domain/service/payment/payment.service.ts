@@ -4,7 +4,7 @@ import {
   PaymentRepositorySymbol,
 } from "@app/domain/interface/repository/payment.repository";
 import { EntityManager } from "typeorm";
-import { PaymentEntity } from "@app/domain/entity/payment.entity";
+import { PaymentEntity } from "@app/domain/entity/payment/payment.entity";
 
 @Injectable()
 export class PaymentService {

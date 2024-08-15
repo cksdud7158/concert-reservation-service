@@ -2,7 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { JwtService } from "@nestjs/jwt";
 import WaitingQueueStatus from "@app/domain/enum/entity/waiting-queue-status.enum";
 import { TokenService } from "@app/domain/service/token/token.service";
-import WaitingQueueEntity from "@app/domain/entity/waiting-queue.entity";
+import WaitingQueueEntity from "@app/domain/entity/waitingQueue/waiting-queue.entity";
 import { BadRequestException } from "@nestjs/common";
 import { PayloadType } from "@app/domain/type/token/payload.type";
 import { RedisClientSymbol } from "@app/module/provider/redis/redis.provider";

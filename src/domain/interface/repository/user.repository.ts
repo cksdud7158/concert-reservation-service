@@ -1,6 +1,6 @@
 import { EntityManager } from "typeorm";
-import PointEntity from "src/domain/entity/point.entity";
-import { UserEntity } from "@app/domain/entity/user.entity";
+import PointEntity from "@app/domain/entity/user/point.entity";
+import { UserEntity } from "@app/domain/entity/user/user.entity";
 
 export const UserRepositorySymbol = Symbol.for("UserRepository");
 

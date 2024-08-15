@@ -1,4 +1,4 @@
-import { ConcertEntity } from "@app/domain/entity/concert.entity";
+import { ConcertEntity } from "@app/domain/entity/concert/concert.entity";
 import { Concert } from "@app/infrastructure/entity/concert.entity";
 
 class ConcertMapper {

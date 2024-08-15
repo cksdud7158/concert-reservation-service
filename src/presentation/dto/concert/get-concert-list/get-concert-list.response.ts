@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { ConcertEntity } from "@app/domain/entity/concert.entity";
+import { ConcertEntity } from "@app/domain/entity/concert/concert.entity";
 
 const concertsExample = [
   {

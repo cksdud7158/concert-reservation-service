@@ -1,5 +1,5 @@
 import { EntityManager } from "typeorm";
-import { PaymentEntity } from "@app/domain/entity/payment.entity";
+import { PaymentEntity } from "@app/domain/entity/payment/payment.entity";
 
 export const PaymentRepositorySymbol = Symbol.for("PaymentRepository");
 

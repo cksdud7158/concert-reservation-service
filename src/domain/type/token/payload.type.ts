@@ -1,4 +1,4 @@
-import WaitingQueueEntity from "@app/domain/entity/waiting-queue.entity";
+import WaitingQueueEntity from "@app/domain/entity/waitingQueue/waiting-queue.entity";
 
 export type PayloadType = WaitingQueueEntity & {
   iat?: number;

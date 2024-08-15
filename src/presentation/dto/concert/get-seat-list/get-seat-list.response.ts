@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import ConcertScheduleStatus from "@app/domain/enum/entity/concert-seat-status.enum";
-import { ConcertSeatEntity } from "@app/domain/entity/concert-seat.entity";
+import { ConcertSeatEntity } from "@app/domain/entity/concert/concert-seat.entity";
 
 const seatsExample = [
   {

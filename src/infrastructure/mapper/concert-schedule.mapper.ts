@@ -1,5 +1,5 @@
 import { ConcertSchedule } from "@app/infrastructure/entity/concert-schedule.entity";
-import { ConcertScheduleEntity } from "@app/domain/entity/concert-schedule.entity";
+import { ConcertScheduleEntity } from "@app/domain/entity/concert/concert-schedule.entity";
 import ConcertMapper from "@app/infrastructure/mapper/concert.mapper";
 import ConcertSeatMapper from "@app/infrastructure/mapper/concert-seat.mapper";
 

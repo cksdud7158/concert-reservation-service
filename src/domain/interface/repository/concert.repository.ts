@@ -1,5 +1,5 @@
 import { EntityManager } from "typeorm";
-import { ConcertEntity } from "@app/domain/entity/concert.entity";
+import { ConcertEntity } from "@app/domain/entity/concert/concert.entity";
 
 export const ConcertRepositorySymbol = Symbol.for("ConcertRepository");
 

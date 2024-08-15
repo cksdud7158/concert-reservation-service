@@ -1,5 +1,5 @@
 import { User } from "@app/infrastructure/entity/user.entity";
-import { UserEntity } from "@app/domain/entity/user.entity";
+import { UserEntity } from "@app/domain/entity/user/user.entity";
 import { BadRequestException } from "@nestjs/common";
 
 class UserMapper {
