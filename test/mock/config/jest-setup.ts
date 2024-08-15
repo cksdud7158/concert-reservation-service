@@ -3,8 +3,8 @@ import { INestApplication } from "@nestjs/common";
 import { DataSource } from "typeorm";
 import { mockAppModule } from "../App.module";
 import Redis from "ioredis";
-import { RedisClientSymbol } from "@app/module/provider/redis.provider";
-import RedisKey from "@app/domain/enum/redis-key.enum";
+import { RedisClientSymbol } from "@app/module/provider/redis/redis.provider";
+import RedisKey from "@app/domain/enum/redis/redis-key.enum";
 
 let mockModule: TestingModule;
 let app: INestApplication;

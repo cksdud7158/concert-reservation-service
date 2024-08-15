@@ -1,12 +1,14 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { JwtService } from "@nestjs/jwt";
-import WaitingQueueStatus from "@app/domain/enum/waiting-queue-status.enum";
+import WaitingQueueStatus from "@app/domain/enum/entity/waiting-queue-status.enum";
 import { TokenService } from "@app/domain/service/token/token.service";
 import WaitingQueueEntity from "@app/domain/entity/waiting-queue.entity";
 import { BadRequestException } from "@nestjs/common";
 import { PayloadType } from "@app/domain/type/token/payload.type";
-import { RedisClientSymbol } from "@app/module/provider/redis.provider";
+import { RedisClientSymbol } from "@app/module/provider/redis/redis.provider";
 import Redis from "ioredis";
+import waitingQueueProvider from "@app/module/provider/repository/waiting-queue.provider";
+import { mockRedisProvider } from "../../../mock/lib/redis.mock";
 
 describe("TokenService", () => {
   let service: TokenService;
@@ -28,17 +30,8 @@ describe("TokenService", () => {
             signAsync: jest.fn(),
           },
         },
-        {
-          provide: RedisClientSymbol,
-          useValue: {
-            scard: jest.fn(),
-            sadd: jest.fn(),
-            zadd: jest.fn(),
-            zrank: jest.fn(),
-            smembers: jest.fn(),
-            srem: jest.fn(),
-          },
-        },
+        waitingQueueProvider,
+        mockRedisProvider,
       ],
     }).compile();
 

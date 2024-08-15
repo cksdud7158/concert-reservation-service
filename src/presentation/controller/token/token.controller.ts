@@ -10,7 +10,6 @@ import {
 import { ApiCreatedResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { ApiTag } from "@app/config/swagger/api-tag-enum";
 import { TokenRequest } from "@app/presentation/dto/token/get-token/token.request";
-import { TokenGuard } from "@app/presentation/guard/token.guard";
 import { RefreshTokenUseCase } from "@app/application/use-case/token/refresh-token.use-case";
 import { GetTokenUseCase } from "@app/application/use-case/token/get-token.use-case";
 import { RefreshTokenGuard } from "@app/presentation/guard/refresh-token.guard";

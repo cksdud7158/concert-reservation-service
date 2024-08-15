@@ -10,7 +10,7 @@ import { UserEntity } from "@app/domain/entity/user.entity";
 import { ConcertEntity } from "@app/domain/entity/concert.entity";
 import { ConcertSeatEntity } from "@app/domain/entity/concert-seat.entity";
 import { ConcertScheduleEntity } from "@app/domain/entity/concert-schedule.entity";
-import TicketStatus from "@app/domain/enum/ticket-status.enum";
+import TicketStatus from "@app/domain/enum/entity/ticket-status.enum";
 
 @Injectable()
 export class ReservationService {

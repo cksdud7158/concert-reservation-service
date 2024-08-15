@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { User } from "@app/infrastructure/entity/user.entity";
-import PointHistoryType from "@app/domain/enum/point-history.enum";
+import PointHistoryType from "@app/domain/enum/entity/point-history.enum";
 
 @Entity()
 export class PointHistory {

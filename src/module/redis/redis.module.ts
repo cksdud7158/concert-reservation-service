@@ -1,5 +1,5 @@
 import { Global, Module } from "@nestjs/common";
-import redisProvider from "@app/module/provider/redis.provider";
+import redisProvider from "@app/module/provider/redis/redis.provider";
 import { LockService } from "@app/domain/service/redis/redis.service";
 
 @Global()

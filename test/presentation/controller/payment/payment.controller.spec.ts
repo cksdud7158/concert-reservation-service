@@ -5,7 +5,7 @@ import { PaymentService } from "@app/domain/service/payment/payment.service";
 import { ReservationService } from "@app/domain/service/reservation/reservation.service";
 import { UserService } from "@app/domain/service/user/user.service";
 import { ConcertService } from "@app/domain/service/concert/concert.service";
-import PaymentStatus from "@app/domain/enum/payment-status.enum";
+import PaymentStatus from "@app/domain/enum/entity/payment-status.enum";
 import { TokenGuard } from "@app/presentation/guard/token.guard";
 import { mockPaymentProvider } from "../../../mock/repositroy-mocking/payment-repository.mock";
 import { mockTicketProvider } from "../../../mock/repositroy-mocking/ticket-repository.mock";
@@ -19,6 +19,8 @@ import { PayUseCase } from "@app/application/use-case/payment/pay.use-case";
 import { PaymentEntity } from "@app/domain/entity/payment.entity";
 import { TokenService } from "@app/domain/service/token/token.service";
 import { JwtService } from "@nestjs/jwt";
+import { eventbusProvider } from "../../../mock/lib/eventbus.mock";
+import { mockConcertScheduleCacheProvider } from "../../../mock/repositroy-mocking/concert-schedule-cache-repository.mock";
 import { mockWaitingQueueProvider } from "../../../mock/repositroy-mocking/waiting-queue-repository.mock";
 
 describe("PaymentController", () => {
@@ -44,7 +46,9 @@ describe("PaymentController", () => {
         mockConcertProvider,
         mockConcertSeatProvider,
         mockConcertScheduleProvider,
+        mockConcertScheduleCacheProvider,
         mockWaitingQueueProvider,
+        eventbusProvider,
       ],
     })
       .overrideGuard(TokenGuard)

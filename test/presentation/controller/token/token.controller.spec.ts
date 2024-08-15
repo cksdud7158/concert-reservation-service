@@ -4,20 +4,17 @@ import { UserService } from "@app/domain/service/user/user.service";
 import key from "@app/config/token/key";
 import { TokenService } from "@app/domain/service/token/token.service";
 import { TokenController } from "@app/presentation/controller/token/token.controller";
-import { mockWaitingQueueProvider } from "../../../mock/repositroy-mocking/waiting-queue-repository.mock";
 import { mockUserProvider } from "../../../mock/repositroy-mocking/user-repository.mock";
 import { mockPointHistoryProvider } from "../../../mock/repositroy-mocking/point-history-repository.mock";
 import { datasourceProvider } from "../../../mock/lib/datasource.mock";
-import WaitingQueueStatus from "@app/domain/enum/waiting-queue-status.enum";
-import { GetWaitingStatusResponse } from "@app/presentation/dto/token/get-waiting-status/get-waiting-status.response";
-import WaitingQueueEntity from "@app/domain/entity/waiting-queue.entity";
-import { GetWaitingStatusUseCase } from "@app/application/use-case/token/get-waiting-status.use-case";
 import { GetTokenUseCase } from "@app/application/use-case/token/get-token.use-case";
+import { RefreshTokenUseCase } from "@app/application/use-case/token/refresh-token.use-case";
+import { mockWaitingQueueProvider } from "../../../mock/repositroy-mocking/waiting-queue-repository.mock";
 
 describe("AuthController", () => {
   let controller: TokenController;
   let getTokenUseCase: GetTokenUseCase;
-  let getWaitingStatusUseCase: GetWaitingStatusUseCase;
+  let refreshTokenUseCase: RefreshTokenUseCase;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -30,19 +27,19 @@ describe("AuthController", () => {
       ],
       providers: [
         GetTokenUseCase,
-        GetWaitingStatusUseCase,
+        RefreshTokenUseCase,
         TokenService,
         UserService,
         datasourceProvider,
-        mockWaitingQueueProvider,
         mockUserProvider,
         mockPointHistoryProvider,
+        mockWaitingQueueProvider,
       ],
     }).compile();
 
     controller = module.get<TokenController>(TokenController);
     getTokenUseCase = module.get(GetTokenUseCase);
-    getWaitingStatusUseCase = module.get(GetWaitingStatusUseCase);
+    refreshTokenUseCase = module.get(RefreshTokenUseCase);
   });
 
   describe("/token (POST)", () => {
@@ -61,27 +58,15 @@ describe("AuthController", () => {
       expect(res).toBe(response);
     });
   });
-  describe("/token/waiting-status (GET)", () => {
-    it("상태 조회 성공", async () => {
+  describe("/token/refresh (GET)", () => {
+    it("토큰 리프레쉬 성공", async () => {
       const req = { user: { sub: 1 } };
 
-      const waitingQueue = new WaitingQueueEntity({
-        id: 1,
-        user_id: 1,
-        orderNum: 0,
-        status: WaitingQueueStatus.AVAILABLE,
-      });
+      const execute = jest.spyOn(refreshTokenUseCase, "execute");
 
-      jest
-        .spyOn(getWaitingStatusUseCase, "execute")
-        .mockResolvedValue(waitingQueue);
+      const res = await controller.refreshToken(req);
 
-      const res = await controller.getWaitingStatus(req);
-
-      expect(res).toEqual(GetWaitingStatusResponse.toResponse(waitingQueue));
-      expect(getWaitingStatusUseCase.execute).toHaveBeenCalledWith(
-        req.user.sub,
-      );
+      expect(execute).toBeCalled();
     });
   });
 });

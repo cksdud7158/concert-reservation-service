@@ -1,6 +1,6 @@
 import { IsEnum, IsNumber } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
-import WaitingQueueStatus from "@app/domain/enum/waiting-queue-status.enum";
+import WaitingQueueStatus from "@app/domain/enum/entity/waiting-queue-status.enum";
 import WaitingQueueEntity from "@app/domain/entity/waiting-queue.entity";
 
 export class GetWaitingStatusResponse {

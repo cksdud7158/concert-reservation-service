@@ -1,6 +1,6 @@
 import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
-import WaitingQueueStatus from "@app/domain/enum/waiting-queue-status.enum";
+import WaitingQueueStatus from "@app/domain/enum/entity/waiting-queue-status.enum";
 import { PayloadType } from "@app/domain/type/token/payload.type";
 import {
   WaitingQueueRepository,
@@ -89,7 +89,6 @@ export class TokenService {
 
   // 토큰 리프레쉬
   async refreshToken(user: PayloadType): Promise<string> {
-    //
     // 이용 가능 상태면 TTL 만 연장
     if (user.status === WaitingQueueStatus.AVAILABLE) {
       await this.waitingQueueRepository.setActiveUser(user.userId);

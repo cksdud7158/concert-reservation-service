@@ -1,12 +1,11 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { ReservationController } from "@app/presentation/controller/reservation/reservation.controller";
-import ConcertScheduleStatus from "@app/domain/enum/concert-seat-status.enum";
+import ConcertScheduleStatus from "@app/domain/enum/entity/concert-seat-status.enum";
 import { ReservationService } from "@app/domain/service/reservation/reservation.service";
 import { ConcertService } from "@app/domain/service/concert/concert.service";
 import { JwtService } from "@nestjs/jwt";
 import { TokenService } from "@app/domain/service/token/token.service";
 import { TokenGuard } from "@app/presentation/guard/token.guard";
-import { mockWaitingQueueProvider } from "../../../mock/repositroy-mocking/waiting-queue-repository.mock";
 import { mockTicketProvider } from "../../../mock/repositroy-mocking/ticket-repository.mock";
 import { mockConcertProvider } from "../../../mock/repositroy-mocking/concert-repository.mock";
 import { mockConcertScheduleProvider } from "../../../mock/repositroy-mocking/concert-schedule-repository.mock";
@@ -18,6 +17,8 @@ import { ConcertEntity } from "@app/domain/entity/concert.entity";
 import { ConcertScheduleEntity } from "@app/domain/entity/concert-schedule.entity";
 import { ConcertSeatEntity } from "@app/domain/entity/concert-seat.entity";
 import { ReserveConcertResponse } from "@app/presentation/dto/reservation/reserve-concert/reserve-concert.response";
+import { mockConcertScheduleCacheProvider } from "../../../mock/repositroy-mocking/concert-schedule-cache-repository.mock";
+import { mockWaitingQueueProvider } from "../../../mock/repositroy-mocking/waiting-queue-repository.mock";
 
 describe("ReservationController", () => {
   let controller: ReservationController;
@@ -37,11 +38,12 @@ describe("ReservationController", () => {
         ConcertService,
         TokenService,
         JwtService,
-        mockWaitingQueueProvider,
         mockTicketProvider,
         mockConcertProvider,
         mockConcertScheduleProvider,
+        mockConcertScheduleCacheProvider,
         mockConcertSeatProvider,
+        mockWaitingQueueProvider,
         datasourceProvider,
       ],
     })

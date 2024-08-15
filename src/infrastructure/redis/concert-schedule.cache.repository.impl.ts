@@ -1,9 +1,9 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { ConcertScheduleEntity } from "@app/domain/entity/concert-schedule.entity";
-import { RedisClientSymbol } from "@app/module/provider/redis.provider";
+import { RedisClientSymbol } from "@app/module/provider/redis/redis.provider";
 import Redis from "ioredis";
 import { ConcertScheduleCacheRepository } from "@app/domain/interface/cache/concert-schedule.cache.repository";
-import RedisKey from "@app/domain/enum/redis-key.enum";
+import RedisKey from "@app/domain/enum/redis/redis-key.enum";
 
 @Injectable()
 export class ConcertScheduleCacheRepositoryImpl

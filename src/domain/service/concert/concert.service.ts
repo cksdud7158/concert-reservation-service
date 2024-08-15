@@ -15,7 +15,7 @@ import { DataSource, EntityManager } from "typeorm";
 import { ConcertScheduleEntity } from "@app/domain/entity/concert-schedule.entity";
 import { ConcertEntity } from "@app/domain/entity/concert.entity";
 import { ConcertSeatEntity } from "@app/domain/entity/concert-seat.entity";
-import ConcertSeatStatus from "@app/domain/enum/concert-seat-status.enum";
+import ConcertSeatStatus from "@app/domain/enum/entity/concert-seat-status.enum";
 import {
   ConcertScheduleCacheRepository,
   ConcertScheduleCacheRepositorySymbol,

@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import TicketStatus from "@app/domain/enum/ticket-status.enum";
-import ConcertSeatStatus from "@app/domain/enum/concert-seat-status.enum";
+import TicketStatus from "@app/domain/enum/entity/ticket-status.enum";
+import ConcertSeatStatus from "@app/domain/enum/entity/concert-seat-status.enum";
 import { ConcertEntity } from "@app/domain/entity/concert.entity";
 import { ConcertScheduleEntity } from "@app/domain/entity/concert-schedule.entity";
 import { TicketEntity } from "@app/domain/entity/ticket.entity";

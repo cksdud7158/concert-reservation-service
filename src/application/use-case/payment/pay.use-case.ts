@@ -5,10 +5,10 @@ import { UserService } from "@app/domain/service/user/user.service";
 import { ConcertService } from "@app/domain/service/concert/concert.service";
 import { DataSource } from "typeorm";
 import { PaymentEntity } from "@app/domain/entity/payment.entity";
-import TicketStatus from "@app/domain/enum/ticket-status.enum";
-import ConcertScheduleStatus from "@app/domain/enum/concert-seat-status.enum";
 import { EventBus } from "@nestjs/cqrs";
-import { PayCompletedEvent } from "@app/application/event/pay-completed.event";
+import { PayCompletedEvent } from "@app/presentation/event/payment/pay-completed.event";
+import TicketStatus from "@app/domain/enum/entity/ticket-status.enum";
+import ConcertScheduleStatus from "@app/domain/enum/entity/concert-seat-status.enum";
 
 @Injectable()
 export class PayUseCase {

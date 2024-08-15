@@ -1,4 +1,4 @@
-import WaitingQueueStatus from "@app/domain/enum/waiting-queue-status.enum";
+import WaitingQueueStatus from "@app/domain/enum/entity/waiting-queue-status.enum";
 
 class WaitingQueueEntity {
   userId: number;
