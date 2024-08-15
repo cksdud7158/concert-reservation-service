@@ -30,7 +30,10 @@ beforeAll(async () => {
 afterAll(async () => {
   // 데이터 정리
   await dataSource.dropDatabase();
-  redis.del([RedisKey.ACTIVE_USERS, RedisKey.WAITING_USERS]);
+  const keys = await redis.keys("*test*");
+  if (keys.length > 0) {
+    await redis.del(keys);
+  }
   redis.quit();
   await app.close();
 });

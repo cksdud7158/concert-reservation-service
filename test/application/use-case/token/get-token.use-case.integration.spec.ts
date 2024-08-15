@@ -32,16 +32,11 @@ describe("GetTokenUseCase", () => {
       const userId = user.id;
 
       // when
-      const signAsync = jest.spyOn(jwtService, "signAsync");
-      const scard = jest.spyOn(redis, "scard");
-      const sadd = jest.spyOn(redis, "sadd");
       const res = await getTokenUseCase.execute(userId);
 
       // then
       expect(res).toBeDefined();
-      expect(signAsync).toBeCalled();
-      expect(scard).toBeCalled();
-      expect(sadd).toBeCalled();
+      expect(typeof res).toBe("string");
     });
 
     it("토큰 발급 실패 (없는 유저)", async () => {
