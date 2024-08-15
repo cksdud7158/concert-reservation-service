@@ -3,6 +3,7 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
+  OnModuleDestroy,
   OnModuleInit,
 } from "@nestjs/common";
 import { Consumer, EachMessagePayload } from "kafkajs";
@@ -13,7 +14,7 @@ import PaidEventStatusEnum from "@app/domain/enum/entity/paid-event-status.enum"
 import { UpdatePaidEventUseCase } from "@app/application/use-case/payment/update-paid-event.use-case";
 
 @Injectable()
-export class PaymentPaidConsumer implements OnModuleInit {
+export class PaymentPaidConsumer implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(PaymentPaidConsumer.name);
   private readonly consumer: Consumer;
 
@@ -71,5 +72,13 @@ export class PaymentPaidConsumer implements OnModuleInit {
         ? payload.message.value.toString()
         : undefined,
     });
+  }
+
+  async onModuleDestroy() {
+    await this.consumer.disconnect();
+  }
+
+  async disconnectConsumer() {
+    await this.consumer.disconnect();
   }
 }

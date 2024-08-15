@@ -54,6 +54,8 @@ export class PaidEventRepositoryImpl implements PaidEventRepository {
       .andWhere("update_at < :date", { date: fiveMinutesAgo.toISOString() })
       .execute();
 
+    if (!entities?.length) return;
+
     return entities.map((entity) => PaidEventMapper.toDomain(entity));
   }
 }

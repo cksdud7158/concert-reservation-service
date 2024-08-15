@@ -8,6 +8,8 @@ import { WinstonModule } from "nest-winston";
 import { winstoneConfig } from "@app/config/winstone/winstone.config";
 import { ScheduleModule } from "@nestjs/schedule";
 import { typeormTestConfig } from "./config/typeorm/typeorm-test.config";
+import { KafkaModule } from "@app/module/event/kafka.module";
+import { EventModule } from "@app/module/event/event.module";
 
 export const mockAppModule = [
   TokenModule,
@@ -15,6 +17,8 @@ export const mockAppModule = [
   ReservationModule,
   UserModule,
   PaymentModule,
+  KafkaModule,
+  EventModule,
   TypeOrmModule.forRoot(typeormTestConfig),
   WinstonModule.forRoot(winstoneConfig),
   ScheduleModule.forRoot(),

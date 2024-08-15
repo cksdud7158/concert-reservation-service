@@ -1,6 +1,5 @@
 import { Inject, Injectable, Logger } from "@nestjs/common";
 import { Cron, CronExpression } from "@nestjs/schedule";
-import { ChangeToActiveQueuesUseCase } from "@app/application/use-case/token/change-to-active-queues.use-case";
 import { SendMessageUseCase } from "@app/application/use-case/payment/send-message.use-case";
 
 @Injectable()
@@ -12,7 +11,7 @@ export class PaidEventScheduler {
     private readonly sendMessageUseCase: SendMessageUseCase,
   ) {}
 
-  @Cron(CronExpression.EVERY_5_MINUTES)
+  @Cron(CronExpression.EVERY_5_MINUTES, { name: "sendMessage" })
   async sendMessage() {
     this.logger.log("스케쥴러 sendMessage 실행");
     await this.sendMessageUseCase.execute();

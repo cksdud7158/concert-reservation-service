@@ -50,8 +50,7 @@ export class PaidEventService {
     // 5분이 지난 성공 상태 아닌 데이터 조회
     const paidEventEntities =
       await this.paidEventRepository.findByNotSuccessStatusWithAfter5min();
-
-    if (!paidEventEntities.length) return;
+    if (!paidEventEntities?.length) return;
 
     // 메시지 발행
     paidEventEntities.forEach((paidEvent) =>

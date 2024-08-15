@@ -3,6 +3,7 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
+  OnModuleDestroy,
   OnModuleInit,
 } from "@nestjs/common";
 import { Consumer, EachMessagePayload } from "kafkajs";
@@ -12,7 +13,7 @@ import { PaymentEntity } from "@app/domain/entity/payment/payment.entity";
 import { ExpireTokenUseCase } from "@app/application/use-case/token/expire-token.use-case";
 
 @Injectable()
-export class TokenExpireConsumer implements OnModuleInit {
+export class TokenExpireConsumer implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(TokenExpireConsumer.name);
   private readonly consumer: Consumer;
 
@@ -65,5 +66,13 @@ export class TokenExpireConsumer implements OnModuleInit {
         ? payload.message.value.toString()
         : undefined,
     });
+  }
+
+  async onModuleDestroy() {
+    await this.consumer.disconnect();
+  }
+
+  async disconnectConsumer() {
+    await this.consumer.disconnect();
   }
 }
