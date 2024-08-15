@@ -15,6 +15,8 @@ import { LoggingInterceptor } from "@app/presentation/interceptor/logging/loggin
 import { ScheduleModule } from "@nestjs/schedule";
 import { RedisModule } from "@app/module/redis/redis.module";
 import { EventModule } from "@app/module/event/event.module";
+import { KafkaModule } from "@app/module/event/kafka.module";
+import { TestModule } from "@app/module/test/test.module";
 
 @Module({
   imports: [
@@ -25,9 +27,11 @@ import { EventModule } from "@app/module/event/event.module";
     PaymentModule,
     EventModule,
     RedisModule,
+    KafkaModule,
     TypeOrmModule.forRoot(typeORMConfig),
     WinstonModule.forRoot(winstoneConfig),
     ScheduleModule.forRoot(),
+    TestModule,
   ],
   controllers: [AppController],
   providers: [
