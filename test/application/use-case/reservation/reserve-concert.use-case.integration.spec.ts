@@ -5,8 +5,8 @@ import { ReserveConcertUseCase } from "@app/application/use-case/reservation/res
 import { Concert } from "@app/infrastructure/entity/concert.entity";
 import { ConcertSchedule } from "@app/infrastructure/entity/concert-schedule.entity";
 import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
-import ConcertScheduleStatus from "@app/domain/enum/concert-seat-status.enum";
-import TicketStatus from "@app/domain/enum/ticket-status.enum";
+import ConcertScheduleStatus from "@app/domain/enum/entity/concert-seat-status.enum";
+import TicketStatus from "@app/domain/enum/entity/ticket-status.enum";
 import "../../../mock/config/jest-setup";
 
 describe("ReserveConcertUseCase", () => {

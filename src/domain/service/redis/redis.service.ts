@@ -1,5 +1,5 @@
 import { BadRequestException, Inject, Injectable } from "@nestjs/common";
-import { RedisClientSymbol } from "@app/module/provider/redis.provider";
+import { RedisClientSymbol } from "@app/module/provider/redis/redis.provider";
 import Redis from "ioredis";
 
 @Injectable()

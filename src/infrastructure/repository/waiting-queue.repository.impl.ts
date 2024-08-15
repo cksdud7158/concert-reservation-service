@@ -5,9 +5,9 @@ import {
   InternalServerErrorException,
 } from "@nestjs/common";
 import { WaitingQueueRepository } from "@app/domain/interface/repository/waiting-queue.repository";
-import { RedisClientSymbol } from "@app/module/provider/redis.provider";
+import { RedisClientSymbol } from "@app/module/provider/redis/redis.provider";
 import Redis from "ioredis";
-import RedisKey from "@app/domain/enum/redis-key.enum";
+import RedisKey from "@app/domain/enum/redis/redis-key.enum";
 
 @Injectable()
 export class WaitingQueueRepositoryImpl implements WaitingQueueRepository {

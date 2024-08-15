@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import PaymentStatus from "@app/domain/enum/payment-status.enum";
+import PaymentStatus from "@app/domain/enum/entity/payment-status.enum";
 import { Ticket } from "@app/infrastructure/entity/ticket.entity";
 import { User } from "@app/infrastructure/entity/user.entity";
 

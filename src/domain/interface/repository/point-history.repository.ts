@@ -1,5 +1,5 @@
 import { EntityManager } from "typeorm";
-import PointHistoryType from "@app/domain/enum/point-history.enum";
+import PointHistoryType from "@app/domain/enum/entity/point-history.enum";
 
 export const PointHistoryRepositorySymbol = Symbol.for(
   "PointHistoryRepository",

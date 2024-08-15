@@ -2,7 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { ConcertController } from "@app/presentation/controller/concert/concert.controller";
 import { GetScheduleListResponse } from "@app/presentation/dto/concert/get-schedule-list/get-schedule-list.response";
 import { ConcertService } from "@app/domain/service/concert/concert.service";
-import ConcertScheduleStatus from "@app/domain/enum/concert-seat-status.enum";
+import ConcertScheduleStatus from "@app/domain/enum/entity/concert-seat-status.enum";
 import { GetSeatListResponse } from "@app/presentation/dto/concert/get-seat-list/get-seat-list.response";
 import { GetConcertListResponse } from "@app/presentation/dto/concert/get-concert-list/get-concert-list.response";
 import { TokenGuard } from "@app/presentation/guard/token.guard";
@@ -16,6 +16,7 @@ import { ConcertScheduleEntity } from "@app/domain/entity/concert-schedule.entit
 import { ConcertEntity } from "@app/domain/entity/concert.entity";
 import { ConcertSeatEntity } from "@app/domain/entity/concert-seat.entity";
 import { datasourceProvider } from "../../../mock/lib/datasource.mock";
+import { mockConcertScheduleCacheProvider } from "../../../mock/repositroy-mocking/concert-schedule-cache-repository.mock";
 
 describe("ConcertController", () => {
   let controller: ConcertController;
@@ -40,6 +41,7 @@ describe("ConcertController", () => {
         mockConcertProvider,
         mockConcertScheduleProvider,
         mockConcertSeatProvider,
+        mockConcertScheduleCacheProvider,
       ],
     })
       .overrideGuard(TokenGuard)

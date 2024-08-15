@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { EntityManager, In, Repository } from "typeorm";
 import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
 import { ConcertSeatRepository } from "@app/domain/interface/repository/concert-seat.repository";
-import ConcertScheduleStatus from "@app/domain/enum/concert-seat-status.enum";
+import ConcertScheduleStatus from "@app/domain/enum/entity/concert-seat-status.enum";
 import { ConcertSeatEntity } from "@app/domain/entity/concert-seat.entity";
 import ConcertSeatMapper from "@app/infrastructure/mapper/concert-seat.mapper";
 

@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
   VersionColumn,
 } from "typeorm";
-import TicketStatus from "@app/domain/enum/ticket-status.enum";
+import TicketStatus from "@app/domain/enum/entity/ticket-status.enum";
 import { User } from "@app/infrastructure/entity/user.entity";
 import { ConcertSchedule } from "@app/infrastructure/entity/concert-schedule.entity";
 import { ConcertSeat } from "@app/infrastructure/entity/concert-seat.entity";
@@ -59,7 +59,6 @@ export class Ticket {
   })
   @JoinColumn()
   concert: Concert;
-
 
   @VersionColumn()
   version: number;

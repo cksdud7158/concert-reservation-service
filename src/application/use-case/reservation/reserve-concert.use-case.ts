@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { ReservationService } from "@app/domain/service/reservation/reservation.service";
 import { ConcertService } from "@app/domain/service/concert/concert.service";
-import ConcertScheduleStatus from "@app/domain/enum/concert-seat-status.enum";
+import ConcertScheduleStatus from "@app/domain/enum/entity/concert-seat-status.enum";
 import { DataSource } from "typeorm";
 import { TicketEntity } from "@app/domain/entity/ticket.entity";
 

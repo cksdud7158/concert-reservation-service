@@ -7,7 +7,7 @@ import {
   PointHistoryRepository,
   PointHistoryRepositorySymbol,
 } from "@app/domain/interface/repository/point-history.repository";
-import PointHistoryType from "@app/domain/enum/point-history.enum";
+import PointHistoryType from "@app/domain/enum/entity/point-history.enum";
 import { EntityManager } from "typeorm";
 
 @Injectable()

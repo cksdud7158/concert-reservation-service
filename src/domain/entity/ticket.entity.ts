@@ -1,4 +1,4 @@
-import TicketStatus from "@app/domain/enum/ticket-status.enum";
+import TicketStatus from "@app/domain/enum/entity/ticket-status.enum";
 import { ConcertScheduleEntity } from "@app/domain/entity/concert-schedule.entity";
 import { ConcertEntity } from "@app/domain/entity/concert.entity";
 import { UserEntity } from "@app/domain/entity/user.entity";
@@ -26,7 +26,6 @@ export class TicketEntity {
       seat: ConcertSeatEntity;
       concert: ConcertEntity;
       version: number;
-
     }>,
   ) {
     Object.assign(this, args);

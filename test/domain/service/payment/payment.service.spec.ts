@@ -4,7 +4,7 @@ import {
   PaymentRepository,
   PaymentRepositorySymbol,
 } from "@app/domain/interface/repository/payment.repository";
-import PaymentStatus from "@app/domain/enum/payment-status.enum";
+import PaymentStatus from "@app/domain/enum/entity/payment-status.enum";
 import { mockPaymentProvider } from "../../../mock/repositroy-mocking/payment-repository.mock";
 import { PaymentEntity } from "@app/domain/entity/payment.entity";
 import { datasourceProvider } from "../../../mock/lib/datasource.mock";

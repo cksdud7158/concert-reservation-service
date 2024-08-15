@@ -5,7 +5,7 @@ import { TicketRepository } from "@app/domain/interface/repository/ticket.reposi
 import { Ticket } from "@app/infrastructure/entity/ticket.entity";
 import { TicketEntity } from "@app/domain/entity/ticket.entity";
 import TicketMapper from "@app/infrastructure/mapper/ticket.mapper";
-import TicketStatus from "@app/domain/enum/ticket-status.enum";
+import TicketStatus from "@app/domain/enum/entity/ticket-status.enum";
 
 @Injectable()
 export class TicketRepositoryImpl implements TicketRepository {

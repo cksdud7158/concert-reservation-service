@@ -1,4 +1,4 @@
-import PaymentStatus from "@app/domain/enum/payment-status.enum";
+import PaymentStatus from "@app/domain/enum/entity/payment-status.enum";
 import { TicketEntity } from "@app/domain/entity/ticket.entity";
 import { UserEntity } from "@app/domain/entity/user.entity";
 

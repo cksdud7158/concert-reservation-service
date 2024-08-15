@@ -1,4 +1,4 @@
-import ConcertScheduleStatus from "@app/domain/enum/concert-seat-status.enum";
+import ConcertScheduleStatus from "@app/domain/enum/entity/concert-seat-status.enum";
 import { ConcertScheduleEntity } from "@app/domain/entity/concert-schedule.entity";
 
 export class ConcertSeatEntity {
