@@ -44,10 +44,7 @@ export class WaitingQueueRepositoryImpl implements WaitingQueueRepository {
 
   async removeActiveUser(userId: number): Promise<void> {
     const key = this.getActiveUserKey(userId);
-    const res = await this.redis.del(key);
-    if (!res) {
-      throw new InternalServerErrorException("액티브 유저 삭제 실패" + userId);
-    }
+    await this.redis.del(key);
   }
 
   async setWaitingUser(userId: number): Promise<void> {

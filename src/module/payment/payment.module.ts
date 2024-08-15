@@ -14,16 +14,21 @@ import { PaidEventService } from "@app/domain/service/payment/paid-event.service
 import paidEventProvider from "@app/module/provider/repository/paid-event.provider";
 import { PaidEvent } from "@app/infrastructure/entity/paid-event.entity";
 import { UpdatePaidEventUseCase } from "@app/application/use-case/payment/update-paid-event.use-case";
+import { KafkaModule } from "@app/module/event/kafka.module";
+import { PaidEventScheduler } from "@app/presentation/schedule/payment/paid-event.scheduler";
+import { SendMessageUseCase } from "@app/application/use-case/payment/send-message.use-case";
 
 @Module({
   controllers: [PaymentController],
   providers: [
     PayUseCase,
     UpdatePaidEventUseCase,
+    SendMessageUseCase,
     PaymentService,
     PaidEventService,
     paidEventProvider,
     paymentProvider,
+    PaidEventScheduler,
   ],
   imports: [
     TypeOrmModule.forFeature([Payment, PaidEvent]),
@@ -32,6 +37,7 @@ import { UpdatePaidEventUseCase } from "@app/application/use-case/payment/update
     ConcertModule,
     EventModule,
     TokenModule,
+    KafkaModule,
   ],
   exports: [PaidEventService, UpdatePaidEventUseCase],
 })

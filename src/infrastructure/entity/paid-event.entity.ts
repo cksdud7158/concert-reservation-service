@@ -31,5 +31,5 @@ export class PaidEvent {
   status: PaidEventStatus;
 
   @Column({ type: "text" })
-  message: MessageType;
+  message: string;
 }

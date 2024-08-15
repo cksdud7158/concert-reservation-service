@@ -4,6 +4,8 @@ import { Injectable } from "@nestjs/common";
 import { PaidEventRepository } from "@app/domain/interface/repository/paid-event.repository";
 import { PaidEvent } from "@app/infrastructure/entity/paid-event.entity";
 import { PaidEventEntity } from "@app/domain/entity/payment/paid-event.entity";
+import PaidEventStatusEnum from "@app/domain/enum/entity/paid-event-status.enum";
+import PaidEventMapper from "@app/infrastructure/mapper/paid-event.mapper";
 
 @Injectable()
 export class PaidEventRepositoryImpl implements PaidEventRepository {
@@ -21,7 +23,7 @@ export class PaidEventRepositoryImpl implements PaidEventRepository {
       .createQueryBuilder()
       .insert()
       .into(PaidEvent)
-      .values(event)
+      .values(PaidEventMapper.toEntity(event))
       .execute();
   }
 
@@ -38,5 +40,20 @@ export class PaidEventRepositoryImpl implements PaidEventRepository {
       })
       .where("payment_id = :id", { id: event.payment_id })
       .execute();
+  }
+
+  async findByNotSuccessStatusWithAfter5min(): Promise<PaidEventEntity[]> {
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+    const entities = await this.paidEvent.manager
+      .createQueryBuilder()
+      .select()
+      .from(PaidEvent, "pe")
+      .where("pe.status != :status", {
+        status: PaidEventStatusEnum.SEND_SUCCESS,
+      })
+      .andWhere("update_at < :date", { date: fiveMinutesAgo.toISOString() })
+      .execute();
+
+    return entities.map((entity) => PaidEventMapper.toDomain(entity));
   }
 }
