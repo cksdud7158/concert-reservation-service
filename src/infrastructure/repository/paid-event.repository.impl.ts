@@ -33,8 +33,10 @@ export class PaidEventRepositoryImpl implements PaidEventRepository {
     await manager
       .createQueryBuilder()
       .update(PaidEvent)
-      .set(event)
-      .where("id = :id", { id: event.id })
+      .set({
+        status: event.status,
+      })
+      .where("payment_id = :id", { id: event.payment_id })
       .execute();
   }
 }

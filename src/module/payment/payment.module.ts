@@ -13,11 +13,13 @@ import { EventModule } from "@app/module/event/event.module";
 import { PaidEventService } from "@app/domain/service/payment/paid-event.service";
 import paidEventProvider from "@app/module/provider/repository/paid-event.provider";
 import { PaidEvent } from "@app/infrastructure/entity/paid-event.entity";
+import { UpdatePaidEventUseCase } from "@app/application/use-case/payment/update-paid-event.use-case";
 
 @Module({
   controllers: [PaymentController],
   providers: [
     PayUseCase,
+    UpdatePaidEventUseCase,
     PaymentService,
     PaidEventService,
     paidEventProvider,
@@ -28,8 +30,9 @@ import { PaidEvent } from "@app/infrastructure/entity/paid-event.entity";
     ReservationModule,
     UserModule,
     ConcertModule,
-    TokenModule,
     EventModule,
+    TokenModule,
   ],
+  exports: [PaidEventService, UpdatePaidEventUseCase],
 })
 export class PaymentModule {}
