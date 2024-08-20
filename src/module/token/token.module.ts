@@ -9,7 +9,7 @@ import { GetTokenUseCase } from "@app/application/use-case/token/get-token.use-c
 import { ChangeToActiveQueuesUseCase } from "@app/application/use-case/token/change-to-active-queues.use-case";
 import { RedisModule } from "@app/module/redis/redis.module";
 import WaitingQueueProvider from "@app/module/provider/repository/waiting-queue.provider";
-import { EventModule } from "@app/module/event/event.module";
+import { ExpireTokenUseCase } from "@app/application/use-case/token/expire-token.use-case";
 
 @Module({
   controllers: [TokenController],
@@ -17,19 +17,19 @@ import { EventModule } from "@app/module/event/event.module";
     GetTokenUseCase,
     RefreshTokenUseCase,
     ChangeToActiveQueuesUseCase,
+    ExpireTokenUseCase,
     TokenService,
     WaitingQueueProvider,
   ],
   imports: [
     UserModule,
     RedisModule,
-    EventModule,
     JwtModule.register({
       global: true,
       secret: key,
       signOptions: { expiresIn: "2h" },
     }),
   ],
-  exports: [TokenService],
+  exports: [TokenService, ExpireTokenUseCase],
 })
 export class TokenModule {}
