@@ -34,7 +34,7 @@ export class PaidEventListener implements IEventHandler<PaidEvent> {
 
   async handleError(event: PaidEvent) {
     await this.updatePaidEventUseCase.execute(
-      event.payment,
+      event.payment.id,
       PaidEventStatusEnum.SEND_FAIL,
     );
   }

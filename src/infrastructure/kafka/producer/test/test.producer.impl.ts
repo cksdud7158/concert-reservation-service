@@ -17,7 +17,7 @@ export class TestProducerImpl implements OnModuleInit, OnModuleDestroy {
   private readonly producer: Producer;
 
   constructor(@Inject() private readonly kafkaInstanceService: KafkaInstance) {
-    this.producer = this.kafkaInstanceService.getKafkaInstance().producer();
+    this.producer = this.kafkaInstanceService.kafkaInstance.producer();
   }
 
   async onModuleInit() {

@@ -21,7 +21,7 @@ export class TokenExpireConsumer implements OnModuleInit, OnModuleDestroy {
     @Inject() private readonly kafkaInstanceService: KafkaInstance,
     @Inject() private readonly expireTokenUseCase: ExpireTokenUseCase,
   ) {
-    this.consumer = this.kafkaInstanceService.getKafkaInstance().consumer({
+    this.consumer = this.kafkaInstanceService.kafkaInstance.consumer({
       groupId: "nestjs-group-token-expired",
     });
   }
@@ -48,7 +48,7 @@ export class TokenExpireConsumer implements OnModuleInit, OnModuleDestroy {
         },
       });
     } catch (e) {
-      throw new InternalServerErrorException(e);
+      this.logger.error(new InternalServerErrorException(e));
     }
   }
 

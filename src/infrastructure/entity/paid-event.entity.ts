@@ -7,7 +7,6 @@ import {
 } from "typeorm";
 
 import PaidEventStatus from "@app/domain/enum/entity/paid-event-status.enum";
-import { MessageType } from "@app/domain/type/message/producer.type";
 
 @Entity()
 export class PaidEvent {

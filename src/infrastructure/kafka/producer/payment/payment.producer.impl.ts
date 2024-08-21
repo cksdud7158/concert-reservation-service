@@ -10,14 +10,17 @@ import { Producer } from "kafkajs";
 import PaymentTopicEnum from "@app/domain/enum/message/payment/payment.topic.enum";
 import { MessageType } from "@app/domain/type/message/producer.type";
 import { KafkaInstance } from "@app/infrastructure/kafka/kafka.instance";
+import { PaymentProducer } from "@app/domain/interface/message/payment/payment.producer";
 
 @Injectable()
-export class PaymentProducerImpl implements OnModuleInit, OnModuleDestroy {
+export class PaymentProducerImpl
+  implements PaymentProducer, OnModuleInit, OnModuleDestroy
+{
   private readonly logger = new Logger(PaymentProducerImpl.name);
   private readonly producer: Producer;
 
   constructor(@Inject() private readonly kafkaInstanceService: KafkaInstance) {
-    this.producer = this.kafkaInstanceService.getKafkaInstance().producer();
+    this.producer = this.kafkaInstanceService.kafkaInstance.producer();
   }
 
   async onModuleInit() {

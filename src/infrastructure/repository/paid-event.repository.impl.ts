@@ -28,7 +28,8 @@ export class PaidEventRepositoryImpl implements PaidEventRepository {
   }
 
   async updateStatusByPaymentId(
-    event: PaidEventEntity,
+    paymentId: number,
+    status: PaidEventStatusEnum,
     _manager?: EntityManager,
   ): Promise<void> {
     const manager = _manager ?? this.paidEvent.manager;
@@ -36,9 +37,9 @@ export class PaidEventRepositoryImpl implements PaidEventRepository {
       .createQueryBuilder()
       .update(PaidEvent)
       .set({
-        status: event.status,
+        status: status,
       })
-      .where("payment_id = :id", { id: event.payment_id })
+      .where("payment_id = :id", { id: paymentId })
       .execute();
   }
 

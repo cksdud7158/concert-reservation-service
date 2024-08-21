@@ -35,15 +35,10 @@ export class PaidEventService {
 
   // outbox 내역 저장
   async updateStatus(
-    payment: PaymentEntity,
+    paymentId: number,
     status: PaidEventStatusEnum,
   ): Promise<void> {
-    const event = new PaidEventEntity({
-      payment_id: payment.id,
-      status: status,
-    });
-
-    await this.paidEventRepository.updateStatusByPaymentId(event);
+    await this.paidEventRepository.updateStatusByPaymentId(paymentId, status);
   }
 
   async sendMessageNotSuccessStatus(): Promise<void> {

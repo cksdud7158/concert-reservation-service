@@ -22,7 +22,7 @@ export class PaymentPaidConsumer implements OnModuleInit, OnModuleDestroy {
     @Inject() private readonly kafkaInstanceService: KafkaInstance,
     @Inject() private readonly updatePaidEventUseCase: UpdatePaidEventUseCase,
   ) {
-    this.consumer = this.kafkaInstanceService.getKafkaInstance().consumer({
+    this.consumer = this.kafkaInstanceService.kafkaInstance.consumer({
       groupId: "nestjs-group-paid",
     });
   }
@@ -51,15 +51,16 @@ export class PaymentPaidConsumer implements OnModuleInit, OnModuleDestroy {
         },
       });
     } catch (e) {
-      throw new InternalServerErrorException(e);
+      this.logger.error(new InternalServerErrorException(e));
     }
   }
 
   async handleMessage(payload: EachMessagePayload) {
+    console.log("-------", payload.message.value.toString());
     const payment: PaymentEntity = JSON.parse(payload.message.value.toString());
 
     await this.updatePaidEventUseCase.execute(
-      payment,
+      payment.id,
       PaidEventStatusEnum.SEND_SUCCESS,
     );
 

@@ -7,10 +7,7 @@ import PaidEventStatusEnum from "@app/domain/enum/entity/paid-event-status.enum"
 export class UpdatePaidEventUseCase {
   constructor(@Inject() private readonly paidEventService: PaidEventService) {}
 
-  async execute(
-    payment: PaymentEntity,
-    status: PaidEventStatusEnum,
-  ): Promise<void> {
-    await this.paidEventService.updateStatus(payment, status);
+  async execute(paymentId: number, status: PaidEventStatusEnum): Promise<void> {
+    await this.paidEventService.updateStatus(paymentId, status);
   }
 }

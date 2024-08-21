@@ -137,6 +137,7 @@ describe("아웃 박스 패턴 통합 테스트", () => {
   });
 
   afterEach(async () => {
+    jest.clearAllMocks(); // 모든 Mock 상태를 초기화
     await paymentPaidConsumer.disconnectConsumer();
     await testConsumer.disconnectConsumer();
     await tokenExpireConsumer.disconnectConsumer();
@@ -170,6 +171,7 @@ describe("아웃 박스 패턴 통합 테스트", () => {
     expect(paymentPaidConsumerHandleMessage).toBeCalled();
     expect(tokenExpireConsumerHandleMessage).toBeCalled();
   });
+
   it("카프카 메시지 발행 실패", async () => {
     // given
     const ticketIdList = ticketEntities.map((ticketEntity) => ticketEntity.id);
@@ -179,7 +181,7 @@ describe("아웃 박스 패턴 통합 테스트", () => {
     const handleError = jest.spyOn(paidEventListener, "handleError");
     const sendMessage = jest
       .spyOn(paymentProducer, "sendMessage")
-      .mockRejectedValue(new InternalServerErrorException());
+      .mockRejectedValueOnce(new InternalServerErrorException());
     const paymentPaidConsumerHandleMessage = jest.spyOn(
       paymentPaidConsumer,
       "handleMessage",
