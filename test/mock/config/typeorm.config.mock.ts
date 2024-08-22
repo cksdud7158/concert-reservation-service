@@ -3,8 +3,8 @@ import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 
 export const typeormConfigMock: TypeOrmModuleOptions = {
   type: "postgres",
-  host: "localhost",
-  port: 5555,
+  host: "postgres",
+  port: 5432,
   username: "root",
   password: "password",
   database: "concert-reservation-service",

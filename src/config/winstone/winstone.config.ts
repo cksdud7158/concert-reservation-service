@@ -17,7 +17,14 @@ export const winstoneConfig: WinstonModuleOptions = {
         }),
       ),
     }),
+    new winston.transports.File({
+      filename: "logs/application.log",
+      format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.json(),
+      ),
+      maxsize: 1024 * 1024 * 100, // 20 MB 파일 크기 제한
+      maxFiles: 5, // 최대 5개의 파일 유지
+    }),
   ],
-  // 파일 로깅을 원하면 다음과 같이 추가할 수 있습니다.
-  // new winston.transports.File({ filename: 'combined.log' }),
 };

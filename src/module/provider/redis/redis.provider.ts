@@ -6,9 +6,8 @@ const redisProvider = {
   provide: RedisClientSymbol,
   useFactory: () => {
     const redis = new Redis({
-      host: "localhost",
+      host: "redis",
       port: 6379,
-      password: "concert",
     });
     return redis;
   },

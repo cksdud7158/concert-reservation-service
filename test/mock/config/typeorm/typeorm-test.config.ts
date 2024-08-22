@@ -4,8 +4,8 @@ import { resolve } from "path";
 
 export const typeormTestConfig: TypeOrmModuleOptions = {
   type: "postgres",
-  host: "localhost",
-  port: 5555,
+  host: "postgres",
+  port: 5432,
   username: "root",
   password: "password",
   database: "concert-reservation-service-test",

@@ -17,12 +17,12 @@ import { TokenModule } from "@app/module/token/token.module";
     TypeOrmModule.forFeature([PaidEvent]),
   ],
   providers: [
+    KafkaInstance,
     testProducerProvider,
     paymentProducerProvider,
     PaymentPaidConsumer,
     TokenExpireConsumer,
     TestConsumer,
-    KafkaInstance,
   ],
   exports: [testProducerProvider, paymentProducerProvider],
 })

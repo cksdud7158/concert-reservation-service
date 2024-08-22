@@ -16,7 +16,7 @@ export class TestConsumer implements OnModuleInit, OnModuleDestroy {
   private readonly consumer: Consumer;
 
   constructor(@Inject() private readonly kafkaInstanceService: KafkaInstance) {
-    this.consumer = this.kafkaInstanceService.getKafkaInstance().consumer({
+    this.consumer = this.kafkaInstanceService.kafkaInstance.consumer({
       groupId: "nestjs-group-test",
     });
   }
@@ -24,16 +24,16 @@ export class TestConsumer implements OnModuleInit, OnModuleDestroy {
   async onModuleInit() {
     try {
       await this.consumer.connect();
-      await this.consumer.subscribe({
-        topic: TestTopicEnum.TEST_TOPIC,
-        fromBeginning: true,
-      });
-
-      await this.consumer.run({
-        eachMessage: async (payload: EachMessagePayload) => {
-          await this.handleMessage(payload);
-        },
-      });
+      // await this.consumer.subscribe({
+      //   topic: TestTopicEnum.TEST_TOPIC,
+      //   fromBeginning: true,
+      // });
+      //
+      // await this.consumer.run({
+      //   eachMessage: async (payload: EachMessagePayload) => {
+      //     await this.handleMessage(payload);
+      //   },
+      // });
     } catch (e) {
       throw new InternalServerErrorException(e);
     }

@@ -4,8 +4,8 @@ import { resolve } from "path";
 
 export const typeORMConfig: TypeOrmModuleOptions = {
   type: "postgres",
-  host: "localhost",
-  port: 5555,
+  host: "postgres",
+  port: 5432,
   username: "root",
   password: "password",
   database: "concert-reservation-service",
@@ -15,4 +15,5 @@ export const typeORMConfig: TypeOrmModuleOptions = {
   ],
   synchronize: true,
   namingStrategy: new SnakeNamingStrategy(),
+  // logging: true,
 };
