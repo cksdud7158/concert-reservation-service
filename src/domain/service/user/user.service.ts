@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import {
   UserRepository,
   UserRepositorySymbol,
@@ -9,6 +9,7 @@ import {
 } from "@app/domain/interface/repository/point-history.repository";
 import PointHistoryType from "@app/domain/enum/entity/point-history.enum";
 import { EntityManager } from "typeorm";
+import { UserEntity } from "@app/domain/entity/user/user.entity";
 
 @Injectable()
 export class UserService {
@@ -19,8 +20,8 @@ export class UserService {
     private readonly pointHistoryRepository: PointHistoryRepository,
   ) {}
 
-  async hasUser(userId: number): Promise<void> {
-    await this.userRepository.findOneById(userId);
+  async hasUser(userId: number): Promise<UserEntity> {
+    return await this.userRepository.findOneById(userId);
   }
 
   async getPoint(userId: number): Promise<number> {

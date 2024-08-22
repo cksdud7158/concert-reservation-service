@@ -10,7 +10,7 @@ export class TokenScheduler {
     private readonly changeToActiveQueuesUseCase: ChangeToActiveQueuesUseCase,
   ) {}
 
-  @Cron("0 */3 * * * *")
+  @Cron(CronExpression.EVERY_MINUTE)
   async changeToActive() {
     this.logger.log("스케쥴러 changeToActiveQueuesUseCase 실행");
     await this.changeToActiveQueuesUseCase.execute();

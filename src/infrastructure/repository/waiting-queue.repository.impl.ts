@@ -11,20 +11,21 @@ import RedisKey from "@app/domain/enum/redis/redis-key.enum";
 
 @Injectable()
 export class WaitingQueueRepositoryImpl implements WaitingQueueRepository {
-  private readonly MEMORY_THRESHOLD = 0.5;
+  private readonly limit = 500; // 허용할 최대 요청 수
+  private readonly timeframe = 30; // 시간 프레임 (초 단위)
 
   constructor(@Inject(RedisClientSymbol) private readonly redis: Redis) {}
 
-  async isMemoryUsageHigh(): Promise<boolean> {
-    const info = await this.redis.info("memory");
-    const usedMemory = parseInt(info.match(/used_memory:(\d+)/)[1], 10);
-    const totalMemory = parseInt(
-      info.match(/total_system_memory:(\d+)/)[1],
-      10,
-    );
+  async isRequestAllowed(): Promise<boolean> {
+    const key = RedisKey.THROTTLING;
+    const currentCount = await this.redis.incr(key);
 
-    const memoryUsageRatio = usedMemory / totalMemory;
-    return memoryUsageRatio > this.MEMORY_THRESHOLD;
+    if (currentCount === 1) {
+      // 최초 요청이므로 타임프레임 설정
+      await this.redis.set(key, 1, "EX", this.timeframe);
+    }
+
+    return currentCount <= this.limit;
   }
 
   async hasActiveUser(userId: number): Promise<boolean> {

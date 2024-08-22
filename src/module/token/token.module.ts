@@ -10,6 +10,9 @@ import { ChangeToActiveQueuesUseCase } from "@app/application/use-case/token/cha
 import { RedisModule } from "@app/module/redis/redis.module";
 import WaitingQueueProvider from "@app/module/provider/repository/waiting-queue.provider";
 import { ExpireTokenUseCase } from "@app/application/use-case/token/expire-token.use-case";
+import { TokenScheduler } from "@app/presentation/schedule/token/token.scheduler";
+import { CacheService } from "@app/domain/service/cache/cache.service";
+import cacheProvider from "@app/module/provider/repository/cache.provider";
 
 @Module({
   controllers: [TokenController],
@@ -19,7 +22,10 @@ import { ExpireTokenUseCase } from "@app/application/use-case/token/expire-token
     ChangeToActiveQueuesUseCase,
     ExpireTokenUseCase,
     TokenService,
+    TokenScheduler,
+    CacheService,
     WaitingQueueProvider,
+    cacheProvider,
   ],
   imports: [
     UserModule,

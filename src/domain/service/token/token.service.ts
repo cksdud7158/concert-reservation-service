@@ -1,4 +1,9 @@
-import { BadRequestException, Inject, Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  Logger,
+} from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import WaitingQueueStatus from "@app/domain/enum/entity/waiting-queue-status.enum";
 import { PayloadType } from "@app/domain/type/token/payload.type";
@@ -9,6 +14,7 @@ import {
 
 @Injectable()
 export class TokenService {
+  private readonly logger = new Logger(TokenService.name);
   constructor(
     private readonly jwtService: JwtService,
     @Inject(WaitingQueueRepositorySymbol)
@@ -16,24 +22,29 @@ export class TokenService {
   ) {}
 
   async getToken(userId: number): Promise<string> {
+    const start = Date.now(); // 시작 시간 기록
     let orderNum = 0;
     let status = WaitingQueueStatus.AVAILABLE;
 
-    // 메모리 사용량 여부에 따라 대기 여부 판단
-    const isMemoryUsageHigh =
-      await this.waitingQueueRepository.isMemoryUsageHigh();
+    // 순식간에 요청이 몰렸는지 판단
+    const isRequestAllowed =
+      await this.waitingQueueRepository.isRequestAllowed();
 
-    // 일정 숫자 이하면 바로 Active Tokens 에 저장
-    if (!isMemoryUsageHigh) {
+    // 바로 Active Tokens 에 저장
+    if (isRequestAllowed) {
       await this.waitingQueueRepository.setActiveUser(userId);
     }
-    // 이상이면 Waiting Tokens 에 저장
+    // Waiting Tokens 에 저장
     else {
       await this.waitingQueueRepository.setWaitingUser(userId);
       orderNum = (await this.waitingQueueRepository.getWaitingNum(userId)) + 1;
       status = WaitingQueueStatus.PENDING;
     }
 
+    const end = Date.now(); // 종료 시간 기록
+    const duration = end - start; // 처리 시간 계산
+
+    this.logger.log(`${duration}ms`);
     // 상태 리턴
     return this.jwtService.signAsync({
       userId,
