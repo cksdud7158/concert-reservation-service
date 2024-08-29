@@ -2,11 +2,19 @@ import { isNumber } from "class-validator";
 import { BadRequestException } from "@nestjs/common";
 
 class PointEntity {
-  constructor(private _point: number) {
-    if (!isNumber(_point)) {
+  private _point;
+  constructor(
+    args: Partial<{
+      point: number;
+    }>,
+  ) {
+    if (!isNumber(args.point)) {
       throw new BadRequestException("없는 유저입니다.");
     }
+
+    this._point = args.point;
   }
+
   get point(): number {
     return this._point;
   }
