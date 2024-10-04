@@ -19,6 +19,6 @@ export class CacheRepositoryImpl implements CacheRepository {
   }
 
   async set(key: string, value: string) {
-    this.redis.set(key, value, "EX", 60 * 60, "NX");
+    this.redis.set(key, value, "EX", 10 * 60, "NX");
   }
 }
